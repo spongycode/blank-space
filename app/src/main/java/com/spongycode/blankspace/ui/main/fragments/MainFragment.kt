@@ -26,22 +26,4 @@ class MainFragment: Fragment() {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
         return binding.root
     }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu, menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
-            R.id.signOut -> {
-                FirebaseAuth.getInstance().signOut()
-                findNavController().navigate(R.id.action_mainFragment_to_authActivity)
-                activity?.finish()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
 }
