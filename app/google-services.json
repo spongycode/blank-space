@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "820168967248",
+    "project_id": "blank-space-1151",
+    "storage_bucket": "blank-space-1151.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:820168967248:android:9d8d71a96c36b0fb35bd55",
+        "android_client_info": {
+          "package_name": "com.spongycode.blankspace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "820168967248-nuc481glke2261rkqua1ifh698l2mj5t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDJiyV0RlmX8iwqAUKw9vM8FEd1rs-2vUY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "820168967248-nuc481glke2261rkqua1ifh698l2mj5t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
