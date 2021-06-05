@@ -1,6 +1,5 @@
 package com.spongycode.blankspace.ui.auth.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,10 +8,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.SetOptions
-import com.spongycode.blankspace.MainActivity
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentSignupBinding
 import com.spongycode.blankspace.ui.auth.AuthActivity
@@ -50,6 +47,10 @@ class SignUpFragment: Fragment() {
                 )
             }
 
+            signUptoSignInTV.setOnClickListener {
+                findNavController().navigate(R.id.action_signUpFragment_to_signInFragment)
+            }
+
         }
     }
 
@@ -81,9 +82,14 @@ class SignUpFragment: Fragment() {
 
     private fun checkSignUpState() {
         if (firebaseAuth.currentUser != null){ // navigate to mainFragment
-            val intent = Intent(requireContext(), MainActivity::class.java)
-            startActivity(intent)
+           findNavController().navigate(R.id.action_signUpFragment_to_mainActivity)
+           activity?.finish()
         }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        checkSignUpState()
     }
 
     override fun onDestroy() {
