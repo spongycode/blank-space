@@ -1,15 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/edit_meme_text"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="image upload and edit by text and stickers can be done here..."
+        android:layout_height="wrap_content"
+        android:text="Edit Your Meme..."
         android:textAlignment="center"
-        android:textSize="16sp"
-        android:textStyle="bold" />
-</FrameLayout>
+        android:textColor="@color/teal_200"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ja.burhanrashid52.photoeditor.PhotoEditorView
+        android:id="@+id/photoEditorView"
+        android:layout_width="match_parent"
+        android:layout_height="500dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edit_meme_text" />
+
+    <Button
+        android:id="@+id/meme_add_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Text"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/photoEditorView" />
+
+    <ImageButton
+        android:id="@+id/meme_undo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/ic_undo"
+        android:backgroundTint="@color/teal_200"
+        app:layout_constraintEnd_toStartOf="@+id/meme_add_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/meme_add_text" />
+
+    <ImageButton
+        android:id="@+id/meme_redo"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/ic_redo"
+        android:backgroundTint="@color/teal_200"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/meme_add_text"
+        app:layout_constraintTop_toTopOf="@+id/meme_add_text" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
