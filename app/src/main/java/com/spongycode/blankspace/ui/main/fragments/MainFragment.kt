@@ -46,7 +46,6 @@ class MainFragment : Fragment() {
 
                     for (i in response.body()!!.memes!!) {
                         memeList.add(i)
-                        Toast.makeText(requireActivity(), i?.title.toString(), Toast.LENGTH_LONG).show()
                     }
 
                     val linearLayoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)

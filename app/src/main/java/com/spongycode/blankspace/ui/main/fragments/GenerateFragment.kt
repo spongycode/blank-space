@@ -1,18 +1,20 @@
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.Fragment
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentGenerateBinding
 import com.spongycode.blankspace.ui.main.TextEditorDialogFragment
-import ja.burhanrashid52.photoeditor.OnPhotoEditorListener
-import ja.burhanrashid52.photoeditor.PhotoEditor
-import ja.burhanrashid52.photoeditor.PhotoEditorView
-import ja.burhanrashid52.photoeditor.TextStyleBuilder
-import ja.burhanrashid52.photoeditor.ViewType
+import ja.burhanrashid52.photoeditor.*
+import ja.burhanrashid52.photoeditor.PhotoEditor.OnSaveListener
 
 
 @Suppress("DEPRECATION")
@@ -51,6 +53,31 @@ class GenerateFragment : Fragment() {
 
         binding.memeRedo.setOnClickListener {
             mPhotoEditor.redo()
+        }
+
+        binding.memeSavelocal.setOnClickListener {
+            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                mPhotoEditor.saveAsFile(Environment.getExternalStorageDirectory().toString() + "/blank_meme.jpg", object : OnSaveListener {
+                    override fun onSuccess(imagePath: String) {
+                        Toast.makeText(requireActivity(), "Image Saved", Toast.LENGTH_LONG).show()
+                    }
+
+                    override fun onFailure(exception: Exception) {
+                        Toast.makeText(requireActivity(), exception.toString(), Toast.LENGTH_LONG).show()
+                    }
+                })
+            } else {
+                val PERMISSIONS_STORAGE = arrayOf(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                )
+                val REQUEST_EXTERNAL_STORAGE = 1
+                ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        PERMISSIONS_STORAGE,
+                        REQUEST_EXTERNAL_STORAGE
+                );
+            }
         }
 
 
