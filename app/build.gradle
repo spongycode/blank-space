@@ -63,6 +63,11 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.3'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.3'
 
+    // Retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    // Gson Converter
+    implementation 'com.google.code.gson:gson:2.8.7'
+
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
