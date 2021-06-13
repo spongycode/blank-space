@@ -1,4 +1,4 @@
-package com.spongycode.blankspace.ui.main
+package com.spongycode.blankspace.ui.main.adapters
 
 import GenerateFragment
 import android.content.Context

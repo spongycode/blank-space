@@ -1,6 +1,7 @@
 package com.spongycode.blankspace.ui.main.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,12 +9,12 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.gson.JsonObject
 import com.spongycode.blankspace.databinding.FragmentMainBinding
-import com.spongycode.blankspace.ui.main.ApiInterface
-import com.spongycode.blankspace.ui.main.MemeList
-import com.spongycode.blankspace.ui.main.MemeModel
-import com.spongycode.blankspace.ui.main.MemeRecyclerAdapter
+import com.spongycode.blankspace.api.ApiInterface
+import com.spongycode.blankspace.model.modelmemes.MemeList
+import com.spongycode.blankspace.model.modelmemes.MemeModel
+import com.spongycode.blankspace.ui.main.adapters.MemeRecyclerAdapter
+import com.spongycode.blankspace.util.Constants.TAG
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,21 +39,21 @@ class MainFragment : Fragment() {
 
 
         val apiInterface = ApiInterface.create().getMemes()
-        apiInterface!!.enqueue(object : Callback<MemeList?> {
+        apiInterface.enqueue(object : Callback<MemeList?> {
             override fun onResponse(call: Call<MemeList?>, response: Response<MemeList?>) {
 
-                if (response?.body() != null) {
+                if (response.body() != null) {
                     val memeList = mutableListOf<MemeModel>()
 
                     for (i in response.body()!!.memes!!) {
                         memeList.add(i)
-                        Toast.makeText(requireActivity(), i?.title.toString(), Toast.LENGTH_LONG).show()
+//                        Toast.makeText(requireActivity(), i?.title.toString(), Toast.LENGTH_LONG).show()
                     }
 
                     val linearLayoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-                    binding.rvMeme?.layoutManager = linearLayoutManager
-                    binding.rvMeme?.adapter = MemeRecyclerAdapter(requireActivity(), memeList)
-                    val adapter = binding.rvMeme?.adapter
+                    binding.rvMeme.layoutManager = linearLayoutManager
+                    binding.rvMeme.adapter = MemeRecyclerAdapter(requireActivity(), memeList)
+                    val adapter = binding.rvMeme.adapter
                     adapter?.notifyDataSetChanged()
 
                 } else {
@@ -63,6 +64,7 @@ class MainFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<MemeList?>, t: Throwable) {
+                Log.d(TAG, "Error Fetching: ${t.printStackTrace()}")
                 Toast.makeText(requireActivity(), t.toString(), Toast.LENGTH_LONG).show()
             }
         })

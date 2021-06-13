@@ -1,4 +1,4 @@
-package com.spongycode.blankspace.ui.main
+package com.spongycode.blankspace.model.modelmemes
 
 
 data class MemeModel(var title: String, var url: String)

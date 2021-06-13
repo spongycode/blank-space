@@ -1,4 +1,4 @@
-package com.spongycode.blankspace.ui.main
+package com.spongycode.blankspace.model.modelmemes
 
 import com.google.gson.annotations.SerializedName
 
