@@ -1,5 +1,6 @@
-package com.spongycode.blankspace.ui.main
+package com.spongycode.blankspace.api
 
+import com.spongycode.blankspace.model.modelmemes.MemeList
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

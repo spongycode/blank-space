@@ -1,7 +1,11 @@
 package com.spongycode.blankspace.ui.main
 
+import android.app.Activity
 import android.content.Intent
+import android.graphics.Point
+import android.os.Build
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +15,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.ActivityMainBinding
 import com.spongycode.blankspace.ui.auth.AuthActivity
+import com.spongycode.blankspace.ui.main.adapters.MainAdapter
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -18,12 +24,19 @@ class MainActivity : AppCompatActivity() {
     lateinit var tabLayout: TabLayout
     lateinit var viewPager: ViewPager
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    companion object {
+        var width: Int? = null
+        var height: Int? = null
+    }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)//
 
+        width = screenSizeInDp.x
+        height = screenSizeInDp.y
 
         tabLayout = findViewById(R.id.tabLayout)
         viewPager = findViewById(R.id.viewPager)
@@ -62,3 +75,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
+// I was trying to do something extra, but didn't workout.
+
+// extension property to get display metrics instance
+val Activity.displayMetrics: DisplayMetrics
+    get() {
+        val displayMetrics = DisplayMetrics()
+        if (Build.VERSION.SDK_INT >= 30){
+            display?.getRealMetrics(displayMetrics)
+        } else {
+            // getMetrica was deprecated in api level 30
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+        }
+        return displayMetrics
+    }
+
+// Extension property to get screen widht an dheight in dp
+val Activity.screenSizeInDp: Point
+    get() {
+        val point = Point()
+        displayMetrics.apply {
+            point.x = widthPixels
+            point.y = heightPixels
+        }
+        return point
+    }
