@@ -30,7 +30,6 @@ class GenerateFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         imageViewModel = ViewModelProvider(this).get(ImageViewModel::class.java)
-
     }
 
     override fun onCreateView(

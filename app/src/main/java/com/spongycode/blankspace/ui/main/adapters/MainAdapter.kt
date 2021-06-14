@@ -1,6 +1,6 @@
 package com.spongycode.blankspace.ui.main.adapters
 
-import GenerateFragment
+import com.spongycode.blankspace.ui.main.fragments.GenerateFragment
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
