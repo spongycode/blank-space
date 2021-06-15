@@ -1,35 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="5dp"
+    android:layout_marginVertical="5dp">
 
-    <com.google.android.material.imageview.ShapeableImageView
-        android:id="@+id/meme_iv"
-        android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_margin="@dimen/layout_margin"
-        app:layout_constraintBottom_toTopOf="@id/meme_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars" />
 
-    <com.google.android.material.textview.MaterialTextView
-        android:id="@+id/meme_title"
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:paddingHorizontal="8dp"
-        android:hint="HELLO"
-        android:textSize="15sp"
-        android:textStyle="bold|italic"
-        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/meme_iv"
-        />
+        android:elevation="50dp"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="#C8C8C8"
+        app:strokeWidth="1.5dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:background="@color/white">
+
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/meme_iv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="5dp"
+                android:layout_marginVertical="10dp"
+                android:maxHeight="400dp"
+                app:layout_constraintBottom_toTopOf="@id/meme_title"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:srcCompat="@tools:sample/avatars" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/meme_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="10dp"
+                android:hint="HELLO"
+                android:paddingHorizontal="8dp"
+                android:textColor="#FF403E3E"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/meme_iv" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

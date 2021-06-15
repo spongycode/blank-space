@@ -14,12 +14,14 @@ import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.ui.edit.fragments.PropertiesBSFragment
 import com.spongycode.blankspace.ui.edit.fragments.TextEditorDialogFragment
+import com.spongycode.blankspace.util.Helper
 import ja.burhanrashid52.photoeditor.*
 import java.util.*
 
@@ -33,6 +35,14 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
     lateinit var mPhotoEditor: PhotoEditor
     private var mPropertiesBSFragment: PropertiesBSFragment? = null
 
+    lateinit var memeAddTextBG: ImageButton
+    lateinit var memeAddText: ImageButton
+    lateinit var memeSave: ImageButton
+    lateinit var memeUndo: ImageButton
+    lateinit var memeRedo: ImageButton
+    lateinit var memeBrush: ImageButton
+    lateinit var memeEraser: ImageButton
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +53,21 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
         mPropertiesBSFragment = PropertiesBSFragment()
         mPropertiesBSFragment!!.setPropertiesChangeListener(this)
 
+        memeAddTextBG = findViewById(R.id.meme_add_text_with_bg)
+        memeAddText = findViewById(R.id.meme_add_text_no_bg)
+        memeSave = findViewById(R.id.save_local)
+        memeUndo = findViewById(R.id.meme_undo)
+        memeRedo = findViewById(R.id.meme_redo)
+        memeBrush = findViewById(R.id.meme_brush)
+        memeEraser = findViewById(R.id.meme_eraser)
+
+        Helper.buttonEffect(memeAddTextBG, "#FF03DAC5")
+        Helper.buttonEffect(memeAddText, "#FF03DAC5")
+        Helper.buttonEffect(memeSave, "#FF863BF1")
+        Helper.buttonEffect(memeUndo, "#9E693F")
+        Helper.buttonEffect(memeRedo, "#9E693F")
+        Helper.buttonEffect(memeBrush, "#FF03DAC5")
+        Helper.buttonEffect(memeEraser, "#FF03DAC5")
 
 
         if (url == "none") {
@@ -61,26 +86,40 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
             .build()
 
 
-        findViewById<ImageButton>(R.id.meme_undo).setOnClickListener {
+        memeUndo.setOnClickListener {
             mPhotoEditor.undo()
         }
 
 
-        findViewById<ImageButton>(R.id.meme_brush).setOnClickListener {
+        memeBrush.setOnClickListener {
             mPhotoEditor.setBrushDrawingMode(true)
-            showBottomSheetDialogFragment(mPropertiesBSFragment);
+            showBottomSheetDialogFragment(mPropertiesBSFragment)
+            memeBrush.background.setTint(
+                ContextCompat.getColor(
+                    applicationContext,
+                    R.color.teal_200
+                )
+            )
+            memeEraser.background.setTint(ContextCompat.getColor(applicationContext, R.color.white))
         }
 
-        findViewById<ImageButton>(R.id.meme_eraser).setOnClickListener {
+        memeEraser.setOnClickListener {
             mPhotoEditor.brushEraser()
+            memeEraser.background.setTint(
+                ContextCompat.getColor(
+                    applicationContext,
+                    R.color.teal_200
+                )
+            )
+            memeBrush.background.setTint(ContextCompat.getColor(applicationContext, R.color.white))
         }
 
-        findViewById<ImageButton>(R.id.meme_redo).setOnClickListener {
+        memeRedo.setOnClickListener {
             mPhotoEditor.redo()
         }
 
 
-        findViewById<ImageButton>(R.id.meme_add_text_with_bg).setOnClickListener {
+        memeAddTextBG.setOnClickListener {
             val typeface: Typeface? = ResourcesCompat.getFont(this, R.font.impact)
             val textStyleBuilder: TextStyleBuilder = TextStyleBuilder()
             textStyleBuilder.withTextSize(40F)
@@ -88,18 +127,23 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
             textStyleBuilder.withTextFont(typeface!!)
             textStyleBuilder.withBackgroundColor(resources.getColor(R.color.white_trans))
             mPhotoEditor.addText("Hold to Edit", textStyleBuilder)
+
+            memeEraser.background.setTint(ContextCompat.getColor(applicationContext, R.color.white))
+            memeBrush.background.setTint(ContextCompat.getColor(applicationContext, R.color.white))
+
         }
-        findViewById<ImageButton>(R.id.meme_add_text_no_bg).setOnClickListener {
+        memeAddText.setOnClickListener {
             val typeface: Typeface? = ResourcesCompat.getFont(this, R.font.impact)
             val textStyleBuilder: TextStyleBuilder = TextStyleBuilder()
             textStyleBuilder.withTextSize(40F)
             textStyleBuilder.withTextColor(resources.getColor(R.color.black))
             textStyleBuilder.withTextFont(typeface!!)
             mPhotoEditor.addText("Hold to Edit", textStyleBuilder)
+
+            memeEraser.background.setTint(ContextCompat.getColor(applicationContext, R.color.white))
+            memeBrush.background.setTint(ContextCompat.getColor(applicationContext, R.color.white))
+
         }
-
-
-
 
 
         findViewById<ImageButton>(R.id.save_local).setOnClickListener {
@@ -137,8 +181,6 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
                 );
             }
         }
-
-
 
 
         mPhotoEditor.setOnPhotoEditorListener(object : OnPhotoEditorListener {
