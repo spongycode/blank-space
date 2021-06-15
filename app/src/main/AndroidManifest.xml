@@ -13,7 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.BlankSpace">
-        <activity android:name=".ui.edit.EditActivity"></activity>
+        <activity android:name=".ui.edit.EditActivity" />
+        <activity android:name=".ui.photoviewer.PhotoViewerActivity" />
         <activity android:name=".ui.auth.AuthActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

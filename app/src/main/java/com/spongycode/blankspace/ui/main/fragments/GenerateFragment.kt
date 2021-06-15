@@ -18,6 +18,7 @@ import com.spongycode.blankspace.databinding.ImageItemBinding
 import com.spongycode.blankspace.model.modelsImages.Image
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
+import com.spongycode.blankspace.ui.photoviewer.PhotoViewerActivity
 import com.spongycode.blankspace.viewmodel.ImageViewModel
 import com.squareup.picasso.Picasso
 
@@ -93,6 +94,11 @@ class GenerateFragment : Fragment() {
                 val myIntent = Intent(requireContext(), EditActivity::class.java)
                 myIntent.putExtra("imageurl", image.url)
                 context?.startActivity(myIntent)
+            }
+            holder.image.setOnClickListener {
+                val intent = Intent(context, PhotoViewerActivity::class.java)
+                intent.putExtra("IMAGE_URL", image.url)
+                context?.startActivity(intent)
             }
         }
 

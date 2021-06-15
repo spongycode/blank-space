@@ -11,22 +11,27 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import android.widget.ImageButton
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.spongycode.blankspace.R
+import com.spongycode.blankspace.ui.edit.fragments.PropertiesBSFragment
 import com.spongycode.blankspace.ui.edit.fragments.TextEditorDialogFragment
 import ja.burhanrashid52.photoeditor.*
 import java.util.*
 
-class EditActivity : AppCompatActivity() {
+
+@Suppress("DEPRECATION")
+class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
 
     private val pickImage = 100
     private var imageRouteClear = true
     lateinit var mPhotoEditorView: PhotoEditorView
+    lateinit var mPhotoEditor: PhotoEditor
+    private var mPropertiesBSFragment: PropertiesBSFragment? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,6 +40,10 @@ class EditActivity : AppCompatActivity() {
 
         val url = intent?.getStringExtra("imageurl")
         mPhotoEditorView = findViewById(R.id.photo_editor_view)
+        mPropertiesBSFragment = PropertiesBSFragment()
+        mPropertiesBSFragment!!.setPropertiesChangeListener(this)
+
+
 
         if (url == "none") {
             // Pick Image
@@ -46,7 +55,7 @@ class EditActivity : AppCompatActivity() {
 
 
         val mTextRobotoTf = ResourcesCompat.getFont(this, R.font.impact)
-        val mPhotoEditor = PhotoEditor.Builder(this, mPhotoEditorView)
+        mPhotoEditor = PhotoEditor.Builder(this, mPhotoEditorView)
             .setPinchTextScalable(true)
             .setDefaultTextTypeface(mTextRobotoTf)
             .build()
@@ -54,6 +63,16 @@ class EditActivity : AppCompatActivity() {
 
         findViewById<ImageButton>(R.id.meme_undo).setOnClickListener {
             mPhotoEditor.undo()
+        }
+
+
+        findViewById<ImageButton>(R.id.meme_brush).setOnClickListener {
+            mPhotoEditor.setBrushDrawingMode(true)
+            showBottomSheetDialogFragment(mPropertiesBSFragment);
+        }
+
+        findViewById<ImageButton>(R.id.meme_eraser).setOnClickListener {
+            mPhotoEditor.brushEraser()
         }
 
         findViewById<ImageButton>(R.id.meme_redo).setOnClickListener {
@@ -93,7 +112,8 @@ class EditActivity : AppCompatActivity() {
                     Environment.getExternalStorageDirectory().toString() + "/blank_meme.jpg",
                     object : PhotoEditor.OnSaveListener {
                         override fun onSuccess(imagePath: String) {
-                            Toast.makeText(applicationContext, "Image Saved", Toast.LENGTH_LONG).show()
+                            Toast.makeText(applicationContext, "Image Saved", Toast.LENGTH_LONG)
+                                .show()
                         }
 
                         override fun onFailure(exception: Exception) {
@@ -137,24 +157,25 @@ class EditActivity : AppCompatActivity() {
                 }
             }
 
-            override fun onAddViewListener(viewType: ViewType?, numberOfAddedViews: Int) {
-                Unit
-            }
+            override fun onAddViewListener(viewType: ViewType?, numberOfAddedViews: Int) = Unit
 
-            override fun onRemoveViewListener(viewType: ViewType?, numberOfAddedViews: Int) {
-                Unit
-            }
+            override fun onRemoveViewListener(viewType: ViewType?, numberOfAddedViews: Int) = Unit
 
             override fun onStartViewChangeListener(viewType: ViewType?) {
-                Unit
             }
 
             override fun onStopViewChangeListener(viewType: ViewType?) {
-                Unit
             }
         })
 
 
+    }
+
+    private fun showBottomSheetDialogFragment(fragment: BottomSheetDialogFragment?) {
+        if (fragment == null || fragment.isAdded) {
+            return
+        }
+        fragment.show(supportFragmentManager, fragment.tag)
     }
 
 
@@ -174,5 +195,17 @@ class EditActivity : AppCompatActivity() {
 
             imageRouteClear = true
         }
+    }
+
+    override fun onColorChanged(colorCode: Int) {
+        mPhotoEditor.setBrushColor(colorCode)
+    }
+
+    override fun onOpacityChanged(opacity: Int) {
+        mPhotoEditor.setOpacity(opacity)
+    }
+
+    override fun onBrushSizeChanged(brushSize: Int) {
+        mPhotoEditor.setBrushSize(brushSize.toFloat())
     }
 }

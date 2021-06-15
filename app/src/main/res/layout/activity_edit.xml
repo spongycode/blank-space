@@ -46,6 +46,28 @@
 
 
     <ImageButton
+        android:id="@+id/meme_brush"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/ic_brush"
+        android:backgroundTint="@color/teal_200"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/save_local"
+        app:layout_constraintStart_toEndOf="@+id/meme_add_text_no_bg" />
+
+
+    <ImageButton
+        android:id="@+id/meme_eraser"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/ic_eraser"
+        android:backgroundTint="@color/teal_200"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/meme_add_text_with_bg"
+        app:layout_constraintStart_toEndOf="@+id/save_local" />
+
+
+    <ImageButton
         android:id="@+id/meme_undo"
         android:layout_width="50dp"
         android:layout_height="50dp"

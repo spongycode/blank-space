@@ -79,6 +79,10 @@ dependencies {
     // Photo Editor
     implementation 'com.burhanrashid52:photoeditor:1.1.4'
 
+    // Photo Viewer
+    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
