@@ -1,31 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:orientation="horizontal"
+    android:padding="4dp"
+    android:weightSum="10">
 
-    <LinearLayout
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/blog_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        >
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/image"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/layout_margin"
-            android:foregroundGravity="center_horizontal"
-            android:src="@drawable/meme"
-            />
+        android:theme="@style/Theme.MaterialComponents.DayNight"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/teal_200"
+        app:strokeWidth="1.5dp">
 
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/textView"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="25dp"
-            android:gravity="center_horizontal"
-            android:textAlignment="gravity"
-            android:hint="somehting"
-            android:textSize="15sp"
-            />
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:background="@color/white">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="25dp"
+                android:gravity="center_horizontal"
+                android:hint="somehting"
+                android:textAlignment="gravity"
+                android:textSize="15sp"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/layout_margin"
+                android:foregroundGravity="center_horizontal"
+                android:src="@drawable/ic_launcher_background"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textView" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/template_edit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Edit"
+                app:layout_constraintEnd_toStartOf="@+id/template_save"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/image" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/template_save"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Save"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/template_edit"
+                app:layout_constraintTop_toBottomOf="@id/image" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+
+
 </RelativeLayout>
