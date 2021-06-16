@@ -9,6 +9,7 @@ import android.util.DisplayMetrics
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -32,6 +33,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)//
 
@@ -43,8 +46,10 @@ class MainActivity : AppCompatActivity() {
         tabLayout.addTab(tabLayout.newTab().setText("Home"))
         tabLayout.addTab(tabLayout.newTab().setText("Generate"))
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
-        val adapter = MainAdapter(this, supportFragmentManager,
-                tabLayout.tabCount)
+        val adapter = MainAdapter(
+            this, supportFragmentManager,
+            tabLayout.tabCount
+        )
         viewPager.adapter = adapter
 
         viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
@@ -52,6 +57,7 @@ class MainActivity : AppCompatActivity() {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
             }
+
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
@@ -63,7 +69,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when(item.itemId){
+        return when (item.itemId) {
             R.id.signOut -> {
                 FirebaseAuth.getInstance().signOut()
                 val intent = Intent(this, AuthActivity::class.java)
@@ -82,7 +88,7 @@ class MainActivity : AppCompatActivity() {
 val Activity.displayMetrics: DisplayMetrics
     get() {
         val displayMetrics = DisplayMetrics()
-        if (Build.VERSION.SDK_INT >= 30){
+        if (Build.VERSION.SDK_INT >= 30) {
             display?.getRealMetrics(displayMetrics)
         } else {
             // getMetrica was deprecated in api level 30

@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Blank Space</string>
+    <string-array name="arr_category">
+        <item>"Random"</item>
+        <item>"Gaming"</item>
+        <item>"Coding"</item>
+        <item>"Science"</item>
+        <item>"Member Edits"</item>
+    </string-array>
 </resources>

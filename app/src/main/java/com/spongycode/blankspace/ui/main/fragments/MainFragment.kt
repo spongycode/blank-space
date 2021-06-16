@@ -5,7 +5,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,32 +27,67 @@ class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
 
+    lateinit var apiInterface: Call<MemeList?>
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
 
+        binding.spCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                Toast.makeText(
+                    requireContext(),
+                    parent?.getItemAtPosition(position).toString(),
+                    Toast.LENGTH_LONG
+                ).show()
+                fetchMemeByCategory(parent?.getItemAtPosition(position).toString())
+            }
 
-        val apiInterface = ApiInterface.create().getMemes()
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+        }
+
+        return binding.root
+    }
+
+    private fun fetchMemeByCategory(category: String) {
+
+        if (category == "Member Edits"){
+            return
+        }
+
+        when(category){
+            "Random" -> apiInterface = ApiInterface.create().getMemesRandom()
+            "Coding" -> apiInterface = ApiInterface.create().getMemesProgram()
+            "Science" -> apiInterface = ApiInterface.create().getMemesScience()
+            "Gaming" -> apiInterface = ApiInterface.create().getMemesGaming()
+        }
+
+
         apiInterface.enqueue(object : Callback<MemeList?> {
             override fun onResponse(call: Call<MemeList?>, response: Response<MemeList?>) {
 
                 if (response.body() != null) {
                     val memeList = mutableListOf<MemeModel>()
-
                     for (i in response.body()!!.memes!!) {
                         memeList.add(i)
-//                        Toast.makeText(requireActivity(), i?.title.toString(), Toast.LENGTH_LONG).show()
                     }
 
-                    val linearLayoutManager = LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+                    val linearLayoutManager =
+                        LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
                     binding.rvMeme.layoutManager = linearLayoutManager
                     binding.rvMeme.adapter = MemeRecyclerAdapter(requireActivity(), memeList)
                     val adapter = binding.rvMeme.adapter
@@ -68,9 +105,5 @@ class MainFragment : Fragment() {
                 Toast.makeText(requireActivity(), t.toString(), Toast.LENGTH_LONG).show()
             }
         })
-
-
-
-        return binding.root
     }
 }

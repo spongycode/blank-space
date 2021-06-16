@@ -1,16 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/white">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cv_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="5dp"
+        android:layout_marginLeft="5dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Light"
+        app:cardCornerRadius="6dp"
+        app:cardElevation="0dp"
+        app:layout_constraintBottom_toTopOf="@id/rv_meme"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeWidth="1.5dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#EAE8E8">
+
+            <androidx.appcompat.widget.AppCompatSpinner
+                android:id="@+id/sp_category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/arr_category"
+                android:paddingHorizontal="5dp"
+                android:paddingVertical="10dp"
+                android:spinnerMode="dialog"
+                android:theme="@style/CardView.Light"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_meme"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/meme_layout"
-
-        />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cv_spinner"
+        tools:listitem="@layout/meme_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
