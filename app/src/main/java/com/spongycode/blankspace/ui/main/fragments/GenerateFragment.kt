@@ -6,10 +6,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
 import com.spongycode.blankspace.R
@@ -54,6 +56,8 @@ class GenerateFragment : Fragment() {
                 binding.list.adapter?.notifyDataSetChanged()
             }
         )
+
+        binding.list?.attachFab(binding.generateFab, activity as AppCompatActivity)
 
         binding.generateFab.setOnClickListener {
             val myIntent = Intent(requireContext(), EditActivity::class.java)
@@ -103,5 +107,22 @@ class GenerateFragment : Fragment() {
         }
 
         override fun getItemCount() = listImages.size
+    }
+
+
+    private fun RecyclerView.attachFab(fab: FloatingActionButton, activity: AppCompatActivity) {
+        this.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0) {
+                    fab.hide()
+
+                } else if (dy < 0) {
+                    fab.show()
+                    activity.supportActionBar!!.show()
+
+                }
+            }
+        })
     }
 }

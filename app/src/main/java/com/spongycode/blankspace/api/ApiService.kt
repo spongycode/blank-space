@@ -8,16 +8,16 @@ import retrofit2.http.GET
 
 interface ApiInterface {
 
-    @GET("/gimme/memes/7")
+    @GET("/gimme/memes/50")
     fun getMemesRandom(): Call<MemeList?>
 
-    @GET("/gimme/programmingmemes/7")
+    @GET("/gimme/programmingmemes/50")
     fun getMemesProgram(): Call<MemeList?>
 
-    @GET("/gimme/sciencememe/7")
+    @GET("/gimme/sciencememe/50")
     fun getMemesScience(): Call<MemeList?>
 
-    @GET("/gimme/gamingmemes/7")
+    @GET("/gimme/gamingmemes/50")
     fun getMemesGaming(): Call<MemeList?>
 
 

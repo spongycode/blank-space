@@ -12,7 +12,7 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.BlankSpace">
+        android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
         <activity android:name=".ui.edit.EditActivity" />
         <activity android:name=".ui.photoviewer.PhotoViewerActivity" />
         <activity android:name=".ui.auth.AuthActivity">
