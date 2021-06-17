@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="layout_margin">8dp</dimen>
+    <dimen name="corner_radius">25dp</dimen>
+    <dimen name="margin_hor">30dp</dimen>
+    <dimen name="btn_rad">25dp</dimen>
 </resources>
