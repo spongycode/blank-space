@@ -1,5 +1,6 @@
 package com.spongycode.blankspace.ui.main.fragments
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -18,11 +19,13 @@ import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentGenerateBinding
 import com.spongycode.blankspace.databinding.ImageItemBinding
 import com.spongycode.blankspace.model.modelsImages.Image
+import com.spongycode.blankspace.storage.saveTemplate
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
-import com.spongycode.blankspace.ui.photoviewer.PhotoViewerActivity
+import com.spongycode.blankspace.util.ClickListener
 import com.spongycode.blankspace.viewmodel.ImageViewModel
 import com.squareup.picasso.Picasso
+import java.util.*
 
 class GenerateFragment : Fragment() {
 
@@ -64,8 +67,6 @@ class GenerateFragment : Fragment() {
             myIntent.putExtra("imageurl", "none")
             this.startActivity(myIntent)
         }
-
-
         return binding.root
     }
 
@@ -87,8 +88,10 @@ class GenerateFragment : Fragment() {
             return GenerateFragmentViewHolder(itemBinding)
         }
 
+        private lateinit var image: Image
+        @SuppressLint("ClickableViewAccessibility")
         override fun onBindViewHolder(holder: GenerateFragmentViewHolder, position: Int) {
-            val image = listImages.get(position)
+            image = listImages.get(position)
             holder.title.text = image.name
             Picasso.get().load(image.url)
                 .error(R.drawable.meme)
@@ -99,16 +102,23 @@ class GenerateFragment : Fragment() {
                 myIntent.putExtra("imageurl", image.url)
                 context?.startActivity(myIntent)
             }
-            holder.image.setOnClickListener {
-                val intent = Intent(context, PhotoViewerActivity::class.java)
-                intent.putExtra("IMAGE_URL", image.url)
-                context?.startActivity(intent)
-            }
+            holder.image.setOnTouchListener(TapListener())
         }
 
         override fun getItemCount() = listImages.size
-    }
 
+        inner class TapListener: ClickListener(this@GenerateFragment.requireContext()){
+            override fun onLong() {
+                val myIntent = Intent(requireContext(), EditActivity::class.java)
+                myIntent.putExtra("imageurl", image.url)
+                context?.startActivity(myIntent)
+            }
+
+            override fun onDouble() {
+                saveTemplate(image)
+            }
+        }
+    }
 
     private fun RecyclerView.attachFab(fab: FloatingActionButton, activity: AppCompatActivity) {
         this.addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -125,4 +135,5 @@ class GenerateFragment : Fragment() {
             }
         })
     }
+
 }

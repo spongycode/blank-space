@@ -8,7 +8,7 @@ import com.spongycode.blankspace.R
 class PhotoViewerActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_photo_viewer)
+        setContentView(R.layout.fragment_photo_viewer)
         this.supportActionBar?.hide()
 
         val imageUrl = intent.getStringExtra("IMAGE_URL")
