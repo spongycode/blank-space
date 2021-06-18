@@ -23,12 +23,12 @@ class MemeRecyclerAdapter(private val context: Context, private val memeList: Li
         return ViewHolder(view)
     }
 
-    private lateinit var meme: MemeModel
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        meme = memeList[position]
+        val meme: MemeModel = memeList[position]
         holder.title.text = meme.title
         Glide.with(holder.itemView.context.applicationContext).load(meme.url).into(holder.image)
-        holder.image.setOnTouchListener(TapListener())
+        holder.image.setOnTouchListener(TapListener(meme))
     }
 
     override fun getItemCount() = memeList.size
@@ -38,7 +38,7 @@ class MemeRecyclerAdapter(private val context: Context, private val memeList: Li
         internal var image: ImageView = view.findViewById(R.id.meme_iv)
     }
 
-    inner class TapListener: ClickListener(context){
+    inner class TapListener(private val meme: MemeModel): ClickListener(context){
         override fun onLong() {
             val myIntent = Intent(context, EditActivity::class.java)
             myIntent.putExtra("imageurl", meme.url)

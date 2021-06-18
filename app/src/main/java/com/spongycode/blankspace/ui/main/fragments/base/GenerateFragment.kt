@@ -1,4 +1,4 @@
-package com.spongycode.blankspace.ui.main.fragments
+package com.spongycode.blankspace.ui.main.fragments.base
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -102,20 +102,20 @@ class GenerateFragment : Fragment() {
                 myIntent.putExtra("imageurl", image.url)
                 context?.startActivity(myIntent)
             }
-            holder.image.setOnTouchListener(TapListener())
+            holder.image.setOnTouchListener(TapListener(image))
         }
 
         override fun getItemCount() = listImages.size
 
-        inner class TapListener: ClickListener(this@GenerateFragment.requireContext()){
+        inner class TapListener(private val img: Image): ClickListener(this@GenerateFragment.requireContext()){
             override fun onLong() {
                 val myIntent = Intent(requireContext(), EditActivity::class.java)
-                myIntent.putExtra("imageurl", image.url)
+                myIntent.putExtra("imageurl", img.url)
                 context?.startActivity(myIntent)
             }
 
             override fun onDouble() {
-                saveTemplate(image)
+                saveTemplate(img)
             }
         }
     }

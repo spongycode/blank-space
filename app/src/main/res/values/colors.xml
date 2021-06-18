@@ -21,4 +21,5 @@
     //transparent bg
     <color name="white_trans">#D8FFFFFF</color>
 
+    <color name="gray">#DDDDDD</color>
 </resources>

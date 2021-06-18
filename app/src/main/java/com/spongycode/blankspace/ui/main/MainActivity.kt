@@ -7,6 +7,7 @@ import android.graphics.Point
 import android.os.Build
 import android.os.Bundle
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -17,6 +18,9 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
+import androidx.navigation.NavHostController
+import androidx.navigation.findNavController
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
@@ -25,10 +29,11 @@ import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.ActivityMainBinding
 import com.spongycode.blankspace.ui.auth.AuthActivity
 import com.spongycode.blankspace.ui.main.adapters.MainAdapter
+import com.spongycode.blankspace.ui.main.fragments.drawer.favorite.FMemesFragment
 import com.spongycode.blankspace.util.Constants.STORAGE_PERMISSION_CODE
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     lateinit var tabLayout: TabLayout
@@ -81,6 +86,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
 
+        binding.navigationView.setNavigationItemSelectedListener (object : NavigationView.OnNavigationItemSelectedListener{
+            override fun onNavigationItemSelected(item: MenuItem): Boolean {
+                lateinit var fragment: Fragment
+                when (item.itemId){
+                    R.id.nav_fmemes -> { fragment = FMemesFragment(); supportFragmentManager
+                        .beginTransaction()
+                        .add(R.id.frameLayout, fragment)
+                        .commit()
+                    }
+                    R.id.nav_ftemplates -> {  }
+                }
+                return true
+            }
+        })
+
     }
 
     private fun checkPermission(permission: String){
@@ -105,39 +125,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Toast.makeText(this@MainActivity, "Camera Permission Denied", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-//
-//    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-//        menuInflater.inflate(R.menu.drawer_menu, menu)
-//        return true
-//    }
-//
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        return when (item.itemId) {
-//            R.id.signOut -> {
-//                FirebaseAuth.getInstance().signOut()
-//                val intent = Intent(this, AuthActivity::class.java)
-//                startActivity(intent)
-//                this.finish()
-//                true
-//            }
-//            else -> super.onOptionsItemSelected(item)
-//        }
-//    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.nav_account -> { Toast.makeText(this, "Publication", Toast.LENGTH_LONG).show() }
-        }
-        binding.drawerLayout.closeDrawer(GravityCompat.START)
-        return true
-    }
-
-    override fun onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)){
-            binding.drawerLayout.closeDrawer(GravityCompat.START)
-        } else { super.onBackPressed() }
     }
 }
 
