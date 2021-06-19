@@ -29,6 +29,7 @@ import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.ActivityMainBinding
 import com.spongycode.blankspace.ui.auth.AuthActivity
 import com.spongycode.blankspace.ui.main.adapters.MainAdapter
+import com.spongycode.blankspace.ui.main.fragments.drawer.activities.SettingsActivity
 import com.spongycode.blankspace.ui.main.fragments.drawer.favorite.FMemesFragment
 import com.spongycode.blankspace.util.Constants.STORAGE_PERMISSION_CODE
 
@@ -58,8 +59,11 @@ class MainActivity : AppCompatActivity() {
 
 
         // Set app drawer
-        actionBarDrawerToggle = ActionBarDrawerToggle(this, binding.drawerLayout, R.string.open_drawer, R.string.close_drawer)
+        actionBarDrawerToggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open_drawer, R.string.close_drawer)
+        binding.drawerLayout.addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.isDrawerIndicatorEnabled = true
+        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_ios_24)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 //        binding.navigateUp.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
 
         width = screenSizeInDp.x
@@ -86,20 +90,34 @@ class MainActivity : AppCompatActivity() {
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
 
-        binding.navigationView.setNavigationItemSelectedListener (object : NavigationView.OnNavigationItemSelectedListener{
-            override fun onNavigationItemSelected(item: MenuItem): Boolean {
-                lateinit var fragment: Fragment
-                when (item.itemId){
-                    R.id.nav_fmemes -> { fragment = FMemesFragment(); supportFragmentManager
+        binding.navigationView.setNavigationItemSelectedListener { item ->
+            lateinit var fragment: Fragment
+            when (item.itemId) {
+                R.id.nav_fmemes -> {
+                    fragment = FMemesFragment(); supportFragmentManager
                         .beginTransaction()
                         .add(R.id.frameLayout, fragment)
                         .commit()
-                    }
-                    R.id.nav_ftemplates -> {  }
                 }
-                return true
+                R.id.nav_ftemplates -> {
+                }
+
+                R.id.nav_settings -> {
+                    startActivity(Intent(this, SettingsActivity::class.java))
+
+                }
+
+                R.id.nav_logout -> {
+                    FirebaseAuth.getInstance().signOut()
+                    startActivity(Intent(this, AuthActivity::class.java))
+                    finish()
+                }
             }
-        })
+
+            val drawer : DrawerLayout = findViewById(R.id.drawer_layout)
+            drawer.closeDrawer(GravityCompat.START)
+            true
+        }
 
     }
 

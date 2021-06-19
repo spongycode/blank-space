@@ -7,6 +7,9 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.view.MotionEvent
 import android.view.View
+import com.spongycode.blankspace.model.UserModel
+import com.spongycode.blankspace.ui.auth.fragments.SignInFragment
+import kotlinx.coroutines.tasks.await
 
 object Constants {
     const val TAG = "Error fetching"
@@ -64,4 +67,26 @@ object Helper{
         }
 
     }
+
+
+    suspend fun isUniqueUsername(newUsername: String) : Boolean{
+        var res: Boolean = false
+        SignInFragment.firestore.collection("users")
+            .whereEqualTo("username", newUsername)
+            .get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    if (task.result!!.size() == 0) {
+                        res = true
+                    }
+                }
+            }
+            .await()
+        return res
+    }
+}
+
+
+object userdata{
+    var afterLoginUserData: UserModel =  UserModel(userId = "dummyID")
 }
