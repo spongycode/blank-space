@@ -36,8 +36,6 @@ import com.spongycode.blankspace.util.Constants.STORAGE_PERMISSION_CODE
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    lateinit var tabLayout: TabLayout
-    lateinit var viewPager: ViewPager
     lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
 
     companion object {
@@ -53,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
+//        setSupportActionBar(binding.)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
 
@@ -65,26 +63,7 @@ class MainActivity : AppCompatActivity() {
         width = screenSizeInDp.x
         height = screenSizeInDp.y
 
-        tabLayout = findViewById(R.id.tabLayout)
-        viewPager = findViewById(R.id.viewPager)
-        tabLayout.addTab(tabLayout.newTab().setText("Home"))
-        tabLayout.addTab(tabLayout.newTab().setText("Generate"))
-        tabLayout.tabGravity = TabLayout.GRAVITY_FILL
-        val adapter = MainAdapter(
-            this, supportFragmentManager,
-            tabLayout.tabCount
-        )
-        viewPager.adapter = adapter
 
-        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
-        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabSelected(tab: TabLayout.Tab) {
-                viewPager.currentItem = tab.position
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab) {}
-            override fun onTabReselected(tab: TabLayout.Tab) {}
-        })
 
         binding.navigationView.setNavigationItemSelectedListener (object : NavigationView.OnNavigationItemSelectedListener{
             override fun onNavigationItemSelected(item: MenuItem): Boolean {

@@ -16,6 +16,7 @@ import com.spongycode.blankspace.model.modelmemes.MemeList
 import com.spongycode.blankspace.model.modelmemes.MemeModel
 import com.spongycode.blankspace.ui.main.adapters.MemeRecyclerAdapter
 import com.spongycode.blankspace.util.Constants.TAG
+import okhttp3.internal.Util
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -80,7 +81,7 @@ class MainFragment : Fragment() {
             override fun onResponse(call: Call<MemeList?>, response: Response<MemeList?>) {
 
                 if (response.body() != null) {
-                    val memeList = mutableListOf<MemeModel>()
+                    val memeList: MutableList<MemeModel> = mutableListOf()
                     for (i in response.body()!!.memes!!) {
                         memeList.add(i)
                     }
