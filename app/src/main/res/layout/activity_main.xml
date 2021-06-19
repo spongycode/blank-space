@@ -5,9 +5,10 @@
     android:id="@+id/activity_main"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
-    android:orientation="horizontal">
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/rose_pink"
@@ -19,10 +20,13 @@
         android:layout_height="match_parent"
         android:id="@+id/drawerLayout">
 
-        <FrameLayout
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/main_nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/frameLayout"/>
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/main_nav_graph" />
 
         <com.google.android.material.navigation.NavigationView
             android:layout_width="wrap_content"

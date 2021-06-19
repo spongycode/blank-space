@@ -21,6 +21,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavHostController
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
@@ -29,7 +30,9 @@ import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.ActivityMainBinding
 import com.spongycode.blankspace.ui.auth.AuthActivity
 import com.spongycode.blankspace.ui.main.adapters.MainAdapter
+import com.spongycode.blankspace.ui.main.fragments.base.TabLayoutFragment
 import com.spongycode.blankspace.ui.main.fragments.drawer.favorite.FMemesFragment
+import com.spongycode.blankspace.ui.main.fragments.drawer.favorite.FTemplatesFragment
 import com.spongycode.blankspace.util.Constants.STORAGE_PERMISSION_CODE
 
 
@@ -48,33 +51,39 @@ class MainActivity : AppCompatActivity() {
 
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
+        val fm = supportFragmentManager
+//        fm
+//            .beginTransaction()
+//            .add(R.id.frameLayout, TabLayoutFragment())
+//            .commit()
+
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
 //        setSupportActionBar(binding.)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
 
         // Set app drawer
-        actionBarDrawerToggle = ActionBarDrawerToggle(this, binding.drawerLayout, R.string.open_drawer, R.string.close_drawer)
+        actionBarDrawerToggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open_drawer, R.string.close_drawer)
         actionBarDrawerToggle.isDrawerIndicatorEnabled = true
 //        binding.navigateUp.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
 
         width = screenSizeInDp.x
         height = screenSizeInDp.y
 
-
+        val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
 
         binding.navigationView.setNavigationItemSelectedListener (object : NavigationView.OnNavigationItemSelectedListener{
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
-                lateinit var fragment: Fragment
                 when (item.itemId){
-                    R.id.nav_fmemes -> { fragment = FMemesFragment(); supportFragmentManager
-                        .beginTransaction()
-                        .add(R.id.frameLayout, fragment)
-                        .commit()
+                    R.id.nav_fmemes -> {
+                        navController.navigate(R.id.action_tabLayoutFragment_to_FMemesFragment)
                     }
-                    R.id.nav_ftemplates -> {  }
+                    R.id.nav_ftemplates -> {
+
+                        navController.navigate(R.id.action_tabLayoutFragment_to_FTemplatesFragment)
+                    }
                 }
                 return true
             }

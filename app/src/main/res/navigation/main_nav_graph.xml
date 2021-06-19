@@ -2,8 +2,18 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/FMemesFragment">
-
+    app:startDestination="@id/tabLayoutFragment">
+    <fragment
+        android:id="@+id/tabLayoutFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.base.TabLayoutFragment"
+        android:label="TabLayoutFragment" >
+        <action
+            android:id="@+id/action_tabLayoutFragment_to_FMemesFragment"
+            app:destination="@id/FMemesFragment" />
+        <action
+            android:id="@+id/action_tabLayoutFragment_to_FTemplatesFragment"
+            app:destination="@id/FTemplatesFragment" />
+    </fragment>
     <fragment
         android:id="@+id/FMemesFragment"
         android:name="com.spongycode.blankspace.ui.main.fragments.drawer.favorite.FMemesFragment"
@@ -12,26 +22,4 @@
         android:id="@+id/FTemplatesFragment"
         android:name="com.spongycode.blankspace.ui.main.fragments.drawer.favorite.FTemplatesFragment"
         android:label="FTemplatesFragment" />
-    <fragment
-        android:id="@+id/mainFragment"
-        android:name="com.spongycode.blankspace.ui.main.fragments.base.MainFragment"
-        android:label="MainFragment" >
-        <action
-            android:id="@+id/action_mainFragment_to_FMemesFragment"
-            app:destination="@id/FMemesFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_FTemplatesFragment"
-            app:destination="@id/FTemplatesFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/generateFragment"
-        android:name="com.spongycode.blankspace.ui.main.fragments.base.GenerateFragment"
-        android:label="GenerateFragment" >
-        <action
-            android:id="@+id/action_generateFragment_to_FMemesFragment"
-            app:destination="@id/FMemesFragment" />
-        <action
-            android:id="@+id/action_generateFragment_to_FTemplatesFragment"
-            app:destination="@id/FTemplatesFragment" />
-    </fragment>
 </navigation>
