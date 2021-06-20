@@ -33,8 +33,6 @@ class GenerateFragment : Fragment() {
     private val binding get() = _binding!!
     private lateinit var itemBinding: ImageItemBinding
     private lateinit var imageViewModel: ImageViewModel
-    private var width: Int? = MainActivity.width
-    private var height: Int? = MainActivity.height
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,8 +74,7 @@ class GenerateFragment : Fragment() {
             RecyclerView.ViewHolder(binding.root) {
             internal var image: ShapeableImageView = itemBinding.image
             internal var title: MaterialTextView = itemBinding.textView
-            internal var save: MaterialButton = itemBinding.templateSave
-            internal var edit: MaterialButton = itemBinding.templateEdit
+            internal var star: ShapeableImageView = itemBinding.starSign
         }
 
         override fun onCreateViewHolder(
@@ -93,15 +90,10 @@ class GenerateFragment : Fragment() {
         override fun onBindViewHolder(holder: GenerateFragmentViewHolder, position: Int) {
             image = listImages.get(position)
             holder.title.text = image.name
+            holder.star.visibility = if( image.fav) View.VISIBLE else View.INVISIBLE
             Picasso.get().load(image.url)
                 .error(R.drawable.meme)
                 .into(holder.image)
-            Log.w("display", "1- $width, $height")
-            holder.edit.setOnClickListener {
-                val myIntent = Intent(requireContext(), EditActivity::class.java)
-                myIntent.putExtra("imageurl", image.url)
-                context?.startActivity(myIntent)
-            }
             holder.image.setOnTouchListener(TapListener(image))
         }
 
@@ -116,6 +108,7 @@ class GenerateFragment : Fragment() {
 
             override fun onDouble() {
                 saveTemplate(img)
+                img.fav = !img.fav
             }
         }
     }

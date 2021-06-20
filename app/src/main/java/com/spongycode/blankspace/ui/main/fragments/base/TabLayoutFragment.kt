@@ -24,7 +24,7 @@ class TabLayoutFragment: Fragment() {
         tabLayout.addTab(tabLayout.newTab().setText("Generate"))
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
         val tabAdapter = MainAdapter(
-                this@TabLayoutFragment.requireContext(), childFragmentManager, 2
+                this@TabLayoutFragment.requireContext(), childFragmentManager, tabLayout.tabCount
         )
         viewPager.adapter = tabAdapter
 
