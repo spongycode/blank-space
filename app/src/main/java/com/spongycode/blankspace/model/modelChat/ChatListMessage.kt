@@ -1,4 +1,4 @@
-package com.rick.chatapp.chat.model
+package com.spongycode.blankspace.model.modelChat
 
 import java.io.Serializable
 
