@@ -37,7 +37,7 @@ import java.io.OutputStream
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
+//    lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
 
     companion object {
         var width: Int? = null
@@ -52,16 +52,24 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setIcon(R.drawable.ic_troll_face)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_burger)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        // accessing all these parameter from TabLayoutFragment.kt  init
 
 
-        // Set app drawer
-        actionBarDrawerToggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open_drawer, R.string.close_drawer)
-        actionBarDrawerToggle.isDrawerIndicatorEnabled = true
+
+//        setSupportActionBar(binding.toolbar)
+//        supportActionBar?.setIcon(R.drawable.ic_troll_face)
+//        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_burger)
+//        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+//
+//
+//        // Set app drawer
+//        actionBarDrawerToggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open_drawer, R.string.close_drawer)
+//        actionBarDrawerToggle.isDrawerIndicatorEnabled = true
 //        binding.navigateUp.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
+
+
+
+        // accessing all these parameter from TabLayoutFragment.kt  end
 
         width = screenSizeInDp.x
         height = screenSizeInDp.y

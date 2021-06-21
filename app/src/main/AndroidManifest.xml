@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -13,6 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
+        <activity android:name=".ui.drawer.DrawerActivity"></activity>
         <activity android:name=".ui.edit.EditActivity" />
         <activity android:name=".ui.auth.AuthActivity">
             <intent-filter>
@@ -25,16 +27,13 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-
-        android:authorities="com.rick.shareimage.fileprovider"
-
-        android:exported="false"
-        android:grantUriPermissions="true">
-        <meta-data
-            android:name="android.support.FILE_PROVIDER_PATHS"
-            android:resource="@xml/path" />
-    </provider>
-
-</application>
+            android:authorities="com.rick.shareimage.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/path" />
+        </provider>
+    </application>
 
 </manifest>
