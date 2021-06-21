@@ -85,7 +85,8 @@ class MainActivity : AppCompatActivity() {
                     R.id.nav_fmemes -> { navController.navigate(R.id.FMemesFragment) }
                     R.id.nav_ftemplates -> { navController.navigate(R.id.FTemplatesFragment) }
                     R.id.nav_profile -> { navController.navigate(R.id.myProfileFragment) }
-                    R.id.nav_settings -> { navController.navigate(R.id.settingFragment) }
+                    R.id.nav_settings -> { binding.drawerLayout.close()
+                        navController.navigate(R.id.settingFragment) }
                     R.id.nav_logout -> { navController.navigate(R.id.authActivity); this@MainActivity.finish() }
                 }
                 return true

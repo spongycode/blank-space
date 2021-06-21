@@ -8,4 +8,9 @@
         <item name="android:textColorPrimary">#FFFFFF</item>
         <item name="android:textSize">14sp</item>
     </style>
+
+
+    <style name="ToolbarColoredBackArrow">
+        <item name="android:textColorSecondary">#fff</item>
+    </style>
 </resources>
