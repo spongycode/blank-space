@@ -17,5 +17,3 @@ object BitmapScaler {
         return Bitmap.createScaledBitmap(b, (b.width * factor).toInt(), height, true)
     }
 }
-
-

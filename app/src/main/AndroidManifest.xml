@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
-        <activity android:name=".ui.main.fragments.drawer.activities.SettingsActivity"></activity>
+        <activity android:name=".ui.drawer.DrawerActivity"></activity>
         <activity android:name=".ui.edit.EditActivity" />
         <activity android:name=".ui.auth.AuthActivity">
             <intent-filter>
@@ -24,6 +24,16 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.main.MainActivity" />
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.rick.shareimage.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/path" />
+        </provider>
     </application>
 
 </manifest>

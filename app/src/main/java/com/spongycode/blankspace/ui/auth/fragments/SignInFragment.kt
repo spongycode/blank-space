@@ -12,7 +12,7 @@ import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.FirebaseFirestore
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentSigninBinding
-import com.spongycode.blankspace.model.UserModel
+import com.spongycode.blankspace.model.modelLoginUser.LoginUser
 import com.spongycode.blankspace.ui.auth.AuthActivity
 import com.spongycode.blankspace.util.userdata
 import kotlinx.coroutines.CoroutineScope
@@ -83,7 +83,7 @@ class SignInFragment: Fragment() {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         for (data in task.result!!) {
-                            userdata.afterLoginUserData = data.toObject(UserModel::class.java)
+                            userdata.afterLoginUserData = data.toObject(LoginUser::class.java)
                         }
                         findNavController().navigate(R.id.action_signInFragment_to_mainActivity)
                         activity?.finish()

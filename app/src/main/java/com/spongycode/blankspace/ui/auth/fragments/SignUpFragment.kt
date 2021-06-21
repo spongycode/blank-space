@@ -9,10 +9,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.firestore.SetOptions
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentSignupBinding
-import com.spongycode.blankspace.model.UserModel
+import com.spongycode.blankspace.model.modelLoginUser.LoginUser
 import com.spongycode.blankspace.ui.auth.AuthActivity
 import com.spongycode.blankspace.ui.auth.AuthActivity.Companion.usersCollectionReference
 import com.spongycode.blankspace.ui.auth.fragments.SignInFragment.Companion.firestore
@@ -71,7 +70,7 @@ class SignUpFragment : Fragment() {
                         val userId = firebaseAuth.currentUser!!.uid
                         usersCollectionReference.document(userId)
                             .set(
-                                UserModel(
+                                LoginUser(
                                     email = email,
                                     imageUrl = "",
                                     username = name,
@@ -111,7 +110,7 @@ class SignUpFragment : Fragment() {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         for (data in task.result!!) {
-                            userdata.afterLoginUserData = data.toObject(UserModel::class.java)
+                            userdata.afterLoginUserData = data.toObject(LoginUser::class.java)
                         }
                     }
                 }

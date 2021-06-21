@@ -13,5 +13,4 @@
     <style name="ToolbarColoredBackArrow">
         <item name="android:textColorSecondary">#fff</item>
     </style>
-
 </resources>

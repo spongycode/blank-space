@@ -1,9 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_nav_graph"
-    app:startDestination="@id/FMemesFragment">
-
+    app:startDestination="@id/tabLayoutFragment">
+    <fragment
+        android:id="@+id/tabLayoutFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.base.TabLayoutFragment"
+        android:label="TabLayoutFragment" >
+        <action
+            android:id="@+id/action_tabLayoutFragment_to_FMemesFragment"
+            app:destination="@id/FMemesFragment" />
+        <action
+            android:id="@+id/action_tabLayoutFragment_to_FTemplatesFragment"
+            app:destination="@id/FTemplatesFragment" />
+    </fragment>
     <fragment
         android:id="@+id/FMemesFragment"
         android:name="com.spongycode.blankspace.ui.main.fragments.drawer.favorite.FMemesFragment"
@@ -13,25 +24,47 @@
         android:name="com.spongycode.blankspace.ui.main.fragments.drawer.favorite.FTemplatesFragment"
         android:label="FTemplatesFragment" />
     <fragment
-        android:id="@+id/mainFragment"
-        android:name="com.spongycode.blankspace.ui.main.fragments.base.MainFragment"
-        android:label="MainFragment" >
+        android:id="@+id/chatScreenFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.drawer.chat.ChatScreenFragment"
+        android:label="ChatScreenFragment" >
         <action
-            android:id="@+id/action_mainFragment_to_FMemesFragment"
-            app:destination="@id/FMemesFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_FTemplatesFragment"
-            app:destination="@id/FTemplatesFragment" />
+            android:id="@+id/action_chatScreenFragment_to_listOfUsersFragment"
+            app:destination="@id/listOfUsersFragment" />
     </fragment>
     <fragment
-        android:id="@+id/generateFragment"
-        android:name="com.spongycode.blankspace.ui.main.fragments.base.GenerateFragment"
-        android:label="GenerateFragment" >
+        android:id="@+id/groupChatFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.drawer.chat.GroupChatFragment"
+        android:label="GroupChatFragment" >
         <action
-            android:id="@+id/action_generateFragment_to_FMemesFragment"
-            app:destination="@id/FMemesFragment" />
-        <action
-            android:id="@+id/action_generateFragment_to_FTemplatesFragment"
-            app:destination="@id/FTemplatesFragment" />
+            android:id="@+id/action_groupChatFragment_to_listOfUsersFragment"
+            app:destination="@id/listOfUsersFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/listOfUsersFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.drawer.chat.ListOfUsersFragment"
+        android:label="ListOfUsersFragment" >
+        <action
+            android:id="@+id/action_listOfUsersFragment_to_groupChatFragment"
+            app:destination="@id/groupChatFragment" />
+        <action
+            android:id="@+id/action_listOfUsersFragment_to_chatScreenFragment"
+            app:destination="@id/chatScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/myProfileFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.drawer.profile.MyProfileFragment"
+        android:label="MyProfileFragment" />
+    <fragment
+        android:id="@+id/privateChatFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.drawer.chat.PrivateChatFragment"
+        android:label="PrivateChatFragment" />
+    <fragment
+        android:id="@+id/settingFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.drawer.profile.SettingFragment"
+        android:label="SettingFragment" />
+    <activity
+        android:id="@+id/authActivity"
+        android:name="com.spongycode.blankspace.ui.auth.AuthActivity"
+        android:label="activity_auth"
+        tools:layout="@layout/activity_auth" />
 </navigation>

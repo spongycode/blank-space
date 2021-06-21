@@ -15,12 +15,12 @@
         <menu>
             <item
                 android:id="@+id/nav_fmemes"
-                android:icon="@drawable/ic_nav_meme"
+                android:icon="@drawable/ic_hearth"
                 android:title="Memes" />
 
             <item
                 android:id="@+id/nav_ftemplates"
-                android:icon="@drawable/ic_nav_temp"
+                android:icon="@drawable/ic_star"
                 android:title="Templates" />
         </menu>
     </item>
@@ -28,7 +28,7 @@
     <item android:title="@+id/Account">
         <menu>
             <item
-                android:id="@+id/nav_account"
+                android:id="@+id/nav_profile"
                 android:icon="@drawable/ic_nav_account"
                 android:title="My profile" />
 

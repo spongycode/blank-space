@@ -7,7 +7,7 @@ import android.graphics.Color
 import android.graphics.PorterDuff
 import android.view.MotionEvent
 import android.view.View
-import com.spongycode.blankspace.model.UserModel
+import com.spongycode.blankspace.model.modelLoginUser.LoginUser
 import com.spongycode.blankspace.ui.auth.fragments.SignInFragment
 import kotlinx.coroutines.tasks.await
 
@@ -88,5 +88,5 @@ object Helper{
 
 
 object userdata{
-    var afterLoginUserData: UserModel =  UserModel(userId = "dummyID")
+    var afterLoginUserData: LoginUser =  LoginUser(userId = "dummyID")
 }
