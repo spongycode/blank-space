@@ -1,12 +1,15 @@
 package com.spongycode.blankspace.ui.main.fragments.base
 
+import android.R.attr.src
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.content.pm.ResolveInfo
-import android.graphics.drawable.BitmapDrawable
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
+import android.provider.MediaStore.Images.Media.insertImage
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -15,10 +18,13 @@ import android.widget.AdapterView
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.imageview.ShapeableImageView
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.api.ApiInterface
@@ -33,8 +39,10 @@ import com.spongycode.blankspace.util.Constants.TAG
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.ByteArrayOutputStream
 
 
+@Suppress("DEPRECATION")
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
@@ -120,11 +128,18 @@ class MainFragment : Fragment() {
         })
     }
 
-    inner class MemeRecyclerAdapter(private val context: Context, private val memeList: List<MemeModel>) :
+    inner class MemeRecyclerAdapter(
+        private val context: Context,
+        private val memeList: List<MemeModel>
+    ) :
         RecyclerView.Adapter<MemeRecyclerAdapter.ViewHolder>() {
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(R.layout.meme_layout, parent, false)
+            val view = LayoutInflater.from(parent.context).inflate(
+                R.layout.meme_layout,
+                parent,
+                false
+            )
             return ViewHolder(view)
         }
 
@@ -134,34 +149,76 @@ class MainFragment : Fragment() {
             val meme: MemeModel = memeList[position]
             holder.title.text = meme.title
             Glide.with(holder.itemView.context.applicationContext).load(meme.url).into(holder.image)
-            holder.like.setImageResource( if (meme.like) R.drawable.ic_heart_sign else R.drawable.ic_hearth )
+            holder.like.setImageResource(if (meme.like) R.drawable.ic_heart_sign else R.drawable.ic_hearth)
             holder.image.setOnTouchListener(TapListener(meme))
             holder.share.setOnClickListener {
+
+                Glide.with(requireActivity())
+                    .asBitmap()
+                    .load(meme.url)
+                    .into(object : CustomTarget<Bitmap?>() {
+                        override fun onResourceReady(
+                            resource: Bitmap,
+                            @Nullable transition: Transition<in Bitmap?>?
+                        ) {
+                            val os = ByteArrayOutputStream()
+                            resource.compress( Bitmap.CompressFormat.PNG, 100, os)
+                            val path: String = MediaStore.Images.Media.insertImage(
+                                activity?.contentResolver,
+                                resource,
+                                null,
+                                null
+                            )
+
+                            val myIntent = Intent()
+                            myIntent.apply {
+                                action = Intent.ACTION_SEND
+                                type = "image/*"
+                                putExtra(Intent.EXTRA_STREAM, Uri.parse(path))
+                            }
+                            val chooser = Intent.createChooser(myIntent, "share file")
+                            requireActivity().startActivity(chooser)
+
+                        }
+
+                        override fun onLoadCleared(@Nullable placeholder: Drawable?) {}
+                    })
+
+
                 // there's a prblm reading the uri after writing, i will try a different approach tomorrow or later tonight
-                val myIntent = Intent()
-                val uri = MainActivity().getBitmapFromView((activity as MainActivity), (holder.image.drawable as BitmapDrawable).bitmap)
-                myIntent.apply {
-                    action = Intent.ACTION_SEND
-                    type = "image/*"
-                    putExtra(Intent.EXTRA_STREAM, uri)
-                }
-                val chooser = Intent.createChooser(myIntent, "share file")
-                val resInfoList: List<ResolveInfo> = context.packageManager
-                    .queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY)
+//                val myIntent = Intent()
+//
+//                val uri = MainActivity().getBitmapFromView(
+//                    requireActivity(),
+//                    (holder.image.drawable as BitmapDrawable).bitmap
+//                )
 
-                for (resolveInfo in resInfoList) {
-                    val packageName = resolveInfo.activityInfo.packageName
-                    context.grantUriPermission(
-                        packageName,
-                        uri,
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
-                    )
-                }
+//                myIntent.apply {
+//                    action = Intent.ACTION_SEND
+//                    type = "image/*"
+//                    putExtra(Intent.EXTRA_STREAM, uri)
+//                }
+//                val chooser = Intent.createChooser(myIntent, "share file")
 
-                (activity as MainActivity).startActivity(chooser)
-
+//                val resInfoList: List<ResolveInfo> = context.packageManager
+//                    .queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY)
+//
+//                for (resolveInfo in resInfoList) {
+//                    val packageName = resolveInfo.activityInfo.packageName
+//                    context.grantUriPermission(
+//                        packageName,
+//                        uri,
+//                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
+//                    )
+//                }
+//
+//                requireActivity().startActivity(chooser)
             }
-            holder.download.setOnClickListener { MainActivity().saveImage((activity as MainActivity), holder.image.drawable, meme.title) }
+            holder.download.setOnClickListener { MainActivity().saveImage(
+                (activity as MainActivity),
+                holder.image.drawable,
+                meme.title
+            ) }
             holder.like.setOnClickListener { meme.like = !meme.like }
         }
 
