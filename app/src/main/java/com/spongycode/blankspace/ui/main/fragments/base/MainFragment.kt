@@ -1,6 +1,5 @@
 package com.spongycode.blankspace.ui.main.fragments.base
 
-import android.R.attr.src
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -9,7 +8,6 @@ import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
-import android.provider.MediaStore.Images.Media.insertImage
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -20,14 +18,12 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.imageview.ShapeableImageView
 import com.spongycode.blankspace.R
-import com.spongycode.blankspace.api.ApiInterface
 import com.spongycode.blankspace.databinding.FragmentMainBinding
 import com.spongycode.blankspace.model.modelmemes.MemeList
 import com.spongycode.blankspace.model.modelmemes.MemeModel
@@ -35,10 +31,7 @@ import com.spongycode.blankspace.storage.saveMemeToFavs
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.util.ClickListener
-import com.spongycode.blankspace.util.Constants.TAG
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.ByteArrayOutputStream
 
 
@@ -47,8 +40,8 @@ class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-
-    lateinit var apiInterface: Call<MemeList?>
+    private lateinit var memeList: MutableList<MemeModel>
+    private val memeViewModel = MainActivity.memeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +55,30 @@ class MainFragment : Fragment() {
     ): View? {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
 
+        memeList = memeViewModel.memeList
+
+        if (memeList.isEmpty()){
+            memeViewModel.memeViewModel().observe(
+                viewLifecycleOwner, {
+                    // set up and populate view
+                    memeList.apply {
+                        addAll(it)
+                        toSet()
+                        toList()
+                        Log.d("meme", "meme: $memeList")
+                        binding.rvMeme.adapter = MemeRecyclerAdapter(requireContext(), memeList)
+                        binding.rvMeme.adapter?.notifyDataSetChanged()
+                    }
+                }
+            )
+        }
+        if (memeList.isNotEmpty()){
+
+            binding.rvMeme.adapter = MemeRecyclerAdapter(requireContext(), memeList)
+            binding.rvMeme.adapter?.notifyDataSetChanged()
+
+        }
+
         binding.spCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -74,59 +91,72 @@ class MainFragment : Fragment() {
                     parent?.getItemAtPosition(position).toString(),
                     Toast.LENGTH_LONG
                 ).show()
-                fetchMemeByCategory(parent?.getItemAtPosition(position).toString())
+                memeViewModel.memeViewModel(parent?.getItemAtPosition(position).toString()).observe(
+                    viewLifecycleOwner, {
+                        // set up and populate view
+                        val memeList = mutableListOf<MemeModel>()
+                        memeList.apply {
+                            addAll(it)
+                            toSet()
+                            toList()
+                            Log.d("meme", "meme: $memeList")
+                            binding.rvMeme.adapter = MemeRecyclerAdapter(requireContext(), memeList)
+                            binding.rvMeme.adapter?.notifyDataSetChanged()
+                        }
+                    }
+                )
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
-
         return binding.root
     }
 
-    private fun fetchMemeByCategory(category: String) {
-
-        if (category == "Member Edits"){
-            return
-        }
-
-        when(category){
-            "Random" -> apiInterface = ApiInterface.create().getMemesRandom()
-            "Coding" -> apiInterface = ApiInterface.create().getMemesProgram()
-            "Science" -> apiInterface = ApiInterface.create().getMemesScience()
-            "Gaming" -> apiInterface = ApiInterface.create().getMemesGaming()
-        }
-
-
-        apiInterface.enqueue(object : Callback<MemeList?> {
-            override fun onResponse(call: Call<MemeList?>, response: Response<MemeList?>) {
-
-                if (response.body() != null) {
-                    val memeList: MutableList<MemeModel> = mutableListOf()
-                    for (i in response.body()!!.memes!!) {
-                        memeList.add(i)
-                    }
-
-                    val linearLayoutManager =
-                        LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-                    binding.rvMeme.layoutManager = linearLayoutManager
-                    binding.rvMeme.adapter = MemeRecyclerAdapter(requireActivity(), memeList)
-                    val adapter = binding.rvMeme.adapter
-                    adapter?.notifyDataSetChanged()
-
-                } else {
-                    Toast.makeText(requireActivity(), "Error fetching", Toast.LENGTH_LONG).show()
-
-                }
-
-            }
-
-            override fun onFailure(call: Call<MemeList?>, t: Throwable) {
-                Log.d(TAG, "Error Fetching: ${t.printStackTrace()}")
-                Toast.makeText(requireActivity(), t.toString(), Toast.LENGTH_LONG).show()
-            }
-        })
-    }
+    // This should be in its own file (repository)
+//    private fun fetchMemeByCategory(category: String) {
+//
+//        if (category == "Member Edits"){
+//            return
+//        }
+//
+//        when(category){
+//            "Random" -> apiInterface = ApiInterface.create().getMemesRandom()
+//            "Coding" -> apiInterface = ApiInterface.create().getMemesProgram()
+//            "Science" -> apiInterface = ApiInterface.create().getMemesScience()
+//            "Gaming" -> apiInterface = ApiInterface.create().getMemesGaming()
+//        }
+//
+//
+//        apiInterface.enqueue(object : Callback<MemeList?> {
+//            override fun onResponse(call: Call<MemeList?>, response: Response<MemeList?>) {
+//
+//                if (response.body() != null) {
+//                    val memeList: MutableList<MemeModel> = mutableListOf()
+//                    for (i in response.body()!!.memes!!) {
+//                        memeList.add(i)
+//                    }
+//
+//                    val linearLayoutManager =
+//                        LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
+//                    binding.rvMeme.layoutManager = linearLayoutManager
+//                    binding.rvMeme.adapter = MemeRecyclerAdapter(requireActivity(), memeList)
+//                    val adapter = binding.rvMeme.adapter
+//                    adapter?.notifyDataSetChanged()
+//
+//                } else {
+//                    Toast.makeText(requireActivity(), "Error fetching", Toast.LENGTH_LONG).show()
+//
+//                }
+//
+//            }
+//
+//            override fun onFailure(call: Call<MemeList?>, t: Throwable) {
+//                Log.d(TAG, "Error Fetching: ${t.printStackTrace()}")
+//                Toast.makeText(requireActivity(), t.toString(), Toast.LENGTH_LONG).show()
+//            }
+//        })
+//    }
 
     inner class MemeRecyclerAdapter(
         private val context: Context,
@@ -183,36 +213,6 @@ class MainFragment : Fragment() {
 
                         override fun onLoadCleared(@Nullable placeholder: Drawable?) {}
                     })
-
-
-                // there's a prblm reading the uri after writing, i will try a different approach tomorrow or later tonight
-//                val myIntent = Intent()
-//
-//                val uri = MainActivity().getBitmapFromView(
-//                    requireActivity(),
-//                    (holder.image.drawable as BitmapDrawable).bitmap
-//                )
-
-//                myIntent.apply {
-//                    action = Intent.ACTION_SEND
-//                    type = "image/*"
-//                    putExtra(Intent.EXTRA_STREAM, uri)
-//                }
-//                val chooser = Intent.createChooser(myIntent, "share file")
-
-//                val resInfoList: List<ResolveInfo> = context.packageManager
-//                    .queryIntentActivities(chooser, PackageManager.MATCH_DEFAULT_ONLY)
-//
-//                for (resolveInfo in resInfoList) {
-//                    val packageName = resolveInfo.activityInfo.packageName
-//                    context.grantUriPermission(
-//                        packageName,
-//                        uri,
-//                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or Intent.FLAG_GRANT_READ_URI_PERMISSION
-//                    )
-//                }
-//
-//                requireActivity().startActivity(chooser)
             }
             holder.download.setOnClickListener { MainActivity().saveImage(
                 (activity as MainActivity),

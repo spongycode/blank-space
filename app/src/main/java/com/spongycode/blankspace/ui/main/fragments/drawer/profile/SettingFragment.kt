@@ -17,8 +17,6 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.GravityCompat
-import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.Glide
@@ -65,10 +63,6 @@ class SettingFragment: Fragment() {
     ): View? {
         _binding = FragmentSettingsBinding.inflate(inflater, container, false)
 
-
-
-
-
         val toolbar: Toolbar = binding.toolSettings
         (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar)
 
@@ -79,7 +73,6 @@ class SettingFragment: Fragment() {
         binding.toolSettings.setNavigationOnClickListener {
             navController.navigate(R.id.tabLayoutFragment)
         }
-
 
 
         storageReference = FirebaseStorage.getInstance().reference
@@ -154,12 +147,11 @@ class SettingFragment: Fragment() {
                         }
                     }
                 } catch (e: Exception) {
-                    Unit
+
                 }
             }
         }
     }
-
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -214,7 +206,7 @@ class SettingFragment: Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            // will see
+            null
         }
         return super.onOptionsItemSelected(item)
     }

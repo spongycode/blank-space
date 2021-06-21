@@ -3,15 +3,12 @@ package com.spongycode.blankspace.ui.main.fragments.base
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
@@ -31,13 +28,9 @@ class GenerateFragment : Fragment() {
 
     private var _binding: FragmentGenerateBinding? = null
     private val binding get() = _binding!!
+    private lateinit var imageList: MutableList<Image>
     private lateinit var itemBinding: ImageItemBinding
-    private lateinit var imageViewModel: ImageViewModel
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        imageViewModel = ViewModelProvider(this).get(ImageViewModel::class.java)
-    }
+    private val imageViewModel: ImageViewModel = MainActivity.imageViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -46,17 +39,24 @@ class GenerateFragment : Fragment() {
         // Inflate the layout for this fragment
         _binding = FragmentGenerateBinding.inflate(inflater, container, false)
 
-        imageViewModel.imageLiveData.observe(
-            viewLifecycleOwner, {
-                // set up and populate view
-                val memeList = mutableListOf<Image>()
-                memeList.addAll(it)
-                memeList.toSet()
-                memeList.toList()
-                binding.list.adapter = GenerateFragmentAdapter(memeList)
-                binding.list.adapter?.notifyDataSetChanged()
-            }
-        )
+        imageList = imageViewModel.imageList
+
+        if(imageList.isEmpty()){
+            imageViewModel.imageLiveData.observe(
+                viewLifecycleOwner, {
+                    // set up and populate view
+
+                    imageList.addAll(it)
+                    imageList.toSet()
+                    imageList.toList()
+                    binding.list.adapter = GenerateFragmentAdapter(imageList)
+                    binding.list.adapter?.notifyDataSetChanged()
+                }
+            )
+        } else{
+            binding.list.adapter = GenerateFragmentAdapter(imageList)
+            binding.list.adapter?.notifyDataSetChanged()
+        }
 
         binding.list?.attachFab(binding.generateFab, activity as AppCompatActivity)
 

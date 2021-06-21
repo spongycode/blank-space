@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginVertical="5dp"
-        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
         android:theme="@style/ThemeOverlay.AppCompat.Light"
         app:cardCornerRadius="6dp"
         app:cardElevation="0dp"
@@ -49,6 +49,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cv_spinner"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/meme_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
