@@ -9,21 +9,25 @@
     tools:context=".ui.main.MainActivity"
     android:fitsSystemWindows="true">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/rose_pink"
-            app:title="@string/app_name"
-            app:layout_scrollFlags="scroll|enterAlways|snap">
-        </androidx.appcompat.widget.Toolbar>
+<!--we will call appbar along with tab layout fragment-->
 
-    </com.google.android.material.appbar.AppBarLayout>
+
+<!--    <com.google.android.material.appbar.AppBarLayout-->
+<!--        android:id="@+id/appbar"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content">-->
+
+<!--        <androidx.appcompat.widget.Toolbar-->
+<!--            android:id="@+id/toolbar"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="?attr/actionBarSize"-->
+<!--            android:background="@color/rose_pink"-->
+<!--            app:title="@string/app_name"-->
+<!--            app:layout_scrollFlags="scroll|enterAlways|snap">-->
+<!--        </androidx.appcompat.widget.Toolbar>-->
+
+<!--    </com.google.android.material.appbar.AppBarLayout>-->
 
     <androidx.drawerlayout.widget.DrawerLayout
         android:layout_width="match_parent"

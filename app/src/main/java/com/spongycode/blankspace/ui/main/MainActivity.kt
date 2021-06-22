@@ -17,29 +17,35 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.content.FileProvider
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.ActivityMainBinding
 import com.spongycode.blankspace.util.Constants.STORAGE_PERMISSION_CODE
+import com.spongycode.blankspace.viewmodel.ImageViewModel
+import com.spongycode.blankspace.viewmodel.MemeViewModel
 import java.io.File
 import java.io.FileOutputStream
-import java.io.IOException
 import java.io.OutputStream
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    lateinit var actionBarDrawerToggle: ActionBarDrawerToggle
 
     companion object {
+        var storage: FirebaseStorage = Firebase.storage
+        lateinit var imageViewModel: ImageViewModel
+        lateinit var memeViewModel: MemeViewModel
         var width: Int? = null
         var height: Int? = null
     }
@@ -47,21 +53,12 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setIcon(R.drawable.ic_troll_face)
-        supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_burger)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-
-
-        // Set app drawer
-        actionBarDrawerToggle = ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open_drawer, R.string.close_drawer)
-        actionBarDrawerToggle.isDrawerIndicatorEnabled = true
-//        binding.navigateUp.setOnClickListener { binding.drawerLayout.openDrawer(GravityCompat.START) }
+        imageViewModel = ViewModelProvider(this).get(ImageViewModel::class.java)
+        memeViewModel = ViewModelProvider(this).get(MemeViewModel::class.java)
 
         width = screenSizeInDp.x
         height = screenSizeInDp.y
@@ -72,13 +69,40 @@ class MainActivity : AppCompatActivity() {
         binding.navigationView.setNavigationItemSelectedListener (object : NavigationView.OnNavigationItemSelectedListener{
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 when (item.itemId){
-                    R.id.nav_home -> { navController.navigate(R.id.tabLayoutFragment) }
-                    R.id.nav_message -> { navController.navigate(R.id.groupChatFragment) }
-                    R.id.nav_fmemes -> { navController.navigate(R.id.FMemesFragment) }
-                    R.id.nav_ftemplates -> { navController.navigate(R.id.FTemplatesFragment) }
-                    R.id.nav_profile -> { navController.navigate(R.id.myProfileFragment) }
-                    R.id.nav_settings -> { navController.navigate(R.id.settingFragment) }
-                    R.id.nav_logout -> { navController.navigate(R.id.authActivity); this@MainActivity.finish() }
+                    R.id.nav_home -> {
+                        if (navController.currentDestination?.label == "TabLayoutFragment") return false
+                        else navController.navigate(R.id.tabLayoutFragment); navController.popBackStack()
+                        binding.drawerLayout.close()
+                    }
+                    R.id.nav_message -> {
+                        if (navController.currentDestination?.label == "GroupChatFragment") return false
+                        else navController.navigate(R.id.groupChatFragment)
+                        binding.drawerLayout.close()
+
+                    }
+                    R.id.nav_fmemes -> {
+                        if (navController.currentDestination?.label == "FMemesFragment") return false
+                        else navController.navigate(R.id.FMemesFragment)
+                        binding.drawerLayout.close()
+                    }
+                    R.id.nav_ftemplates -> {
+                        if (navController.currentDestination?.label == "FTemplatesFragment") return false
+                        else navController.navigate(R.id.FTemplatesFragment)
+                        binding.drawerLayout.close()
+                    }
+                    R.id.nav_profile -> {
+                        if (navController.currentDestination?.label == "MyProfileFragment") return false
+                        else navController.navigate(R.id.myProfileFragment)
+                        binding.drawerLayout.close()
+                    }
+                    R.id.nav_settings -> {
+                        if (navController.currentDestination?.label == "SettingFragment") return false
+                        else navController.navigate(R.id.settingFragment)
+                        binding.drawerLayout.close()
+                    }
+                    R.id.nav_logout -> {
+                        FirebaseAuth.getInstance().signOut()
+                        navController.navigate(R.id.authActivity); navController.popBackStack(); this@MainActivity.finish() }
                 }
                 return true
             }
@@ -114,7 +138,7 @@ class MainActivity : AppCompatActivity() {
                 // Opening an outputStream with tue Uri
                 outputStream = imageUri?.let { contentResolver.openOutputStream(it) }
             }
-        } else { // Build > Q
+        } else { // Build < Q
             val imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
             val image = File(imagesDir, filename)
             outputStream = FileOutputStream(image)
@@ -125,29 +149,6 @@ class MainActivity : AppCompatActivity() {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
             Toast.makeText(activity.applicationContext, "saved to photos", Toast.LENGTH_SHORT).show()
         }
-    }
-
-    // doesn't work
-    fun getBitmapFromView(activity: Activity, bmp: Bitmap?): Uri? {
-        checkPermission(activity)
-        val imageFolder = File(activity.applicationContext.cacheDir, "images")
-        var uri: Uri? = null
-
-        try {
-            imageFolder.mkdir()
-            val file = File(imageFolder, "shared_image.jpg")
-            val outputStream = FileOutputStream(file)
-            outputStream.flush()
-            outputStream.close()
-            uri = FileProvider.getUriForFile(activity.applicationContext, "com.rick.shareimage.fileprovider", file)
-            bmp?.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
-        } catch ( e: IOException){
-            e.message?.let {
-                Toast.makeText(activity.applicationContext, "failure", Toast.LENGTH_SHORT).show()
-                Log.d("share", it)
-            }
-        }
-        return uri
     }
 
     private fun checkPermission(activity: Activity){

@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Blank Space</string>
+    <string name="already_a_member">Already a member?</string>
+    <string name="login_here"><u>Login Here</u></string>
+    <string name="register_now"><u>Register Now</u></string>
     <string-array name="arr_category">
         <item>"Random"</item>
         <item>"Gaming"</item>

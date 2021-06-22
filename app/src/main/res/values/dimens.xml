@@ -8,4 +8,8 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="text_margin">4dp</dimen>
+    <dimen name="corner_radius">25dp</dimen>
+    <dimen name="margin_hor">30dp</dimen>
+    <dimen name="btn_rad">25dp</dimen>
+
 </resources>
