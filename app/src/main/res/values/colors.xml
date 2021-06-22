@@ -20,6 +20,7 @@
     <color name="yellow_green_color_picker">#C5E17A</color>
     //transparent bg
     <color name="white_trans">#D8FFFFFF</color>
+    <color name="trans">#00FFFFFF</color>
 
     <color name="gray">#DDDDDD</color>
     <color name="rose_pink">#DCC5F3</color>
