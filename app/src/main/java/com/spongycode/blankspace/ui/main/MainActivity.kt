@@ -24,6 +24,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
@@ -69,18 +70,39 @@ class MainActivity : AppCompatActivity() {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 when (item.itemId){
                     R.id.nav_home -> {
-                        // i will do onItemReselected tomorrow, it's actually just an if statement
-                        navController.navigate(R.id.tabLayoutFragment); navController.popBackStack()
+                        if (navController.currentDestination?.label == "TabLayoutFragment") return false
+                        else navController.navigate(R.id.tabLayoutFragment); navController.popBackStack()
+                        binding.drawerLayout.close()
                     }
                     R.id.nav_message -> {
-                        Log.d("destination", "dest: ${navController.currentDestination?.id}")
-                        navController.navigate(R.id.groupChatFragment) }
-                    R.id.nav_fmemes -> { navController.navigate(R.id.FMemesFragment) }
-                    R.id.nav_ftemplates -> { navController.navigate(R.id.FTemplatesFragment) }
-                    R.id.nav_profile -> { navController.navigate(R.id.myProfileFragment) }
-                    R.id.nav_settings -> { binding.drawerLayout.close()
-                        navController.navigate(R.id.settingFragment) }
-                    R.id.nav_logout -> { navController.navigate(R.id.authActivity); this@MainActivity.finish() }
+                        if (navController.currentDestination?.label == "GroupChatFragment") return false
+                        else navController.navigate(R.id.groupChatFragment)
+                        binding.drawerLayout.close()
+
+                    }
+                    R.id.nav_fmemes -> {
+                        if (navController.currentDestination?.label == "FMemesFragment") return false
+                        else navController.navigate(R.id.FMemesFragment)
+                        binding.drawerLayout.close()
+                    }
+                    R.id.nav_ftemplates -> {
+                        if (navController.currentDestination?.label == "FTemplatesFragment") return false
+                        else navController.navigate(R.id.FTemplatesFragment)
+                        binding.drawerLayout.close()
+                    }
+                    R.id.nav_profile -> {
+                        if (navController.currentDestination?.label == "MyProfileFragment") return false
+                        else navController.navigate(R.id.myProfileFragment)
+                        binding.drawerLayout.close()
+                    }
+                    R.id.nav_settings -> {
+                        if (navController.currentDestination?.label == "SettingFragment") return false
+                        else navController.navigate(R.id.settingFragment)
+                        binding.drawerLayout.close()
+                    }
+                    R.id.nav_logout -> {
+                        FirebaseAuth.getInstance().signOut()
+                        navController.navigate(R.id.authActivity); navController.popBackStack(); this@MainActivity.finish() }
                 }
                 return true
             }
