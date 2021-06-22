@@ -11,6 +11,7 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ImageView
@@ -20,18 +21,24 @@ import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.imageview.ShapeableImageView
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentMainBinding
-import com.spongycode.blankspace.model.modelmemes.MemeList
+import com.spongycode.blankspace.model.modelLoginUser.LoginUser
 import com.spongycode.blankspace.model.modelmemes.MemeModel
 import com.spongycode.blankspace.storage.saveMemeToFavs
+import com.spongycode.blankspace.ui.auth.fragments.SignInFragment
+import com.spongycode.blankspace.ui.auth.fragments.SignInFragment.Companion.firestore
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.util.ClickListener
-import retrofit2.Call
+import com.spongycode.blankspace.util.Helper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 
 
@@ -57,7 +64,7 @@ class MainFragment : Fragment() {
 
         memeList = memeViewModel.memeList
 
-        if (memeList.isEmpty()){
+        if (memeList.isEmpty()) {
             memeViewModel.memeViewModel().observe(
                 viewLifecycleOwner, {
                     // set up and populate view
@@ -72,7 +79,7 @@ class MainFragment : Fragment() {
                 }
             )
         }
-        if (memeList.isNotEmpty()){
+        if (memeList.isNotEmpty()) {
 
             binding.rvMeme.adapter = MemeRecyclerAdapter(requireContext(), memeList)
             binding.rvMeme.adapter?.notifyDataSetChanged()
@@ -177,6 +184,29 @@ class MainFragment : Fragment() {
         @SuppressLint("ClickableViewAccessibility")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val meme: MemeModel = memeList[position]
+            if(meme.userId == ""){
+                holder.memeSenderUsername.visibility= GONE
+                holder.memeSenderImage.visibility= GONE
+
+            }
+
+            firestore.collection("users")
+                .whereEqualTo("userId", meme.userId)
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        for (data in task.result!!) {
+                            val imageUrl = data.toObject(LoginUser::class.java).imageUrl
+                            Glide.with(requireActivity()).load(imageUrl).into(holder.memeSenderImage)
+                            holder.memeSenderUsername.text = data.toObject(LoginUser::class.java).username
+                        }
+                    }
+                }
+
+
+
+
+
             holder.title.text = meme.title
             Glide.with(holder.itemView.context.applicationContext).load(meme.url).into(holder.image)
             holder.like.setImageResource(if (meme.like) R.drawable.ic_heart_sign else R.drawable.ic_hearth)
@@ -192,7 +222,7 @@ class MainFragment : Fragment() {
                             @Nullable transition: Transition<in Bitmap?>?
                         ) {
                             val os = ByteArrayOutputStream()
-                            resource.compress( Bitmap.CompressFormat.PNG, 100, os)
+                            resource.compress(Bitmap.CompressFormat.PNG, 100, os)
                             val path: String = MediaStore.Images.Media.insertImage(
                                 activity?.contentResolver,
                                 resource,
@@ -214,11 +244,13 @@ class MainFragment : Fragment() {
                         override fun onLoadCleared(@Nullable placeholder: Drawable?) {}
                     })
             }
-            holder.download.setOnClickListener { MainActivity().saveImage(
-                (activity as MainActivity),
-                holder.image.drawable,
-                meme.title
-            ) }
+            holder.download.setOnClickListener {
+                MainActivity().saveImage(
+                    (activity as MainActivity),
+                    holder.image.drawable,
+                    meme.title
+                )
+            }
             holder.like.setOnClickListener { meme.like = !meme.like }
         }
 
@@ -230,9 +262,11 @@ class MainFragment : Fragment() {
             internal val like: ShapeableImageView = view.findViewById(R.id.like)
             internal val share: ShapeableImageView = view.findViewById(R.id.share)
             internal val download: ShapeableImageView = view.findViewById(R.id.download)
+            internal val memeSenderImage: ImageView = view.findViewById(R.id.meme_sender_image)
+            internal val memeSenderUsername: TextView = view.findViewById(R.id.meme_sender_username)
         }
 
-        inner class TapListener(private val meme: MemeModel): ClickListener(context){
+        inner class TapListener(private val meme: MemeModel) : ClickListener(context) {
             override fun onLong() {
                 val myIntent = Intent(context, EditActivity::class.java)
                 myIntent.putExtra("imageurl", meme.url)
