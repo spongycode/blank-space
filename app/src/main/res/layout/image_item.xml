@@ -1,21 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/white"
     android:orientation="horizontal"
-    android:paddingVertical="5dp"
-    android:weightSum="10">
+    android:paddingVertical="5dp">
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/blog_card_view"
+        style="@style/CustomCardViewStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="5dp"
         android:theme="@style/Theme.MaterialComponents.DayNight"
-        app:cardCornerRadius="6dp"
         app:cardElevation="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:strokeColor="#C8C8C8"
         app:strokeWidth="1.5dp">
 
@@ -24,32 +27,36 @@
             android:layout_height="match_parent"
             android:background="@color/white">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp"
-                android:layout_marginBottom="25dp"
-                android:gravity="center_horizontal"
-                android:hint="somehting"
-                android:textAlignment="gravity"
-                android:textColor="#FF403E3E"
-                android:textSize="15sp"
-                app:layout_constraintBottom_toTopOf="@id/image"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/image"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/layout_margin"
-                android:foregroundGravity="center_horizontal"
+                android:adjustViewBounds="true"
+                android:foreground="@drawable/black_shadow"
                 android:src="@drawable/ic_launcher_background"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/textView" />
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/textView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:ellipsize="marquee"
+                android:fontFamily="@font/gadugi"
+                android:gravity="start"
+                android:hint="somehting"
+                android:singleLine="true"
+                android:textAlignment="gravity"
+                android:textColor="#FFF"
+                android:textColorHint="@color/white"
+                android:textSize="15sp"
+                app:layout_constraintBottom_toBottomOf="@id/image"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
 
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -58,10 +65,10 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/layout_margin"
                 android:src="@drawable/ic_star_sign"
-                app:tint="@color/star_gold"
-                android:visibility="gone"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:tint="@color/star_gold" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -69,4 +76,4 @@
     </com.google.android.material.card.MaterialCardView>
 
 
-</RelativeLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

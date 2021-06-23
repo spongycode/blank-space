@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -208,7 +209,20 @@ class MainFragment : Fragment() {
 
 
             holder.title.text = meme.title
-            Glide.with(holder.itemView.context.applicationContext).load(meme.url).into(holder.image)
+
+
+            val circularProgressDrawable = CircularProgressDrawable(requireContext())
+            circularProgressDrawable.strokeWidth = 10f
+            circularProgressDrawable.centerRadius = 50f
+            circularProgressDrawable.start()
+
+
+
+            Glide.with(holder.itemView.context.applicationContext).load(meme.url)
+                .placeholder(circularProgressDrawable)
+                .into(holder.image)
+
+
             holder.like.setImageResource(if (meme.like) R.drawable.ic_heart_sign else R.drawable.ic_hearth)
             holder.image.setOnTouchListener(TapListener(meme))
             holder.share.setOnClickListener {

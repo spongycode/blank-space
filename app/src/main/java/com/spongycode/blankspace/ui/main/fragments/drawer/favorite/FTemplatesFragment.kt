@@ -7,11 +7,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
 import com.spongycode.blankspace.R
+import com.spongycode.blankspace.databinding.FragmentFTemplatesBinding
 import com.spongycode.blankspace.databinding.FragmentGenerateBinding
 import com.spongycode.blankspace.databinding.ImageItemBinding
 import com.spongycode.blankspace.model.modelsImages.Image
@@ -24,7 +28,7 @@ import com.squareup.picasso.Picasso
 
 class FTemplatesFragment: Fragment() {
 
-    private var _binding: FragmentGenerateBinding? = null
+    private var _binding: FragmentFTemplatesBinding? = null
     private val binding get() = _binding!!
     private lateinit var itemBinding: ImageItemBinding
     private val imageViewModel: ImageViewModel = MainActivity.imageViewModel
@@ -34,7 +38,18 @@ class FTemplatesFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentGenerateBinding.inflate(inflater, container, false)
+        _binding = FragmentFTemplatesBinding.inflate(inflater, container, false)
+
+        val toolbar: Toolbar = binding.toolFTemplates
+        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar)
+        val navHostFragment = (activity as AppCompatActivity).supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        toolbar.setNavigationIcon(R.drawable.ic_nav_up)
+        binding.toolFTemplates.setNavigationOnClickListener {
+            navController.navigate(R.id.tabLayoutFragment)
+        }
+
+
 
         imageViewModel.savedImageLiveData.observe(
             viewLifecycleOwner, {
@@ -45,8 +60,8 @@ class FTemplatesFragment: Fragment() {
                     toSet()
                     toList()
                     Log.d("image", "image: $imageList")
-                    binding.list.adapter = FTemplateFragmentAdapter(imageList)
-                    binding.list.adapter?.notifyDataSetChanged()
+                    binding.listFTemplates.adapter = FTemplateFragmentAdapter(imageList)
+                    binding.listFTemplates.adapter?.notifyDataSetChanged()
                 }
             }
         )
