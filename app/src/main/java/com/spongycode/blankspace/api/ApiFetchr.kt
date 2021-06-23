@@ -58,6 +58,7 @@ class ApiFetchr{
     private fun memberEditsFirebaseFetch(): LiveData<List<MemeModel>> {
         val responseMemberEditsLiveData = MutableLiveData<List<MemeModel>>()
         firestore.collection("memberEdits")
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { documents ->
                 try {

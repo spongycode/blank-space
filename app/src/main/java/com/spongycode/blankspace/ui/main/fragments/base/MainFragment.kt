@@ -21,7 +21,6 @@ import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.request.target.BitmapImageViewTarget
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.imageview.ShapeableImageView
@@ -30,15 +29,11 @@ import com.spongycode.blankspace.databinding.FragmentMainBinding
 import com.spongycode.blankspace.model.modelLoginUser.LoginUser
 import com.spongycode.blankspace.model.modelmemes.MemeModel
 import com.spongycode.blankspace.storage.saveMemeToFavs
-import com.spongycode.blankspace.ui.auth.fragments.SignInFragment
 import com.spongycode.blankspace.ui.auth.fragments.SignInFragment.Companion.firestore
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.util.ClickListener
-import com.spongycode.blankspace.util.Helper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.spongycode.blankspace.util.userdata
 import java.io.ByteArrayOutputStream
 
 
@@ -117,6 +112,9 @@ class MainFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
+        binding.fabMemberEdits.setOnClickListener{
+                MemberEditsDialog.newInstance(userdata.afterLoginUserData.imageUrl).show(parentFragmentManager, "hello")
+        }
         return binding.root
     }
 
@@ -187,7 +185,11 @@ class MainFragment : Fragment() {
             if(meme.userId == ""){
                 holder.memeSenderUsername.visibility= GONE
                 holder.memeSenderImage.visibility= GONE
-
+                holder.memePostTimeTv.visibility= GONE
+            }else{
+                val listDate = meme.timestamp!!.toDate().toString().split(":| ".toRegex()).map { it.trim() }
+                val dateFinal = listDate[3] + ":" + listDate[4] + " on " + listDate[1] + " " + listDate[2]
+                holder.memePostTimeTv.text = dateFinal
             }
 
             firestore.collection("users")
@@ -202,8 +204,6 @@ class MainFragment : Fragment() {
                         }
                     }
                 }
-
-
 
 
 
@@ -264,6 +264,7 @@ class MainFragment : Fragment() {
             internal val download: ShapeableImageView = view.findViewById(R.id.download)
             internal val memeSenderImage: ImageView = view.findViewById(R.id.meme_sender_image)
             internal val memeSenderUsername: TextView = view.findViewById(R.id.meme_sender_username)
+            internal val memePostTimeTv: TextView = view.findViewById(R.id.meme_post_time_tv)
         }
 
         inner class TapListener(private val meme: MemeModel) : ClickListener(context) {

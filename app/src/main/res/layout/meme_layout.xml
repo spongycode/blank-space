@@ -26,12 +26,12 @@
 
             android:background="@color/white">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/meme_sender_image"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:background="@drawable/meme"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
                 android:layout_margin="@dimen/activity_horizontal_margin"
+                android:background="@drawable/ic_baseline_account_circle_24"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -39,14 +39,22 @@
                 android:id="@+id/meme_sender_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="username"
-                android:textSize="18sp"
-                android:textColor="@color/black"
-                android:layout_margin="@dimen/activity_horizontal_margin"
+                android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+                android:textColor="#272626"
+                android:textSize="15sp"
+                android:textStyle="bold"
                 app:layout_constraintLeft_toRightOf="@id/meme_sender_image"
-                app:layout_constraintBottom_toBottomOf="@+id/meme_sender_image"
-                app:layout_constraintTop_toTopOf="@+id/meme_sender_image" />
+                app:layout_constraintTop_toTopOf="@+id/meme_sender_image"
+                app:layout_constraintVertical_bias="0" />
 
+            <TextView
+                android:id="@+id/meme_post_time_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="10dp"
+                app:layout_constraintBottom_toBottomOf="@+id/meme_sender_image"
+                app:layout_constraintStart_toStartOf="@+id/meme_sender_username"
+                app:layout_constraintTop_toBottomOf="@+id/meme_sender_username" />
 
 
             <com.google.android.material.imageview.ShapeableImageView
@@ -69,8 +77,8 @@
                 android:layout_margin="@dimen/layout_margin"
                 android:src="@drawable/ic_hearth"
                 android:tint="@color/black"
-                app:layout_constraintTop_toBottomOf="@id/meme_iv"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/meme_iv" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/share"
@@ -79,8 +87,8 @@
                 android:layout_margin="@dimen/layout_margin"
                 android:src="@drawable/ic_share"
                 android:tint="@color/black"
-                app:layout_constraintTop_toBottomOf="@id/meme_iv"
-                app:layout_constraintStart_toEndOf="@id/like"/>
+                app:layout_constraintStart_toEndOf="@id/like"
+                app:layout_constraintTop_toBottomOf="@id/meme_iv" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/download"
@@ -89,21 +97,21 @@
                 android:layout_margin="@dimen/layout_margin"
                 android:src="@drawable/ic_download"
                 android:tint="@color/black"
-                app:layout_constraintTop_toBottomOf="@id/meme_iv"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/meme_iv" />
 
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/meme_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/layout_margin"
+                android:ellipsize="end"
                 android:maxLines="2"
-                android:hint="HELLO"
                 android:paddingHorizontal="8dp"
                 android:textColor="#FF403E3E"
                 android:textSize="15sp"
-                app:layout_constraintStart_toEndOf="@id/share"
                 app:layout_constraintEnd_toStartOf="@id/download"
+                app:layout_constraintStart_toEndOf="@id/share"
                 app:layout_constraintTop_toBottomOf="@id/meme_iv" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
