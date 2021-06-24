@@ -25,4 +25,8 @@
     <color name="gray">#DDDDDD</color>
     <color name="rose_pink">#DCC5F3</color>
     <color name="star_gold">#FFD700</color>
+
+    // decent green
+    <color name="decent_green">#9DAC5A</color>
+
 </resources>

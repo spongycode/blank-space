@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -37,6 +38,7 @@ import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.ui.main.fragments.base.PhotoViewerDialog
 import com.spongycode.blankspace.util.ClickListener
 import java.io.ByteArrayOutputStream
+import java.util.*
 
 class FMemesFragment: Fragment() {
 
@@ -183,9 +185,14 @@ class FMemesFragment: Fragment() {
 
         inner class TapListener(private val meme: MemeModel): ClickListener(context){
             override fun onLong() {
-                val myIntent = Intent(context, EditActivity::class.java)
-                myIntent.putExtra("imageurl", meme.url)
-                context.startActivity(myIntent)
+                if (meme.gif){
+                    Toast.makeText(requireContext(), "Editing GIFS not supported", Toast.LENGTH_LONG).show()
+                }else{
+                    val myIntent = Intent(context, EditActivity::class.java)
+                    Toast.makeText(requireContext(), meme.url.toLowerCase(Locale.ROOT).trim(), Toast.LENGTH_LONG).show()
+                    myIntent.putExtra("imageurl", meme.url)
+                    context.startActivity(myIntent)
+                }
             }
 
             override fun onDouble() {

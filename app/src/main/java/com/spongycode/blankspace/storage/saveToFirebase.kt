@@ -17,12 +17,12 @@ val memeList = mutableListOf<MemeModel>()
 val imageList = mutableListOf<Image>()
 
 fun saveMemeToFavs(meme: MemeModel){
-    var title = meme.title
+    var title = meme.url // changing to url from title as sometimes title is blank as also always not unique
     val re = Regex("[^A-Za-z0-9 ]")
     title = re.replace(title, "") // remove all special characters
     meme?.let {
         imageCollection
-            .document("${AuthActivity().firebaseAuth.currentUser?.email}/favMemes/$title}")
+            .document("${AuthActivity().firebaseAuth.currentUser?.email}/favMemes/$title")
             .set(meme, SetOptions.merge())
     }
 }

@@ -48,6 +48,7 @@ class MemberEditsDialog : DialogFragment() {
     var mStorage = FirebaseStorage.getInstance()
     val mStorageRef = mStorage.reference
     private var downloadUri: Uri? = null
+    private var isGif : Boolean = false
 
     companion object {
         fun newInstance(imageUrl: String): MemberEditsDialog {
@@ -137,6 +138,7 @@ class MemberEditsDialog : DialogFragment() {
                 val imageByteArray = getImageByteArray(imageUri)
                 ref.putBytes(imageByteArray as ByteArray)
             } else {
+                isGif = true
                 ref.putFile(imageUri)
             }
 
@@ -191,7 +193,8 @@ class MemberEditsDialog : DialogFragment() {
             title = requireView().findViewById<TextView>(R.id.m_e_edit_text).text.toString(),
             url = downloadUri.toString(),
             userId = userdata.afterLoginUserData.userId,
-            timestamp = Timestamp.now()
+            timestamp = Timestamp.now(),
+            gif = isGif
         )
         firestore.collection("memberEdits")
             .add(eachMeme)

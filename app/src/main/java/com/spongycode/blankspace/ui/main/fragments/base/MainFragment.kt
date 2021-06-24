@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -36,6 +37,7 @@ import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.util.ClickListener
 import com.spongycode.blankspace.util.userdata
 import java.io.ByteArrayOutputStream
+import java.util.*
 
 
 @Suppress("DEPRECATION")
@@ -191,20 +193,20 @@ class MainFragment : Fragment() {
                 val listDate = meme.timestamp!!.toDate().toString().split(":| ".toRegex()).map { it.trim() }
                 val dateFinal = listDate[3] + ":" + listDate[4] + " on " + listDate[1] + " " + listDate[2]
                 holder.memePostTimeTv.text = dateFinal
-            }
-
-            firestore.collection("users")
-                .whereEqualTo("userId", meme.userId)
-                .get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        for (data in task.result!!) {
-                            val imageUrl = data.toObject(LoginUser::class.java).imageUrl
-                            Glide.with(requireActivity()).load(imageUrl).into(holder.memeSenderImage)
-                            holder.memeSenderUsername.text = data.toObject(LoginUser::class.java).username
+                firestore.collection("users")
+                    .whereEqualTo("userId", meme.userId)
+                    .get()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            for (data in task.result!!) {
+                                val imageUrl = data.toObject(LoginUser::class.java).imageUrl
+                                Glide.with(requireActivity()).load(imageUrl).into(holder.memeSenderImage)
+                                holder.memeSenderUsername.text = data.toObject(LoginUser::class.java).username
+                            }
                         }
                     }
-                }
+            }
+
 
 
 
@@ -224,7 +226,7 @@ class MainFragment : Fragment() {
 
 
             holder.like.setImageResource(if (meme.like) R.drawable.ic_heart_sign else R.drawable.ic_hearth)
-            holder.image.setOnTouchListener(TapListener(meme))
+            holder.image.setOnTouchListener(TapListener(meme, holder))
             holder.share.setOnClickListener {
 
                 Glide.with(requireActivity())
@@ -279,13 +281,18 @@ class MainFragment : Fragment() {
             internal val memeSenderImage: ImageView = view.findViewById(R.id.meme_sender_image)
             internal val memeSenderUsername: TextView = view.findViewById(R.id.meme_sender_username)
             internal val memePostTimeTv: TextView = view.findViewById(R.id.meme_post_time_tv)
+            internal val memeHeartAnim: ImageView = view.findViewById(R.id.meme_heart_anim_iv)
         }
 
-        inner class TapListener(private val meme: MemeModel) : ClickListener(context) {
+        inner class TapListener(private val meme: MemeModel, private val holder : ViewHolder) : ClickListener(context) {
             override fun onLong() {
-                val myIntent = Intent(context, EditActivity::class.java)
-                myIntent.putExtra("imageurl", meme.url)
-                context.startActivity(myIntent)
+                if (meme.gif){
+                    Toast.makeText(requireContext(), "Editing GIFS not supported", Toast.LENGTH_LONG).show()
+                }else{
+                    val myIntent = Intent(context, EditActivity::class.java)
+                    myIntent.putExtra("imageurl", meme.url)
+                    context.startActivity(myIntent)
+                }
             }
 
             override fun onDouble() {
@@ -293,6 +300,10 @@ class MainFragment : Fragment() {
                 meme.like = !meme.like
                 // this rebuilds the whole rv, we need to implement a diffUtil.
 //                binding.rvMeme.adapter?.notifyDataSetChanged()
+                holder.memeHeartAnim.alpha = 0.8f
+                val drawable: Drawable = holder.memeHeartAnim.drawable
+                val animatedVectorDrawable: AnimatedVectorDrawable = drawable as AnimatedVectorDrawable
+                animatedVectorDrawable.start()
             }
             override fun onSingle() {
                 super.onSingle()

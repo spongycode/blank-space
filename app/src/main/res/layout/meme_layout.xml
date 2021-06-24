@@ -69,6 +69,17 @@
                 app:layout_constraintTop_toBottomOf="@id/meme_sender_image"
                 tools:srcCompat="@tools:sample/avatars" />
 
+            <ImageView
+                android:id="@+id/meme_heart_anim_iv"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:alpha="0"
+                app:layout_constraintBottom_toBottomOf="@id/meme_iv"
+                app:layout_constraintEnd_toEndOf="@+id/meme_iv"
+                app:layout_constraintStart_toStartOf="@+id/meme_iv"
+                app:layout_constraintTop_toTopOf="@id/meme_iv"
+                app:srcCompat="@drawable/heart_anim" />
+
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/like"
                 android:layout_width="15dp"
@@ -112,6 +123,8 @@
                 app:layout_constraintEnd_toStartOf="@id/download"
                 app:layout_constraintStart_toEndOf="@id/share"
                 app:layout_constraintTop_toBottomOf="@id/meme_iv" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 

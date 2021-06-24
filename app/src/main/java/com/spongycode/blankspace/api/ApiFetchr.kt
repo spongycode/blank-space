@@ -15,6 +15,7 @@ import com.spongycode.blankspace.util.Constants
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.util.*
 
 class ApiFetchr{
 
@@ -39,6 +40,7 @@ class ApiFetchr{
                 if (response.body() != null) {
                     val memeList: MutableList<MemeModel> = mutableListOf()
                     for (i in response.body()!!.memes!!) {
+                        i.gif = i.url.substring(i.url.lastIndexOf(".")).toLowerCase(Locale.ROOT).trim() == ".gif"
                         memeList.add(i)
                     }
                     responseLiveData.value = memeList
