@@ -22,6 +22,7 @@ import com.spongycode.blankspace.model.modelsImages.Image
 import com.spongycode.blankspace.storage.saveTemplate
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
+import com.spongycode.blankspace.ui.main.fragments.base.PhotoViewerDialog
 import com.spongycode.blankspace.util.ClickListener
 import com.spongycode.blankspace.viewmodel.ImageViewModel
 import com.squareup.picasso.Picasso
@@ -112,6 +113,10 @@ class FTemplatesFragment: Fragment() {
             override fun onDouble() {
                 saveTemplate(img)
                 img.fav = !img.fav
+            }
+            override fun onSingle() {
+                super.onSingle()
+                PhotoViewerDialog.newInstance(img.url).show(parentFragmentManager, "hello")
             }
         }
     }

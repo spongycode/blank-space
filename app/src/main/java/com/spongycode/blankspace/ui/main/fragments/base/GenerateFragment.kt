@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
@@ -20,6 +21,7 @@ import com.spongycode.blankspace.storage.saveTemplate
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.util.ClickListener
+import com.spongycode.blankspace.util.userdata
 import com.spongycode.blankspace.viewmodel.ImageViewModel
 import com.squareup.picasso.Picasso
 import java.util.*
@@ -109,6 +111,10 @@ class GenerateFragment : Fragment() {
             override fun onDouble() {
                 saveTemplate(img)
                 img.fav = !img.fav
+            }
+            override fun onSingle() {
+                super.onSingle()
+                PhotoViewerDialog.newInstance(img.url).show(parentFragmentManager, "hello")
             }
         }
     }

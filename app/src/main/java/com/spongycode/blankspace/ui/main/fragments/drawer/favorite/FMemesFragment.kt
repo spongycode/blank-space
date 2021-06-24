@@ -34,6 +34,7 @@ import com.spongycode.blankspace.storage.saveMemeToFavs
 import com.spongycode.blankspace.ui.auth.fragments.SignInFragment
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
+import com.spongycode.blankspace.ui.main.fragments.base.PhotoViewerDialog
 import com.spongycode.blankspace.util.ClickListener
 import java.io.ByteArrayOutputStream
 
@@ -192,6 +193,10 @@ class FMemesFragment: Fragment() {
                 meme.like = !meme.like
                 // this rebuilds the whole rv, we need to implement a diffUtil.
 //                binding.rvMeme.adapter?.notifyDataSetChanged()
+            }
+            override fun onSingle() {
+                super.onSingle()
+                PhotoViewerDialog.newInstance(meme.url).show(parentFragmentManager, "hello")
             }
         }
     }

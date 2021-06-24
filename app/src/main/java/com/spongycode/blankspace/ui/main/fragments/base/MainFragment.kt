@@ -294,6 +294,10 @@ class MainFragment : Fragment() {
                 // this rebuilds the whole rv, we need to implement a diffUtil.
 //                binding.rvMeme.adapter?.notifyDataSetChanged()
             }
+            override fun onSingle() {
+                super.onSingle()
+                PhotoViewerDialog.newInstance(meme.url).show(parentFragmentManager, "hello")
+            }
         }
     }
 }

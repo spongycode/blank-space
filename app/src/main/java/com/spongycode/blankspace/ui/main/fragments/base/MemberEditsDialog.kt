@@ -6,7 +6,9 @@ import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.ImageDecoder
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -25,6 +27,7 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.Timestamp
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
@@ -75,6 +78,8 @@ class MemberEditsDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        dialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+
         val testStringArgValue = arguments?.getString("IMAGE_URL")
         Glide.with(requireActivity()).load(testStringArgValue)
             .into(view.findViewById(R.id.member_edits_iv))
@@ -90,6 +95,9 @@ class MemberEditsDialog : DialogFragment() {
         }
         view.findViewById<Button>(R.id.member_edits_btn_post).setOnClickListener {
             postToFirestore()
+            dismiss()
+        }
+        view.findViewById<MaterialButton>(R.id.member_edits_btn_close).setOnClickListener {
             dismiss()
         }
 
