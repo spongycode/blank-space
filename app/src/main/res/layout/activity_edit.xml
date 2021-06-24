@@ -109,4 +109,16 @@
 
 
     </com.google.android.material.card.MaterialCardView>
+
+    <ImageButton
+        android:id="@+id/upload_edit"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/ic_baseline_upload_24"
+        android:backgroundTint="#D34BE6"
+        app:layout_constraintBottom_toBottomOf="@+id/photo_editor_view"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

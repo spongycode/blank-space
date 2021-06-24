@@ -115,8 +115,9 @@ class MainFragment : Fragment() {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
-        binding.fabMemberEdits.setOnClickListener{
-                MemberEditsDialog.newInstance(userdata.afterLoginUserData.imageUrl).show(parentFragmentManager, "hello")
+        binding.fabMemberEdits.setOnClickListener {
+            MemberEditsDialog.newInstance(userdata.afterLoginUserData.imageUrl, null)
+                .show(parentFragmentManager, "hello")
         }
         return binding.root
     }
@@ -185,13 +186,15 @@ class MainFragment : Fragment() {
         @SuppressLint("ClickableViewAccessibility")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val meme: MemeModel = memeList[position]
-            if(meme.userId == ""){
-                holder.memeSenderUsername.visibility= GONE
-                holder.memeSenderImage.visibility= GONE
-                holder.memePostTimeTv.visibility= GONE
-            }else{
-                val listDate = meme.timestamp!!.toDate().toString().split(":| ".toRegex()).map { it.trim() }
-                val dateFinal = listDate[3] + ":" + listDate[4] + " on " + listDate[1] + " " + listDate[2]
+            if (meme.userId == "") {
+                holder.memeSenderUsername.visibility = GONE
+                holder.memeSenderImage.visibility = GONE
+                holder.memePostTimeTv.visibility = GONE
+            } else {
+                val listDate =
+                    meme.timestamp!!.toDate().toString().split(":| ".toRegex()).map { it.trim() }
+                val dateFinal =
+                    listDate[3] + ":" + listDate[4] + " on " + listDate[1] + " " + listDate[2]
                 holder.memePostTimeTv.text = dateFinal
                 firestore.collection("users")
                     .whereEqualTo("userId", meme.userId)
@@ -200,8 +203,10 @@ class MainFragment : Fragment() {
                         if (task.isSuccessful) {
                             for (data in task.result!!) {
                                 val imageUrl = data.toObject(LoginUser::class.java).imageUrl
-                                Glide.with(requireActivity()).load(imageUrl).into(holder.memeSenderImage)
-                                holder.memeSenderUsername.text = data.toObject(LoginUser::class.java).username
+                                Glide.with(requireActivity()).load(imageUrl)
+                                    .into(holder.memeSenderImage)
+                                holder.memeSenderUsername.text =
+                                    data.toObject(LoginUser::class.java).username
                             }
                         }
                     }
@@ -284,11 +289,16 @@ class MainFragment : Fragment() {
             internal val memeHeartAnim: ImageView = view.findViewById(R.id.meme_heart_anim_iv)
         }
 
-        inner class TapListener(private val meme: MemeModel, private val holder : ViewHolder) : ClickListener(context) {
+        inner class TapListener(private val meme: MemeModel, private val holder: ViewHolder) :
+            ClickListener(context) {
             override fun onLong() {
-                if (meme.gif){
-                    Toast.makeText(requireContext(), "Editing GIFS not supported", Toast.LENGTH_LONG).show()
-                }else{
+                if (meme.gif) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Editing GIFS not supported",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
                     val myIntent = Intent(context, EditActivity::class.java)
                     myIntent.putExtra("imageurl", meme.url)
                     context.startActivity(myIntent)
@@ -302,9 +312,11 @@ class MainFragment : Fragment() {
 //                binding.rvMeme.adapter?.notifyDataSetChanged()
                 holder.memeHeartAnim.alpha = 0.8f
                 val drawable: Drawable = holder.memeHeartAnim.drawable
-                val animatedVectorDrawable: AnimatedVectorDrawable = drawable as AnimatedVectorDrawable
+                val animatedVectorDrawable: AnimatedVectorDrawable =
+                    drawable as AnimatedVectorDrawable
                 animatedVectorDrawable.start()
             }
+
             override fun onSingle() {
                 super.onSingle()
                 PhotoViewerDialog.newInstance(meme.url).show(parentFragmentManager, "hello")
