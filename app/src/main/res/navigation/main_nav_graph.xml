@@ -10,19 +10,40 @@
         android:label="TabLayoutFragment" >
         <action
             android:id="@+id/action_tabLayoutFragment_to_FMemesFragment"
-            app:destination="@id/FMemesFragment" />
+            app:destination="@id/FMemesFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"/>
         <action
             android:id="@+id/action_tabLayoutFragment_to_FTemplatesFragment"
-            app:destination="@id/FTemplatesFragment" />
+            app:destination="@id/FTemplatesFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"/>
+        <action
+            android:id="@+id/action_tabLayoutFragment_to_settingFragment"
+            app:destination="@id/settingFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"/>
     </fragment>
     <fragment
         android:id="@+id/FMemesFragment"
         android:name="com.spongycode.blankspace.ui.main.fragments.drawer.favorite.FMemesFragment"
-        android:label="FMemesFragment" />
+        android:label="FMemesFragment" >
+        <action
+            android:id="@+id/action_FMemesFragment_to_tabLayoutFragment"
+            app:destination="@id/tabLayoutFragment"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/to_right"/>
+    </fragment>
     <fragment
         android:id="@+id/FTemplatesFragment"
         android:name="com.spongycode.blankspace.ui.main.fragments.drawer.favorite.FTemplatesFragment"
-        android:label="FTemplatesFragment" />
+        android:label="FTemplatesFragment" >
+        <action
+            android:id="@+id/action_FTemplatesFragment_to_tabLayoutFragment"
+            app:destination="@id/tabLayoutFragment"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/to_right"/>
+    </fragment>
     <fragment
         android:id="@+id/chatScreenFragment"
         android:name="com.spongycode.blankspace.ui.main.fragments.drawer.chat.ChatScreenFragment"
@@ -61,7 +82,13 @@
     <fragment
         android:id="@+id/settingFragment"
         android:name="com.spongycode.blankspace.ui.main.fragments.drawer.profile.SettingFragment"
-        android:label="SettingFragment" />
+        android:label="SettingFragment" >
+        <action
+            android:id="@+id/action_settingFragment_to_tabLayoutFragment"
+            app:destination="@id/tabLayoutFragment"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/to_right"/>
+    </fragment>
     <activity
         android:id="@+id/authActivity"
         android:name="com.spongycode.blankspace.ui.auth.AuthActivity"

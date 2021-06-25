@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -61,9 +62,11 @@ class FMemesFragment: Fragment() {
 
         toolbar.setNavigationIcon(R.drawable.ic_nav_up)
         binding.toolFMemes.setNavigationOnClickListener {
-            navController.navigate(R.id.tabLayoutFragment)
+            navController.navigate(R.id.action_FMemesFragment_to_tabLayoutFragment)
         }
-
+        requireActivity().onBackPressedDispatcher.addCallback {
+            navController.navigate(R.id.action_FMemesFragment_to_tabLayoutFragment)
+        }
         binding.apply {
 
             memeViewModel.savedMemeLiveData.observe(viewLifecycleOwner, {

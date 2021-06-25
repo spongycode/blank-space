@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -47,7 +48,10 @@ class FTemplatesFragment: Fragment() {
         val navController = navHostFragment.navController
         toolbar.setNavigationIcon(R.drawable.ic_nav_up)
         binding.toolFTemplates.setNavigationOnClickListener {
-            navController.navigate(R.id.tabLayoutFragment)
+            navController.navigate(R.id.action_FTemplatesFragment_to_tabLayoutFragment)
+        }
+        requireActivity().onBackPressedDispatcher.addCallback {
+            navController.navigate(R.id.action_FTemplatesFragment_to_tabLayoutFragment)
         }
 
 

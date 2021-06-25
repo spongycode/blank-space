@@ -71,8 +71,8 @@
 
             <ImageView
                 android:id="@+id/meme_heart_anim_iv"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
                 android:alpha="0"
                 app:layout_constraintBottom_toBottomOf="@id/meme_iv"
                 app:layout_constraintEnd_toEndOf="@+id/meme_iv"
