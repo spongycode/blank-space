@@ -40,6 +40,17 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <ImageView
+                android:id="@+id/image_star_anim_iv"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:alpha="0"
+                app:layout_constraintBottom_toBottomOf="@id/image"
+                app:layout_constraintEnd_toEndOf="@+id/image"
+                app:layout_constraintStart_toStartOf="@+id/image"
+                app:layout_constraintTop_toTopOf="@id/image"
+                app:srcCompat="@drawable/star_anim" />
+
             <com.google.android.material.textview.MaterialTextView
                 android:id="@+id/textView"
                 android:layout_width="match_parent"
