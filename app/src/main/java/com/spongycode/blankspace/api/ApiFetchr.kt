@@ -1,12 +1,9 @@
 package com.spongycode.blankspace.api
 
 import android.util.Log
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.Query
 import com.spongycode.blankspace.model.modelmemes.MemeList
 import com.spongycode.blankspace.model.modelmemes.MemeModel
@@ -17,14 +14,19 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.util.*
 
-class ApiFetchr{
+class ApiFetchr {
 
     lateinit var apiInterface: Call<MemeList?>
+    private val memberEditsList: MutableList<MemeModel> = mutableListOf()
+    private val responseMemberEditsLiveData = MutableLiveData<List<MemeModel>>()
+
 
     fun fetchMemeByCategory(category: String): LiveData<List<MemeModel>> {
         val responseLiveData = MutableLiveData<List<MemeModel>>()
 
-        if (category == "Member Edits"){ return memberEditsFirebaseFetch() }
+        if (category == "Member Edits") {
+            return memberEditsFirebaseFetch()
+        }
 
         when (category) {
             "Random" -> apiInterface = ApiInterface.create().getMemesRandom()
@@ -40,7 +42,8 @@ class ApiFetchr{
                 if (response.body() != null) {
                     val memeList: MutableList<MemeModel> = mutableListOf()
                     for (i in response.body()!!.memes!!) {
-                        i.gif = i.url.substring(i.url.lastIndexOf(".")).toLowerCase(Locale.ROOT).trim() == ".gif"
+                        i.gif = i.url.substring(i.url.lastIndexOf(".")).toLowerCase(Locale.ROOT)
+                            .trim() == ".gif"
                         memeList.add(i)
                     }
                     responseLiveData.value = memeList
@@ -58,22 +61,39 @@ class ApiFetchr{
     }
 
     private fun memberEditsFirebaseFetch(): LiveData<List<MemeModel>> {
-        val responseMemberEditsLiveData = MutableLiveData<List<MemeModel>>()
-        firestore.collection("memberEdits")
-            .orderBy("timestamp", Query.Direction.DESCENDING)
-            .get()
-            .addOnSuccessListener { documents ->
-                try {
-                    val memberEditsList: MutableList<MemeModel> = mutableListOf()
-                    for (document in documents) {
-                        val oneEdit = document.toObject(MemeModel::class.java)
-                        memberEditsList.add(oneEdit)
-                    }
-                    responseMemberEditsLiveData.value = memberEditsList
-                } catch (ex: Exception) {
+//        firestore.collection("memberEdits")
+//            .orderBy("timestamp", Query.Direction.DESCENDING)
+//            .get()
+//            .addOnSuccessListener { documents ->
+//                try {
+//                    val memberEditsList: MutableList<MemeModel> = mutableListOf()
+//                    for (document in documents) {
+//                        val oneEdit = document.toObject(MemeModel::class.java)
+//                        memberEditsList.add(oneEdit)
+//                    }
+//                    responseMemberEditsLiveData.value = memberEditsList
+//                } catch (ex: Exception) {
+//
+//                }
+//            }
 
+        firestore.collection("memberEdits")
+            .orderBy("timestamp", Query.Direction.ASCENDING)
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    return@addSnapshotListener
                 }
+                for (dc in snapshots!!.documentChanges) {
+                    when (dc.type) {
+                        DocumentChange.Type.ADDED-> {
+                            val oneEdit = dc.document.toObject(MemeModel::class.java)
+                            memberEditsList.add(0,oneEdit)
+                        }
+                    }
+                }
+                responseMemberEditsLiveData.value = memberEditsList
             }
+
         return responseMemberEditsLiveData
     }
 }
