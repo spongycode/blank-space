@@ -13,4 +13,10 @@
     <style name="ToolbarColoredBackArrow">
         <item name="android:textColorSecondary">#fff</item>
     </style>
+
+    <style name="EditTextPost" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlNormal">#000000</item>
+        <item name="colorControlActivated">#30BE76</item>
+        <item name="colorControlHighlight">#30BE76</item>
+    </style>
 </resources>
