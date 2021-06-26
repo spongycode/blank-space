@@ -6,7 +6,9 @@ import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.ImageDecoder
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -17,14 +19,16 @@ import android.view.View.GONE
 import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
-import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
+import com.google.android.material.button.MaterialButton
 import com.google.firebase.Timestamp
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
@@ -36,7 +40,6 @@ import com.spongycode.blankspace.util.Helper
 import com.spongycode.blankspace.util.userdata
 import java.io.ByteArrayOutputStream
 import java.util.*
-import kotlin.collections.HashMap
 
 
 class MemberEditsDialog : DialogFragment() {
@@ -45,11 +48,13 @@ class MemberEditsDialog : DialogFragment() {
     var mStorage = FirebaseStorage.getInstance()
     val mStorageRef = mStorage.reference
     private var downloadUri: Uri? = null
+    private var isGif: Boolean = false
 
     companion object {
-        fun newInstance(imageUrl: String): MemberEditsDialog {
+        fun newInstance(imageUrl: String, uploadImageUri: Uri? = null): MemberEditsDialog {
             val args = Bundle()
             args.putString("IMAGE_URL", imageUrl)
+            args.putString("UPLOAD_IMAGE_URL", uploadImageUri.toString())
             val fragment = MemberEditsDialog()
             fragment.arguments = args
             return fragment
@@ -75,12 +80,21 @@ class MemberEditsDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val testStringArgValue = arguments?.getString("IMAGE_URL")
-        Glide.with(requireActivity()).load(testStringArgValue)
+        dialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+
+        val profileImageUrl = arguments?.getString("IMAGE_URL")
+        val uploadImageUrl = arguments?.getString("UPLOAD_IMAGE_URL")
+
+        if (uploadImageUrl != "null") {
+            initiateUpload(Uri.parse(uploadImageUrl))
+            view.findViewById<Button>(R.id.member_edits_btn).visibility = GONE
+        }
+
+        Glide.with(requireActivity()).load(profileImageUrl)
             .into(view.findViewById(R.id.member_edits_iv))
         view.findViewById<Button>(R.id.member_edits_btn_post).isEnabled = false
         view.findViewById<Button>(R.id.member_edits_btn_post).alpha = 0.5f
-        Helper.buttonEffect( view.findViewById<Button>(R.id.member_edits_btn_post), "#C665F37D")
+        Helper.buttonEffect(view.findViewById<Button>(R.id.member_edits_btn_post), "#C665F37D")
         view.findViewById<Button>(R.id.member_edits_btn).setOnClickListener {
             val gallery = Intent(
                 Intent.ACTION_PICK,
@@ -90,6 +104,9 @@ class MemberEditsDialog : DialogFragment() {
         }
         view.findViewById<Button>(R.id.member_edits_btn_post).setOnClickListener {
             postToFirestore()
+            dismiss()
+        }
+        view.findViewById<MaterialButton>(R.id.member_edits_btn_close).setOnClickListener {
             dismiss()
         }
 
@@ -107,49 +124,55 @@ class MemberEditsDialog : DialogFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == pickImage && data != null && data.data != null) {
-
-            val circularProgressDrawable = CircularProgressDrawable(requireContext())
-            circularProgressDrawable.strokeWidth = 10f
-            circularProgressDrawable.centerRadius = 50f
-            circularProgressDrawable.start()
-
-            Glide.with(requireActivity()).asBitmap().load("")
-                .placeholder(circularProgressDrawable)
-                .into(requireView().findViewById(R.id.member_edits_post_image))
-
-            requireView().findViewById<Button>(R.id.member_edits_btn).visibility = GONE
-
-            val imageUri: Uri = data.data!!
-            val extension: String =
-                imageUri.toString().substring(imageUri.toString().lastIndexOf("."))
-            val ref = mStorageRef.child("pics/${System.currentTimeMillis()}")
-            val uploadTask: UploadTask
-            uploadTask = ref.putFile(imageUri)
-            if (extension.toLowerCase(Locale.ROOT).trim() != ".gif") {
-                val imageByteArray = getImageByteArray(imageUri)
-                ref.putBytes(imageByteArray as ByteArray)
-            } else {
-                ref.putFile(imageUri)
-            }
-
-            uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
-                if (!task.isSuccessful) {
-                    task.exception?.let {
-                        throw it
-                    }
-                }
-                return@Continuation ref.downloadUrl
-            }).addOnSuccessListener { task ->
-                downloadUri = task
-
-                Glide.with(requireActivity()).load(imageUri)
-                    .into(requireView().findViewById(R.id.member_edits_post_image))
-                requireView().findViewById<Button>(R.id.member_edits_btn_post).alpha = 1f
-                requireView().findViewById<Button>(R.id.member_edits_btn_post).isEnabled = true
-            }
+            initiateUpload(data.data!!)
         }
+
     }
 
+    private fun initiateUpload(mUri: Uri) {
+
+        val circularProgressDrawable = CircularProgressDrawable(requireContext())
+        circularProgressDrawable.strokeWidth = 10f
+        circularProgressDrawable.centerRadius = 50f
+        circularProgressDrawable.start()
+
+        Glide.with(requireActivity()).asBitmap().load("")
+            .placeholder(circularProgressDrawable)
+            .into(requireView().findViewById(R.id.member_edits_post_image))
+
+        requireView().findViewById<Button>(R.id.member_edits_btn).visibility = GONE
+
+        val imageUri: Uri = mUri
+        val extension: String =
+            imageUri.toString().substring(imageUri.toString().lastIndexOf("."))
+        val ref = mStorageRef.child("pics/${System.currentTimeMillis()}")
+        val uploadTask: UploadTask
+        uploadTask = if (extension.toLowerCase(Locale.ROOT).trim() != ".gif") {
+            val imageByteArray = getImageByteArray(imageUri)
+            ref.putBytes(imageByteArray as ByteArray)
+        } else {
+            isGif = true
+            ref.putFile(imageUri)
+        }
+
+        uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    throw it
+                }
+            }
+            return@Continuation ref.downloadUrl
+        }).addOnSuccessListener { task ->
+            downloadUri = task
+
+            Glide.with(requireActivity()).load(imageUri)
+                .into(requireView().findViewById(R.id.member_edits_post_image))
+            requireView().findViewById<Button>(R.id.member_edits_btn_post).alpha = 1f
+            requireView().findViewById<Button>(R.id.member_edits_btn_post).isEnabled = true
+
+
+        }
+    }
 
     private fun getImageByteArray(imageUri: Uri): Any {
         val originalBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
@@ -183,7 +206,8 @@ class MemberEditsDialog : DialogFragment() {
             title = requireView().findViewById<TextView>(R.id.m_e_edit_text).text.toString(),
             url = downloadUri.toString(),
             userId = userdata.afterLoginUserData.userId,
-            timestamp = Timestamp.now()
+            timestamp = Timestamp.now(),
+            gif = isGif
         )
         firestore.collection("memberEdits")
             .add(eachMeme)

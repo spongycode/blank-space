@@ -60,15 +60,25 @@
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/meme_iv"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="350dp"
                 android:layout_marginHorizontal="5dp"
                 android:layout_marginVertical="10dp"
-                android:maxHeight="400dp"
                 app:layout_constraintBottom_toTopOf="@id/meme_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/meme_sender_image"
                 tools:srcCompat="@tools:sample/avatars" />
+
+            <ImageView
+                android:id="@+id/meme_heart_anim_iv"
+                android:layout_width="200dp"
+                android:layout_height="200dp"
+                android:alpha="0"
+                app:layout_constraintBottom_toBottomOf="@id/meme_iv"
+                app:layout_constraintEnd_toEndOf="@+id/meme_iv"
+                app:layout_constraintStart_toStartOf="@+id/meme_iv"
+                app:layout_constraintTop_toTopOf="@id/meme_iv"
+                app:srcCompat="@drawable/heart_anim" />
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/like"
@@ -113,6 +123,8 @@
                 app:layout_constraintEnd_toStartOf="@id/download"
                 app:layout_constraintStart_toEndOf="@id/share"
                 app:layout_constraintTop_toBottomOf="@id/meme_iv" />
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 

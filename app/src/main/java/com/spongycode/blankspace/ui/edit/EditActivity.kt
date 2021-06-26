@@ -18,11 +18,15 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.firebase.storage.FirebaseStorage
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.ui.edit.fragments.PropertiesBSFragment
 import com.spongycode.blankspace.ui.edit.fragments.TextEditorDialogFragment
+import com.spongycode.blankspace.ui.main.fragments.base.MemberEditsDialog
 import com.spongycode.blankspace.util.Helper
+import com.spongycode.blankspace.util.userdata
 import ja.burhanrashid52.photoeditor.*
+import java.io.File
 import java.util.*
 
 
@@ -42,6 +46,11 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
     lateinit var memeRedo: ImageButton
     lateinit var memeBrush: ImageButton
     lateinit var memeEraser: ImageButton
+    lateinit var memeUpload: ImageButton
+
+    var mStorage = FirebaseStorage.getInstance()
+    val mStorageRef = mStorage.reference
+    private var downloadUri: Uri? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,6 +69,7 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
         memeRedo = findViewById(R.id.meme_redo)
         memeBrush = findViewById(R.id.meme_brush)
         memeEraser = findViewById(R.id.meme_eraser)
+        memeEraser = findViewById(R.id.upload_edit)
 
         Helper.buttonEffect(memeAddTextBG, "#FF03DAC5")
         Helper.buttonEffect(memeAddText, "#FF03DAC5")
@@ -147,39 +157,11 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
 
 
         findViewById<ImageButton>(R.id.save_local).setOnClickListener {
-            if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                mPhotoEditor.saveAsFile(
-                    Environment.getExternalStorageDirectory().toString() + "/blank_meme.jpg",
-                    object : PhotoEditor.OnSaveListener {
-                        override fun onSuccess(imagePath: String) {
-                            Toast.makeText(applicationContext, "Image Saved", Toast.LENGTH_LONG)
-                                .show()
-                        }
+            saveOrUploadImageLocal(uploadStatus = false)
+        }
 
-                        override fun onFailure(exception: Exception) {
-                            Toast.makeText(
-                                applicationContext,
-                                exception.toString(),
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
-                    })
-            } else {
-                val PERMISSIONS_STORAGE = arrayOf(
-                    Manifest.permission.READ_EXTERNAL_STORAGE,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-                )
-                val REQUEST_EXTERNAL_STORAGE = 1
-                ActivityCompat.requestPermissions(
-                    this,
-                    PERMISSIONS_STORAGE,
-                    REQUEST_EXTERNAL_STORAGE
-                );
-            }
+        findViewById<ImageButton>(R.id.upload_edit).setOnClickListener {
+            saveOrUploadImageLocal(uploadStatus = true)
         }
 
 
@@ -213,6 +195,60 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
 
     }
 
+    private fun saveOrUploadImageLocal(uploadStatus: Boolean = false) {
+        val tShot = System.currentTimeMillis()
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            mPhotoEditor.saveAsFile(
+                Environment.getExternalStorageDirectory().toString() + "/${tShot}.jpg",
+                object : PhotoEditor.OnSaveListener {
+                    override fun onSuccess(imagePath: String) {
+                        if (uploadStatus) {
+                            val mUri: Uri = Uri.fromFile(
+                                File(
+                                    Environment.getExternalStorageDirectory()
+                                        .toString() + "/${tShot}.jpg"
+                                )
+                            )
+                            MemberEditsDialog.newInstance(
+                                userdata.afterLoginUserData.imageUrl,
+                                mUri
+                            )
+                                .show(supportFragmentManager, "hello")
+//                            postFire(mUri)
+                        } else {
+                            Toast.makeText(applicationContext, "Image Saved", Toast.LENGTH_LONG)
+                                .show()
+                        }
+
+                    }
+
+                    override fun onFailure(exception: Exception) {
+                        Toast.makeText(
+                            applicationContext,
+                            exception.toString(),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
+                })
+        } else {
+            val PERMISSIONS_STORAGE = arrayOf(
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            val REQUEST_EXTERNAL_STORAGE = 1
+            ActivityCompat.requestPermissions(
+                this,
+                PERMISSIONS_STORAGE,
+                REQUEST_EXTERNAL_STORAGE
+            )
+        }
+    }
+
+
     private fun showBottomSheetDialogFragment(fragment: BottomSheetDialogFragment?) {
         if (fragment == null || fragment.isAdded) {
             return
@@ -229,7 +265,6 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
 
             val imageUri: Uri = data.data!!
 
-            Toast.makeText(this, imageUri.toString(), Toast.LENGTH_LONG).show()
 
             mPhotoEditorView = findViewById(R.id.photo_editor_view)
             Glide.with(this).load(imageUri.toString()).into(mPhotoEditorView.source)

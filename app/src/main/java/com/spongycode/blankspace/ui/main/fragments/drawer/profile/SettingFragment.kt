@@ -15,6 +15,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
@@ -71,10 +72,11 @@ class SettingFragment: Fragment() {
 
         toolbar.setNavigationIcon(R.drawable.ic_nav_up)
         binding.toolSettings.setNavigationOnClickListener {
-            navController.navigate(R.id.tabLayoutFragment)
+            navController.navigate(R.id.action_settingFragment_to_tabLayoutFragment)
         }
-
-
+        requireActivity().onBackPressedDispatcher.addCallback {
+            navController.navigate(R.id.action_settingFragment_to_tabLayoutFragment)
+        }
         storageReference = FirebaseStorage.getInstance().reference
         ivProPic = binding.ivProfilePic
         Glide.with(this).load(userdata.afterLoginUserData.imageUrl).into(ivProPic)

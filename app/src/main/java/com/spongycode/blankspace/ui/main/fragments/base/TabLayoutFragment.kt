@@ -42,6 +42,7 @@ class TabLayoutFragment : Fragment() {
             R.string.open_drawer,
             R.string.close_drawer
         )
+        (activity as AppCompatActivity?)!!.findViewById<DrawerLayout>(R.id.drawerLayout).setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED)
         (activity as AppCompatActivity?)!!.findViewById<DrawerLayout>(R.id.drawerLayout)
             .addDrawerListener(actionBarDrawerToggle)
         actionBarDrawerToggle.isDrawerIndicatorEnabled = true

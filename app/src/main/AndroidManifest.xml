@@ -14,7 +14,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
-        <activity android:name=".ui.drawer.DrawerActivity"></activity>
         <activity android:name=".ui.edit.EditActivity" />
         <activity android:name=".ui.auth.AuthActivity">
             <intent-filter>

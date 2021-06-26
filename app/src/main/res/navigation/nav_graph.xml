@@ -11,7 +11,9 @@
         android:label="SignInFragment" >
         <action
             android:id="@+id/action_signInFragment_to_signUpFragment"
-            app:destination="@id/signUpFragment" />
+            app:destination="@id/signUpFragment"
+            app:enterAnim="@anim/from_left"
+            app:exitAnim="@anim/to_right"/>
         <action
             android:id="@+id/action_signInFragment_to_mainActivity"
             app:destination="@id/mainActivity" />
@@ -22,7 +24,9 @@
         android:label="SignUpFragment" >
         <action
             android:id="@+id/action_signUpFragment_to_signInFragment"
-            app:destination="@id/signInFragment" />
+            app:destination="@id/signInFragment"
+            app:enterAnim="@anim/from_right"
+            app:exitAnim="@anim/to_left"/>
         <action
             android:id="@+id/action_signUpFragment_to_mainActivity"
             app:destination="@id/mainActivity" />

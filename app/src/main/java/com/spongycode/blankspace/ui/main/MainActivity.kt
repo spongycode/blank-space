@@ -19,6 +19,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.navigation.NavigationView
@@ -88,13 +89,15 @@ class MainActivity : AppCompatActivity() {
                     }
                     R.id.nav_fmemes -> {
                         if (navController.currentDestination?.label == "FMemesFragment") return false
-                        else navController.navigate(R.id.FMemesFragment)
+                        else navController.navigate(R.id.action_tabLayoutFragment_to_FMemesFragment)
                         binding.drawerLayout.close()
+                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                     }
                     R.id.nav_ftemplates -> {
                         if (navController.currentDestination?.label == "FTemplatesFragment") return false
-                        else navController.navigate(R.id.FTemplatesFragment)
+                        else navController.navigate(R.id.action_tabLayoutFragment_to_FTemplatesFragment)
                         binding.drawerLayout.close()
+                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                     }
                     R.id.nav_profile -> {
                         if (navController.currentDestination?.label == "MyProfileFragment") return false
@@ -103,8 +106,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     R.id.nav_settings -> {
                         if (navController.currentDestination?.label == "SettingFragment") return false
-                        else navController.navigate(R.id.settingFragment)
+                        else navController.navigate(R.id.action_tabLayoutFragment_to_settingFragment)
                         binding.drawerLayout.close()
+                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                     }
                     R.id.nav_logout -> {
                         FirebaseAuth.getInstance().signOut()

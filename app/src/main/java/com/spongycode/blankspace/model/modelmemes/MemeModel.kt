@@ -6,5 +6,6 @@ data class MemeModel(
     var url: String = "",
     var userId: String = "",
     var like: Boolean = false,
-    var timestamp: com.google.firebase.Timestamp? = null
+    var timestamp: com.google.firebase.Timestamp? = null,
+    var gif: Boolean = false
 )

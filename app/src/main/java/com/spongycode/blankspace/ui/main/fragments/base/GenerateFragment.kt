@@ -2,10 +2,13 @@ package com.spongycode.blankspace.ui.main.fragments.base
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
@@ -75,6 +78,7 @@ class GenerateFragment : Fragment() {
             internal var image: ShapeableImageView = itemBinding.image
             internal var title: MaterialTextView = itemBinding.textView
             internal var star: ShapeableImageView = itemBinding.starSign
+            internal var starAnim: ImageView = itemBinding.imageStarAnimIv
         }
 
         override fun onCreateViewHolder(
@@ -94,12 +98,12 @@ class GenerateFragment : Fragment() {
             Picasso.get().load(image.url)
                 .error(R.drawable.meme)
                 .into(holder.image)
-            holder.image.setOnTouchListener(TapListener(image))
+            holder.image.setOnTouchListener(TapListener(image, holder))
         }
 
         override fun getItemCount() = listImages.size
 
-        inner class TapListener(private val img: Image): ClickListener(this@GenerateFragment.requireContext()){
+        inner class TapListener(private val img: Image, private val holder: GenerateFragmentViewHolder): ClickListener(this@GenerateFragment.requireContext()){
             override fun onLong() {
                 val myIntent = Intent(requireContext(), EditActivity::class.java)
                 myIntent.putExtra("imageurl", img.url)
@@ -109,6 +113,16 @@ class GenerateFragment : Fragment() {
             override fun onDouble() {
                 saveTemplate(img)
                 img.fav = !img.fav
+
+                holder.starAnim.alpha = 0.8f
+                val drawable: Drawable = holder.starAnim.drawable
+                val animatedVectorDrawable: AnimatedVectorDrawable =
+                    drawable as AnimatedVectorDrawable
+                animatedVectorDrawable.start()
+            }
+            override fun onSingle() {
+                super.onSingle()
+                PhotoViewerDialog.newInstance(img.url).show(parentFragmentManager, "hello")
             }
         }
     }

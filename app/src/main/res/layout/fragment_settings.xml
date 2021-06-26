@@ -24,7 +24,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-medium"
+                android:fontFamily="@font/gadugi"
                 android:letterSpacing="0.05"
                 android:text="Settings"
                 android:textColor="@color/white"
