@@ -10,11 +10,11 @@ class MemeViewModel: ViewModel() {
 
     val memeList = mutableListOf<MemeModel>()
 
-    fun memeViewModel(category: String = "Random"): LiveData<List<MemeModel>>{
-        val memeViewModel: LiveData<List<MemeModel>>
+    fun memeFun(category: String = "Random"): LiveData<List<MemeModel>>{
+        val memeLiveData: LiveData<List<MemeModel>>
         = ApiFetchr().fetchMemeByCategory(category)
 
-        return memeViewModel
+        return memeLiveData
     }
 
     val savedMemeLiveData: LiveData<List<MemeModel>>

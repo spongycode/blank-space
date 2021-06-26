@@ -75,7 +75,6 @@ class ChatScreenFragment: Fragment() {
                     return@addSnapshotListener
                 }
 
-                messageList.clear()
                 querySnapshot?.let {
 
                     // clear the list and message through every message
@@ -93,11 +92,6 @@ class ChatScreenFragment: Fragment() {
 
                 }
             }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
     inner class ListOfChatsAdapter(private val listMessage: List<ChatScreenMessage>):
@@ -142,7 +136,7 @@ class ChatScreenFragment: Fragment() {
             var user: UserModel
             with(holder){
                 with(message){
-                    holder.message.text = messageText
+                    holder.message.text = messageText.toString()
                     holder.messageTime.text = messageTime.toString()
 
                     if (message.messageReceiverId == FirebaseAuth.getInstance().currentUser!!.uid){
@@ -164,12 +158,14 @@ class ChatScreenFragment: Fragment() {
                     if (message.messageReceiverId == firebaseAuth.currentUser!!.uid){
                         user = UserModel(
                             message.messageSenderId,
+                            "",
                             message.nameSender,
                             message.profilePictureSender
                         )
                     } else {
                         user = UserModel(
                             message.messageReceiverId,
+                            "",
                             message.nameReceiver,
                             message.profilePictureReceiver
                         )

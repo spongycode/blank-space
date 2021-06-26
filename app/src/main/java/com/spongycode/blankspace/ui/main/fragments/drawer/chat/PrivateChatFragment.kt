@@ -137,16 +137,16 @@ class PrivateChatFragment: Fragment() {
                 "nameSender" to sender.username,
                 "profilePictureSender" to sender.imageUrl,
                 "messageText" to message.messageText,
-                "messageTime" to message.timeStamp
+                "messageTime" to message.messageTime
             )
 
             Firebase.firestore
-                .collection("/latest/messages/${sender.userId}")
+                .collection("latest/messages/${sender.userId}")
                 .document(receiver.userId)
                 .set(messageMap, SetOptions.merge())
 
             Firebase.firestore
-                .collection("/latest/messages/${receiver.userId}")
+                .collection("latest/messages/${receiver.userId}")
                 .document(sender.userId)
                 .set(messageMap, SetOptions.merge())
         }
@@ -159,7 +159,7 @@ class PrivateChatFragment: Fragment() {
         // listen to every event at this collection
         // add every new messasge to the messages list
         Firebase.firestore.collection(
-            "/user-messages/${sender.userId}/${receiver.userId}")
+            "user-messages/${sender.userId}/${receiver.userId}")
             .orderBy("timeStamp")
             .addSnapshotListener { querySnapshot, error ->
 
@@ -190,11 +190,6 @@ class PrivateChatFragment: Fragment() {
     override fun onPause() {
         super.onPause()
         chatViewModel.currentText = binding.messageText.text.toString()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 
     // basic adapter

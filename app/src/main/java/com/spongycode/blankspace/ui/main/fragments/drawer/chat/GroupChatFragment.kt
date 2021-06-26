@@ -5,11 +5,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.spongycode.blankspace.databinding.FragmentGroupChatBinding
+import com.spongycode.blankspace.databinding.FragmentPrivateChatBinding
 
 class GroupChatFragment: Fragment() {
 
-    private var _binding: FragmentGroupChatBinding? = null
+    private var _binding: FragmentPrivateChatBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -17,7 +17,8 @@ class GroupChatFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentGroupChatBinding.inflate(inflater, container, false)
+        _binding = FragmentPrivateChatBinding.inflate(inflater, container, false)
         return binding.root
     }
+
 }

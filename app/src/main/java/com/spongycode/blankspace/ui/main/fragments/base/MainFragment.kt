@@ -63,14 +63,13 @@ class MainFragment : Fragment() {
         memeList = memeViewModel.memeList
 
         if (memeList.isEmpty()) {
-            memeViewModel.memeViewModel().observe(
+            memeViewModel.memeFun().observe(
                 viewLifecycleOwner, {
                     // set up and populate view
                     memeList.apply {
                         addAll(it)
                         toSet()
                         toList()
-                        Log.d("meme", "meme: $memeList")
                     }
                     binding.rvMeme.adapter = MemeRecyclerAdapter(requireContext(), memeList)
                     binding.rvMeme.adapter?.notifyDataSetChanged()
@@ -96,7 +95,7 @@ class MainFragment : Fragment() {
                     parent?.getItemAtPosition(position).toString(),
                     Toast.LENGTH_LONG
                 ).show()
-                memeViewModel.memeViewModel(parent?.getItemAtPosition(position).toString()).observe(
+                memeViewModel.memeFun(parent?.getItemAtPosition(position).toString()).observe(
                     viewLifecycleOwner, {
                         // set up and populate view
                         val memeList = mutableListOf<MemeModel>()

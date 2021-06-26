@@ -5,5 +5,5 @@ data class ChatMessage(
     var messageText: String = "",
     var messageSenderID: String = "",
     var messageReceiverID: String = "",
-    var timeStamp: Long = 1L
+    var messageTime: Long = 1L
 )
