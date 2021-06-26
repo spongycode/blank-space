@@ -28,14 +28,13 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.imageview.ShapeableImageView
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentFMemesBinding
-import com.spongycode.blankspace.databinding.FragmentMainBinding
 import com.spongycode.blankspace.databinding.MemeLayoutBinding
-import com.spongycode.blankspace.model.modelLoginUser.LoginUser
+import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelmemes.MemeModel
 import com.spongycode.blankspace.storage.saveMemeToFavs
-import com.spongycode.blankspace.ui.auth.fragments.SignInFragment
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
+import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
 import com.spongycode.blankspace.ui.main.fragments.base.PhotoViewerDialog
 import com.spongycode.blankspace.util.ClickListener
 import java.io.ByteArrayOutputStream
@@ -113,15 +112,15 @@ class FMemesFragment: Fragment() {
                 holder.memePostTimeTv.text = dateFinal
             }
 
-            SignInFragment.firestore.collection("users")
+            firestore.collection("users")
                 .whereEqualTo("userId", meme.userId)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         for (data in task.result!!) {
-                            val imageUrl = data.toObject(LoginUser::class.java).imageUrl
+                            val imageUrl = data.toObject(UserModel::class.java).imageUrl
                             Glide.with(requireActivity()).load(imageUrl).into(holder.memeSenderImage)
-                            holder.memeSenderUsername.text = data.toObject(LoginUser::class.java).username
+                            holder.memeSenderUsername.text = data.toObject(UserModel::class.java).username
                         }
                     }
                 }

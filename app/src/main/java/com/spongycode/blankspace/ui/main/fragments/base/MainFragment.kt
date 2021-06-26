@@ -37,7 +37,6 @@ import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
 import com.spongycode.blankspace.util.ClickListener
 import com.spongycode.blankspace.util.userdata
 import java.io.ByteArrayOutputStream
-import java.util.*
 
 
 @Suppress("DEPRECATION")
@@ -62,7 +61,7 @@ class MainFragment : Fragment() {
 
         memeList = memeViewModel.memeList
 
-        if (memeList.isEmpty()) {
+        if (memeViewModel.count == 0) {
             memeViewModel.memeFun().observe(
                 viewLifecycleOwner, {
                     // set up and populate view
@@ -75,8 +74,9 @@ class MainFragment : Fragment() {
                     binding.rvMeme.adapter?.notifyDataSetChanged()
                 }
             )
+            memeViewModel.count = 1
         }
-        if (memeList.isNotEmpty()) {
+        if (memeViewModel.count == 1) {
 
             binding.rvMeme.adapter = MemeRecyclerAdapter(requireContext(), memeList)
             binding.rvMeme.adapter?.notifyDataSetChanged()

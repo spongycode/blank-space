@@ -8,6 +8,7 @@ import com.spongycode.blankspace.storage.getMemeFromFavs
 
 class MemeViewModel: ViewModel() {
 
+    var count = 0
     val memeList = mutableListOf<MemeModel>()
 
     fun memeFun(category: String = "Random"): LiveData<List<MemeModel>>{
