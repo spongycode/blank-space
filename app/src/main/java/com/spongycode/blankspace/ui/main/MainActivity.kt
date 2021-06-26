@@ -14,23 +14,23 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.util.DisplayMetrics
-import android.util.Log
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.ActivityMainBinding
 import com.spongycode.blankspace.util.Constants.STORAGE_PERMISSION_CODE
+import com.spongycode.blankspace.viewmodel.ChatViewModel
 import com.spongycode.blankspace.viewmodel.ImageViewModel
 import com.spongycode.blankspace.viewmodel.MemeViewModel
 import java.io.File
@@ -43,9 +43,13 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 
     companion object {
-        var storage: FirebaseStorage = Firebase.storage
+        val firebaseAuth = FirebaseAuth.getInstance()
+        val usersCollectionReference = Firebase.firestore.collection("users")
+        val firestore = Firebase.firestore
+        val storage: FirebaseStorage = Firebase.storage
         lateinit var imageViewModel: ImageViewModel
         lateinit var memeViewModel: MemeViewModel
+        lateinit var chatViewModel: ChatViewModel
         var width: Int? = null
         var height: Int? = null
     }
@@ -59,10 +63,12 @@ class MainActivity : AppCompatActivity() {
 
         imageViewModel = ViewModelProvider(this).get(ImageViewModel::class.java)
         memeViewModel = ViewModelProvider(this).get(MemeViewModel::class.java)
+        chatViewModel = ViewModelProvider(this).get(ChatViewModel::class.java)
 
         width = screenSizeInDp.x
         height = screenSizeInDp.y
 
+        // navigation
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
@@ -75,8 +81,8 @@ class MainActivity : AppCompatActivity() {
                         binding.drawerLayout.close()
                     }
                     R.id.nav_message -> {
-                        if (navController.currentDestination?.label == "GroupChatFragment") return false
-                        else navController.navigate(R.id.groupChatFragment)
+                        if (navController.currentDestination?.label == "ChatScreenFragment") return false
+                        else navController.navigate(R.id.chatScreenFragment)
                         binding.drawerLayout.close()
 
                     }

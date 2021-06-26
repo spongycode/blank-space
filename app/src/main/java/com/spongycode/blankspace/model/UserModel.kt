@@ -1,8 +1,11 @@
 package com.spongycode.blankspace.model
 
+import java.io.Serializable
+
 data class UserModel(
+    var userId: String = "",
     var email: String = "",
-    var imageUrl: String = "",
     var username: String = "",
-    var userId: String = ""
-)
+    var imageUrl: String = "",
+    var status: String = ""
+): Serializable

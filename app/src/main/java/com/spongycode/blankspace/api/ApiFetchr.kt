@@ -1,16 +1,12 @@
 package com.spongycode.blankspace.api
 
 import android.util.Log
-import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.Query
 import com.spongycode.blankspace.model.modelmemes.MemeList
 import com.spongycode.blankspace.model.modelmemes.MemeModel
-import com.spongycode.blankspace.ui.auth.fragments.SignInFragment.Companion.firestore
+import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
 import com.spongycode.blankspace.util.Constants
 import retrofit2.Call
 import retrofit2.Callback

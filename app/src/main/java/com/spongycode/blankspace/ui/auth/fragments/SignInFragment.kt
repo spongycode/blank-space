@@ -9,10 +9,11 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.google.firebase.auth.FirebaseAuthException
-import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentSigninBinding
-import com.spongycode.blankspace.model.modelLoginUser.LoginUser
+import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.ui.auth.AuthActivity
 import com.spongycode.blankspace.util.userdata
 import kotlinx.coroutines.CoroutineScope
@@ -26,9 +27,8 @@ class SignInFragment: Fragment() {
     private var _binding: FragmentSigninBinding? = null
     private val binding get() = _binding!!
     private val firebaseAuth = AuthActivity().firebaseAuth
-    companion object{
-        val firestore = FirebaseFirestore.getInstance()
-    }
+    private val firestore = Firebase.firestore
+
 
 
     override fun onCreateView(
@@ -83,7 +83,7 @@ class SignInFragment: Fragment() {
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         for (data in task.result!!) {
-                            userdata.afterLoginUserData = data.toObject(LoginUser::class.java)
+                            userdata.afterLoginUserData = data.toObject(UserModel::class.java)
                         }
                         findNavController().navigate(R.id.action_signInFragment_to_mainActivity)
                         activity?.finish()

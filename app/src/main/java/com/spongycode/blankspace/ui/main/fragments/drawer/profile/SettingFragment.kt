@@ -27,7 +27,7 @@ import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentSettingsBinding
-import com.spongycode.blankspace.ui.auth.fragments.SignInFragment.Companion.firestore
+import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
 import com.spongycode.blankspace.util.BitmapScaler
 import com.spongycode.blankspace.util.Helper
 import com.spongycode.blankspace.util.userdata

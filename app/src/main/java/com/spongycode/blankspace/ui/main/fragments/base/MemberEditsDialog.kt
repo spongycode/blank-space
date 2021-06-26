@@ -30,7 +30,7 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.model.modelmemes.MemeModel
-import com.spongycode.blankspace.ui.auth.fragments.SignInFragment.Companion.firestore
+import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
 import com.spongycode.blankspace.util.BitmapScaler
 import com.spongycode.blankspace.util.Helper
 import com.spongycode.blankspace.util.userdata
