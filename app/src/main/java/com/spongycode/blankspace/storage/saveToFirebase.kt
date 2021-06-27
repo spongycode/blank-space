@@ -1,23 +1,31 @@
 package com.spongycode.blankspace.storage
 
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.navigation.fragment.findNavController
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import com.spongycode.blankspace.R
+import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelmemes.MemeModel
 import com.spongycode.blankspace.model.modelsImages.Image
 import com.spongycode.blankspace.ui.auth.AuthActivity
+import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
+import com.spongycode.blankspace.util.userdata
+import kotlinx.coroutines.tasks.await
 
 val TAG: String = "firebase"
-val imageCollection =  Firebase.firestore.collection("userImages")
+val imageCollection = Firebase.firestore.collection("userImages")
 val memeList = mutableListOf<MemeModel>()
 val imageList = mutableListOf<Image>()
 
-fun saveMemeToFavs(meme: MemeModel){
-    var title = meme.url // changing to url from title as sometimes title is blank as also always not unique
+fun saveMemeToFavs(meme: MemeModel) {
+    var title =
+        meme.url // changing to url from title as sometimes title is blank as also always not unique
     val re = Regex("[^A-Za-z0-9 ]")
     title = re.replace(title, "") // remove all special characters
     meme?.let {
@@ -27,19 +35,31 @@ fun saveMemeToFavs(meme: MemeModel){
     }
 }
 
-fun saveTemplate(image: Image){
-    var name = image.name
+fun saveTemplate(image: Image) {
+    var name =
+        image.url  // changing to url from title as sometimes title is blank as also always not unique
     val re = Regex("[^A-Za-z0-9 ]")
     name = re.replace(name, "") // remove all special characters
     image?.let {
         imageCollection
-            .document("${AuthActivity().firebaseAuth.currentUser?.email}/favTemplates/${image.name}")
+            .document("${AuthActivity().firebaseAuth.currentUser?.email}/favTemplates/$name")
             .set(image, SetOptions.merge())
     }
 }
+fun removeTemplate(image: Image) {
+    var name =
+        image.url  // changing to url from title as sometimes title is blank as also always not unique
+    val re = Regex("[^A-Za-z0-9 ]")
+    name = re.replace(name, "") // remove all special characters
+    image?.let {
+        imageCollection
+            .document("${AuthActivity().firebaseAuth.currentUser?.email}/favTemplates/$name")
+            .delete()
+    }
+}
 
-fun getMemeFromFavs(): LiveData<List<MemeModel>>{
-    val memeLiveData:  MutableLiveData<List<MemeModel>> = MutableLiveData()
+fun getMemeFromFavs(): LiveData<List<MemeModel>> {
+    val memeLiveData: MutableLiveData<List<MemeModel>> = MutableLiveData()
     Firebase.firestore.collection("userImages/${AuthActivity().firebaseAuth.currentUser?.email}/favMemes")
         .limit(25)
         .addSnapshotListener { snapshot, error ->
@@ -53,18 +73,16 @@ fun getMemeFromFavs(): LiveData<List<MemeModel>>{
                     val meme = m.toObject<MemeModel>()
                     memeList.add(meme)
                     Log.d("memeF", "meme: $meme")
+                }
             }
         }
-    }
     memeLiveData.value = memeList
     return memeLiveData
 }
 
 fun getTemplateFromFavs(): LiveData<List<Image>> {
-
-    val imageLiveData : MutableLiveData<List<Image>> = MutableLiveData()
+    val imageLiveData: MutableLiveData<List<Image>> = MutableLiveData()
     Firebase.firestore.collection("userImages/${AuthActivity().firebaseAuth.currentUser?.email}/favTemplates")
-        .limit(25)
         .addSnapshotListener { snapshot, error ->
             error?.let {
                 Log.d(TAG, error.message!!)
@@ -81,4 +99,16 @@ fun getTemplateFromFavs(): LiveData<List<Image>> {
         }
     imageLiveData.value = imageList
     return imageLiveData
+}
+fun checkTemplateIsFav(img: Image) {
+    Firebase.firestore.collection("userImages/${AuthActivity().firebaseAuth.currentUser?.email}/favTemplates")
+        .whereEqualTo("url", img.url)
+        .get()
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                if (task.result!!.size() > 0) {
+                    img.fav = true
+                }
+            }
+        }
 }

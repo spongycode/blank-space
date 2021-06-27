@@ -1,12 +1,16 @@
 package com.spongycode.blankspace.ui.main.fragments.base
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
@@ -19,6 +23,8 @@ import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentGenerateBinding
 import com.spongycode.blankspace.databinding.ImageItemBinding
 import com.spongycode.blankspace.model.modelsImages.Image
+import com.spongycode.blankspace.storage.checkTemplateIsFav
+import com.spongycode.blankspace.storage.removeTemplate
 import com.spongycode.blankspace.storage.saveTemplate
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
@@ -26,6 +32,7 @@ import com.spongycode.blankspace.util.ClickListener
 import com.spongycode.blankspace.viewmodel.ImageViewModel
 import com.squareup.picasso.Picasso
 import java.util.*
+
 
 class GenerateFragment : Fragment() {
 
@@ -94,7 +101,8 @@ class GenerateFragment : Fragment() {
         override fun onBindViewHolder(holder: GenerateFragmentViewHolder, position: Int) {
             image = listImages.get(position)
             holder.title.text = image.name
-            holder.star.visibility = if( image.fav) View.VISIBLE else View.INVISIBLE
+            checkTemplateIsFav(image)
+            holder.star.visibility = if(image.fav) VISIBLE else GONE
             Picasso.get().load(image.url)
                 .error(R.drawable.meme)
                 .into(holder.image)
@@ -103,7 +111,10 @@ class GenerateFragment : Fragment() {
 
         override fun getItemCount() = listImages.size
 
-        inner class TapListener(private val img: Image, private val holder: GenerateFragmentViewHolder): ClickListener(this@GenerateFragment.requireContext()){
+        inner class TapListener(
+            private val img: Image,
+            private val holder: GenerateFragmentViewHolder
+        ): ClickListener(this@GenerateFragment.requireContext()){
             override fun onLong() {
                 val myIntent = Intent(requireContext(), EditActivity::class.java)
                 myIntent.putExtra("imageurl", img.url)
@@ -111,10 +122,16 @@ class GenerateFragment : Fragment() {
             }
 
             override fun onDouble() {
-                saveTemplate(img)
+                if (img.fav){
+                    removeTemplate(img)
+                    holder.star.visibility = GONE
+                }else{
+                    img.fav = true
+                    saveTemplate(img)
+                    holder.star.visibility = VISIBLE
+                }
                 img.fav = !img.fav
-
-                holder.starAnim.alpha = 0.8f
+                holder.starAnim.alpha = 0.9f
                 val drawable: Drawable = holder.starAnim.drawable
                 val animatedVectorDrawable: AnimatedVectorDrawable =
                     drawable as AnimatedVectorDrawable
