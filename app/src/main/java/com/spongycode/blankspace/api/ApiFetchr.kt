@@ -78,16 +78,17 @@ class ApiFetchr {
 //            }
 
         firestore.collection("memberEdits")
-            .orderBy("timestamp", Query.Direction.ASCENDING)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
                 if (e != null) {
                     return@addSnapshotListener
                 }
+                memberEditsList.clear()
                 for (dc in snapshots!!.documentChanges) {
                     when (dc.type) {
                         DocumentChange.Type.ADDED-> {
                             val oneEdit = dc.document.toObject(MemeModel::class.java)
-                            memberEditsList.add(0,oneEdit)
+                            memberEditsList.add(oneEdit)
                         }
                     }
                 }

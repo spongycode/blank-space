@@ -19,6 +19,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.Nullable
+import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
@@ -35,7 +36,9 @@ import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
 import com.spongycode.blankspace.util.ClickListener
+import com.spongycode.blankspace.util.Helper
 import com.spongycode.blankspace.util.userdata
+import com.spongycode.blankspace.viewmodel.MemeViewModel
 import java.io.ByteArrayOutputStream
 
 
@@ -44,7 +47,6 @@ class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
-    private lateinit var memeList: MutableList<MemeModel>
     private val memeViewModel = MainActivity.memeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,66 +61,168 @@ class MainFragment : Fragment() {
     ): View? {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
 
-        memeList = memeViewModel.memeList
+        memeViewModel.allMemeDb["Random"] = memeViewModel.randomMemeList
+        memeViewModel.allMemeDb["Gaming"] = memeViewModel.gamingMemeList
+        memeViewModel.allMemeDb["Coding"] = memeViewModel.codingMemeList
+        memeViewModel.allMemeDb["Science"] = memeViewModel.scienceMemeList
+        memeViewModel.allMemeDb["Member Edits"] = memeViewModel.memberEditsMemeList
 
         if (memeViewModel.count == 0) {
-            memeViewModel.memeFun().observe(
+            memeViewModel.memeFun(memeViewModel.currentMemeCategory).observe(
                 viewLifecycleOwner, {
                     // set up and populate view
-                    memeList.apply {
+                    memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]?.apply {
                         addAll(it)
                         toSet()
                         toList()
                     }
-                    binding.rvMeme.adapter = MemeRecyclerAdapter(requireContext(), memeList)
+                    binding.rvMeme.adapter =
+                        MemeRecyclerAdapter(requireContext(), memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!)
                     binding.rvMeme.adapter?.notifyDataSetChanged()
                 }
             )
             memeViewModel.count = 1
         }
         if (memeViewModel.count == 1) {
-
-            binding.rvMeme.adapter = MemeRecyclerAdapter(requireContext(), memeList)
+            binding.rvMeme.adapter = MemeRecyclerAdapter(
+                requireContext(),
+                memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!
+            )
             binding.rvMeme.adapter?.notifyDataSetChanged()
 
         }
 
-        binding.spCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                Toast.makeText(
-                    requireContext(),
-                    parent?.getItemAtPosition(position).toString(),
-                    Toast.LENGTH_LONG
-                ).show()
-                memeViewModel.memeFun(parent?.getItemAtPosition(position).toString()).observe(
-                    viewLifecycleOwner, {
-                        // set up and populate view
-                        val memeList = mutableListOf<MemeModel>()
-                        memeList.apply {
-                            addAll(it)
-                            toSet()
-                            toList()
-                            Log.d("meme", "meme: $memeList")
-                            binding.rvMeme.adapter = MemeRecyclerAdapter(requireContext(), memeList)
-                            binding.rvMeme.adapter?.notifyDataSetChanged()
+        binding.pop.setOnClickListener {
+            val popupMenu = PopupMenu(requireContext(), binding.pop)
+            popupMenu.menuInflater.inflate(R.menu.popup_menu, popupMenu.menu)
+            popupMenu.setOnMenuItemClickListener { item ->
+                when (item.itemId) {
+                    R.id.action_random -> {
+                        if (memeViewModel.currentMemeCategory != item.title.toString()) {
+                            memeViewModel.currentMemeCategory = item.title.toString()
+                            binding.currentCatTv.text = item.title.toString()
+                            memeFunObserve(item.title.toString())
+                            Toast.makeText(
+                                requireContext(),
+                                "Loading random memes" + item.title,
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
-                )
-            }
+                    R.id.action_gaming -> {
+                        if (memeViewModel.currentMemeCategory != item.title.toString()) {
+                            memeViewModel.currentMemeCategory = item.title.toString()
+                            binding.currentCatTv.text = item.title.toString()
+                            memeFunObserve(item.title.toString())
+                            Toast.makeText(
+                                requireContext(),
+                                "Loading gaming memes",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    R.id.action_coding -> {
+                        if (memeViewModel.currentMemeCategory != item.title.toString()) {
+                            memeViewModel.currentMemeCategory = item.title.toString()
+                            binding.currentCatTv.text = item.title.toString()
+                            memeFunObserve(item.title.toString())
+                            Toast.makeText(
+                                requireContext(),
+                                "Loading coding memes",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    R.id.action_science -> {
+                        if (memeViewModel.currentMemeCategory != item.title.toString()) {
+                            memeViewModel.currentMemeCategory = item.title.toString()
+                            binding.currentCatTv.text = item.title.toString()
+                            memeFunObserve(item.title.toString())
+                            Toast.makeText(
+                                requireContext(),
+                                "Loading science memes",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+                    R.id.action_member_edits -> {
+                        if (memeViewModel.currentMemeCategory != item.title.toString()) {
+                            memeViewModel.currentMemeCategory = item.title.toString()
+                            binding.currentCatTv.text = item.title.toString()
+                            memeFunObserve(item.title.toString())
+                            Toast.makeText(
+                                requireContext(),
+                                "Loading member edits",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
+                true
             }
+            popupMenu.show()
         }
+
+//        binding.spCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+//            override fun onItemSelected(
+//                parent: AdapterView<*>?,
+//                view: View?,
+//                position: Int,
+//                id: Long
+//            ) {
+//                Toast.makeText(
+//                    requireContext(),
+//                    parent?.getItemAtPosition(position).toString(),
+//                    Toast.LENGTH_LONG
+//                ).show()
+//                memeViewModel.memeFun(parent?.getItemAtPosition(position).toString()).observe(
+//                    viewLifecycleOwner, {
+//                        // set up and populate view
+//                        val memeList = mutableListOf<MemeModel>()
+//                        memeList.apply {
+//                            addAll(it)
+//                            toSet()
+//                            toList()
+//                            Log.d("meme", "meme: $memeList")
+//                            binding.rvMeme.adapter = MemeRecyclerAdapter(requireContext(), memeList)
+//                            binding.rvMeme.adapter?.notifyDataSetChanged()
+//                        }
+//                    }
+//                )
+//            }
+//
+//            override fun onNothingSelected(parent: AdapterView<*>?) {
+//            }
+//        }
         binding.fabMemberEdits.setOnClickListener {
             MemberEditsDialog.newInstance(userdata.afterLoginUserData.imageUrl, null)
                 .show(parentFragmentManager, "hello")
         }
         return binding.root
+    }
+
+    private fun memeFunObserve(category: String) {
+        if (memeViewModel.allMemeDb[category]!!.isEmpty()){
+            memeViewModel.memeFun(category).observe(
+                viewLifecycleOwner, {
+                    // set up and populate view
+                    memeViewModel.allMemeDb[category]?.apply {
+                        addAll(0,it)
+                        toSet()
+                        toList()
+                        Log.d("meme", "meme: ${memeViewModel.allMemeDb[category]!!}")
+                        binding.rvMeme.adapter =
+                            MemeRecyclerAdapter(requireContext(), memeViewModel.allMemeDb[category]!!)
+                        binding.rvMeme.adapter?.notifyDataSetChanged()
+                    }
+                }
+            )
+        }else{
+            binding.rvMeme.adapter =
+                MemeRecyclerAdapter(requireContext(), memeViewModel.allMemeDb[category]!!)
+            binding.rvMeme.adapter?.notifyDataSetChanged()
+        }
     }
 
     // This should be in its own file (repository)
@@ -204,11 +308,13 @@ class MainFragment : Fragment() {
                     if (task.isSuccessful) {
                         for (data in task.result!!) {
                             val imageUrl = data.toObject(UserModel::class.java).imageUrl
-                            Glide.with(requireActivity()).load(imageUrl).into(holder.memeSenderImage)
-                            holder.memeSenderUsername.text = data.toObject(UserModel::class.java).username
+                            Glide.with(requireActivity()).load(imageUrl)
+                                .into(holder.memeSenderImage)
+                            holder.memeSenderUsername.text =
+                                data.toObject(UserModel::class.java).username
                         }
                     }
-            }
+                }
 
 
 

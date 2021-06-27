@@ -9,7 +9,14 @@ import com.spongycode.blankspace.storage.getMemeFromFavs
 class MemeViewModel: ViewModel() {
 
     var count = 0
-    val memeList = mutableListOf<MemeModel>()
+    val randomMemeList = mutableListOf<MemeModel>()
+    val gamingMemeList = mutableListOf<MemeModel>()
+    val codingMemeList = mutableListOf<MemeModel>()
+    val scienceMemeList = mutableListOf<MemeModel>()
+    val memberEditsMemeList = mutableListOf<MemeModel>()
+    var allMemeDb = hashMapOf<String, MutableList<MemeModel>>()
+    var currentMemeCategory: String = "Random"
+
 
     fun memeFun(category: String = "Random"): LiveData<List<MemeModel>>{
         val memeLiveData: LiveData<List<MemeModel>>
