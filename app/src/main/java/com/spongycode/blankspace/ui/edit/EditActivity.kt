@@ -69,7 +69,7 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
         memeRedo = findViewById(R.id.meme_redo)
         memeBrush = findViewById(R.id.meme_brush)
         memeEraser = findViewById(R.id.meme_eraser)
-        memeEraser = findViewById(R.id.upload_edit)
+        memeUpload = findViewById(R.id.upload_edit)
 
         Helper.buttonEffect(memeAddTextBG, "#FF03DAC5")
         Helper.buttonEffect(memeAddText, "#FF03DAC5")

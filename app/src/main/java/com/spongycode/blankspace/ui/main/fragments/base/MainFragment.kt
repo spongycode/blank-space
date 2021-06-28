@@ -31,7 +31,9 @@ import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentMainBinding
 import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelmemes.MemeModel
+import com.spongycode.blankspace.storage.removeTemplate
 import com.spongycode.blankspace.storage.saveMemeToFavs
+import com.spongycode.blankspace.storage.saveTemplate
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
@@ -334,7 +336,8 @@ class MainFragment : Fragment() {
                 .into(holder.image)
 
 
-            holder.like.setImageResource(if (meme.like) R.drawable.ic_heart_sign else R.drawable.ic_hearth)
+            holder.like.setImageResource(if (meme.like) R.drawable.ic_baseline_favorite_24 else
+                R.drawable.ic_baseline_favorite_border_24)
             holder.image.setOnTouchListener(TapListener(meme, holder))
             holder.share.setOnClickListener {
 
@@ -391,6 +394,8 @@ class MainFragment : Fragment() {
             internal val memeSenderUsername: TextView = view.findViewById(R.id.meme_sender_username)
             internal val memePostTimeTv: TextView = view.findViewById(R.id.meme_post_time_tv)
             internal val memeHeartAnim: ImageView = view.findViewById(R.id.meme_heart_anim_iv)
+            internal val memeLikeEntry: ShapeableImageView = view.findViewById(R.id.like_entry)
+            internal val memeLikeGone: ShapeableImageView = view.findViewById(R.id.like_gone)
         }
 
         inner class TapListener(private val meme: MemeModel, private val holder: ViewHolder) :
@@ -410,8 +415,25 @@ class MainFragment : Fragment() {
             }
 
             override fun onDouble() {
-                saveMemeToFavs(meme)
+                if (meme.like){
+                    holder.memeLikeGone.alpha = 1f
+                    val drawableLittle: Drawable = holder.memeLikeEntry.drawable
+                    val animatedVectorDrawableLittle: AnimatedVectorDrawable =
+                        drawableLittle as AnimatedVectorDrawable
+                    animatedVectorDrawableLittle.start()
+                    holder.like.setImageResource(0)
+
+                }else{
+                    holder.memeLikeEntry.alpha = 1f
+                    val drawableLittle: Drawable = holder.memeLikeEntry.drawable
+                    val animatedVectorDrawableLittle: AnimatedVectorDrawable =
+                        drawableLittle as AnimatedVectorDrawable
+                    animatedVectorDrawableLittle.start()
+                    holder.like.setImageResource(R.drawable.ic_baseline_favorite_24)
+                }
                 meme.like = !meme.like
+                saveMemeToFavs(meme)
+
                 // this rebuilds the whole rv, we need to implement a diffUtil.
 //                binding.rvMeme.adapter?.notifyDataSetChanged()
                 holder.memeHeartAnim.alpha = 0.8f
