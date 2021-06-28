@@ -11,13 +11,16 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.spongycode.blankspace.databinding.FragmentPrivateChatBinding
+import com.spongycode.blankspace.databinding.FragmentGroupChatBinding
 import com.spongycode.blankspace.databinding.LeftsidemessageBinding
 import com.spongycode.blankspace.databinding.RightsidemessageBinding
 import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelChat.ChatMessage
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.viewmodel.ChatViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 
 class GroupChatFragment: Fragment() {
@@ -38,14 +41,14 @@ class GroupChatFragment: Fragment() {
     * info of the sender and the receiver(groupId)
     * */
 
-    private var _binding: FragmentPrivateChatBinding? = null
+    private var _binding: FragmentGroupChatBinding? = null
     private val binding get() = _binding!!
     private lateinit var lMessageBinding: LeftsidemessageBinding
     private lateinit var rMessageBinding: RightsidemessageBinding
     private val chatViewModel: ChatViewModel = MainActivity.chatViewModel
     private val chatMessages = mutableListOf<ChatMessage>()
-    private var sender = UserModel("asfkljalsdkjf", "", "antonio")
-    private val groupId = "BlankSpaceGroup"
+    private var sender = UserModel()
+    private val groupId = "blankspacegroup  "
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,13 +60,24 @@ class GroupChatFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentPrivateChatBinding.inflate(inflater, container, false)
+        _binding = FragmentGroupChatBinding.inflate(inflater, container, false)
 
         chatViewModel.user.observe(viewLifecycleOwner, {
             sender = it.get(0)
         })
         Log.d("sender", "sender: $sender")
 
+        val messageList = listOf(
+            ChatMessage("asdfkid", "messaeg text",
+            "${FirebaseAuth.getInstance().currentUser?.uid}", "$groupId", 12342341),
+            ChatMessage("fdsasdf", "messaege text",
+            "${FirebaseAuth.getInstance().currentUser?.uid}", "$groupId", 12342361),
+            ChatMessage("fasdfasfd", "messaeg etext",
+            "${FirebaseAuth.getInstance().currentUser?.uid}", "$groupId", 12342351),
+        )
+
+        binding.list.adapter = GroupChatAdapter(messageList)
+        binding.list.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
         receiveMessage()
 
         return binding.root
@@ -96,7 +110,7 @@ class GroupChatFragment: Fragment() {
 
         // reference of the chatRoom for the sender and receiver of the message
         val senderReference = Firebase.firestore
-            .collection("user-messages/group-chat/$groupId")
+            .collection("user-messages/group/$groupId")
 
         sender?.let { sender ->
 
@@ -123,62 +137,38 @@ class GroupChatFragment: Fragment() {
             // on the other hand, messages in this fragment won't be presented on chatScreen
             // maybe later when we add features, and users find themselves able to create groups, but
             // group chat fragment is exactly what the name says. (general chat)
-//            val messageMap = hashMapOf(
-//                "messageId" to message.messageId,
-//                "messageReceiverId" to message.messageReceiverID,
-//                "nameReceiver" to receiver.username,
-//                "profilePictureReceiver" to receiver.imageUrl,
-//                "messageSenderId" to sender.userId,
-//                "nameSender" to sender.username,
-//                "profilePictureSender" to sender.imageUrl,
-//                "messageText" to message.messageText,
-//                "messageTime" to message.messageTime
-//            )
-//
-//            Firebase.firestore
-//                .collection("latest/messages/${sender.userId}")
-//                .document(receiver.userId)
-//                .set(messageMap, SetOptions.merge())
-//
-//            Firebase.firestore
-//                .collection("latest/messages/${receiver.userId}")
-//                .document(sender.userId)
-//                .set(messageMap, SetOptions.merge())
+
         }
 
     }
 
     // this will go to repo
     private fun receiveMessage(){
-
-        // listen to every event at this collection
-        // add every new messasge to the messages list
-        Firebase.firestore.collection("user-messages/group-chat/$groupId")
-            .orderBy("messageTime")
-            .addSnapshotListener { querySnapshot, error ->
-
-                // if error then log it
+        CoroutineScope(Dispatchers.IO).launch{
+            val a = Firebase.firestore
+                .collection("user-messages/group/$groupId")
+            a
+                .orderBy("messageTime")
+                .addSnapshotListener { value, error ->
                 error?.let {
-                    Log.d("receiveMessage", error.message!!)
+                    Log.w("error", error)
                 }
 
-                // clear the list for older messages and redownload all messages again
-                chatMessages.clear()
-                querySnapshot?.let{
-                    for (document in it){
-                        // dont know if i should create a GroupMessage data class, or modify chatMessage
-                        val message = document.toObject<ChatMessage>()
-                        Log.d("message", "messaeg: $message")
+                value?.let {
+                    chatMessages.clear()
+                    Log.d("error", "data: ${it.documents}")
+                    for (doc in it){
+                        val message = doc.toObject<ChatMessage>()
                         chatMessages.add(message)
                     }
 
-                    // scroll to the just received message
-                    binding.list.adapter = PrivateChatAdapter(chatMessages)
-                    binding.list.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
+                    binding.list.adapter = GroupChatAdapter(chatMessages)
                     binding.list.adapter?.notifyDataSetChanged()
                     binding.list.scrollToPosition(chatMessages.size - 1)
+
                 }
             }
+        }
     }
 
     override fun onPause() {
@@ -187,7 +177,7 @@ class GroupChatFragment: Fragment() {
     }
 
     // basic adapter
-    inner class PrivateChatAdapter(private val messages: List<ChatMessage>): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
+    private inner class GroupChatAdapter(private val messages: List<ChatMessage>): RecyclerView.Adapter<RecyclerView.ViewHolder>(){
 
         inner class PrivateChatSenderViewHolder(binding: RightsidemessageBinding):
             RecyclerView.ViewHolder(binding.root){
@@ -197,6 +187,7 @@ class GroupChatFragment: Fragment() {
         inner class PrivateChatReceiverViewHolder(binding: LeftsidemessageBinding):
             RecyclerView.ViewHolder(binding.root){
             internal val lMessage: MaterialTextView = binding.lMessage
+            internal val lName: MaterialTextView = binding.lName
         }
 
         override fun getItemViewType(position: Int): Int {
@@ -234,7 +225,9 @@ class GroupChatFragment: Fragment() {
                     this.rMessage.text = message.messageText
                 }
                 if (this is PrivateChatReceiverViewHolder) {
+//                    well, i guess i will have to build an unique message with all features, better than having three
                     this.lMessage.text = message.messageText
+                    this.lName.text = message.messageSenderID
                 }
             }
         }

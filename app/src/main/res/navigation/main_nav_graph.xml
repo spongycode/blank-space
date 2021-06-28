@@ -51,6 +51,9 @@
         <action
             android:id="@+id/action_chatScreenFragment_to_listOfUsersFragment"
             app:destination="@id/listOfUsersFragment" />
+        <action
+            android:id="@+id/action_chatScreenFragment_to_groupChatFragment"
+            app:destination="@id/groupChatFragment" />
     </fragment>
     <fragment
         android:id="@+id/groupChatFragment"
@@ -59,6 +62,9 @@
         <action
             android:id="@+id/action_groupChatFragment_to_listOfUsersFragment"
             app:destination="@id/listOfUsersFragment" />
+        <action
+            android:id="@+id/action_groupChatFragment_to_chatScreenFragment"
+            app:destination="@id/chatScreenFragment" />
     </fragment>
     <fragment
         android:id="@+id/listOfUsersFragment"
