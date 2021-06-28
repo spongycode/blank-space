@@ -31,9 +31,7 @@ import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentMainBinding
 import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelmemes.MemeModel
-import com.spongycode.blankspace.storage.removeTemplate
-import com.spongycode.blankspace.storage.saveMemeToFavs
-import com.spongycode.blankspace.storage.saveTemplate
+import com.spongycode.blankspace.storage.*
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
@@ -301,27 +299,31 @@ class MainFragment : Fragment() {
                 val dateFinal =
                     listDate[3] + ":" + listDate[4] + " on " + listDate[1] + " " + listDate[2]
                 holder.memePostTimeTv.text = dateFinal
-            }
-
-            firestore.collection("users")
-                .whereEqualTo("userId", meme.userId)
-                .get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        for (data in task.result!!) {
-                            val imageUrl = data.toObject(UserModel::class.java).imageUrl
-                            Glide.with(requireActivity()).load(imageUrl)
-                                .into(holder.memeSenderImage)
-                            holder.memeSenderUsername.text =
-                                data.toObject(UserModel::class.java).username
+                firestore.collection("users")
+                    .whereEqualTo("userId", meme.userId)
+                    .get()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            for (data in task.result!!) {
+                                val imageUrl = data.toObject(UserModel::class.java).imageUrl
+                                Glide.with(requireActivity()).load(imageUrl)
+                                    .into(holder.memeSenderImage)
+                                holder.memeSenderUsername.text =
+                                    data.toObject(UserModel::class.java).username
+                            }
                         }
                     }
-                }
+            }
 
-
-
+            checkMemeIsFav(meme)
+            holder.like.setImageResource(if (meme.like) R.drawable.ic_baseline_favorite_24 else
+                R.drawable.ic_baseline_favorite_border_24)
 
             holder.title.text = meme.title
+
+            holder.memeLikeEntry.setOnClickListener {
+                onDoubleWorker(holder, meme)
+            }
 
 
             val circularProgressDrawable = CircularProgressDrawable(requireContext())
@@ -336,8 +338,7 @@ class MainFragment : Fragment() {
                 .into(holder.image)
 
 
-            holder.like.setImageResource(if (meme.like) R.drawable.ic_baseline_favorite_24 else
-                R.drawable.ic_baseline_favorite_border_24)
+
             holder.image.setOnTouchListener(TapListener(meme, holder))
             holder.share.setOnClickListener {
 
@@ -415,38 +416,47 @@ class MainFragment : Fragment() {
             }
 
             override fun onDouble() {
-                if (meme.like){
-                    holder.memeLikeGone.alpha = 1f
-                    val drawableLittle: Drawable = holder.memeLikeEntry.drawable
-                    val animatedVectorDrawableLittle: AnimatedVectorDrawable =
-                        drawableLittle as AnimatedVectorDrawable
-                    animatedVectorDrawableLittle.start()
-                    holder.like.setImageResource(0)
-
-                }else{
-                    holder.memeLikeEntry.alpha = 1f
-                    val drawableLittle: Drawable = holder.memeLikeEntry.drawable
-                    val animatedVectorDrawableLittle: AnimatedVectorDrawable =
-                        drawableLittle as AnimatedVectorDrawable
-                    animatedVectorDrawableLittle.start()
-                    holder.like.setImageResource(R.drawable.ic_baseline_favorite_24)
-                }
-                meme.like = !meme.like
-                saveMemeToFavs(meme)
-
-                // this rebuilds the whole rv, we need to implement a diffUtil.
-//                binding.rvMeme.adapter?.notifyDataSetChanged()
-                holder.memeHeartAnim.alpha = 0.8f
-                val drawable: Drawable = holder.memeHeartAnim.drawable
-                val animatedVectorDrawable: AnimatedVectorDrawable =
-                    drawable as AnimatedVectorDrawable
-                animatedVectorDrawable.start()
+                onDoubleWorker(holder,meme)
             }
 
             override fun onSingle() {
                 super.onSingle()
                 PhotoViewerDialog.newInstance(meme.url).show(parentFragmentManager, "hello")
             }
+        }
+
+        private fun onDoubleWorker(holder: ViewHolder,meme: MemeModel) {
+            if (meme.like){
+                meme.like = false
+                removeMeme(meme)
+                holder.like.setImageResource(0)
+                holder.memeLikeEntry.alpha = 0f
+                holder.memeLikeGone.alpha = 1f
+                val drawableLittle: Drawable = holder.memeLikeGone.drawable
+                val animatedVectorDrawableLittle: AnimatedVectorDrawable =
+                    drawableLittle as AnimatedVectorDrawable
+                animatedVectorDrawableLittle.start()
+
+            }else{
+                meme.like = true
+                saveMemeToFavs(meme)
+                holder.memeLikeEntry.alpha = 1f
+                holder.memeLikeGone.alpha = 0f
+                val drawableLittle: Drawable = holder.memeLikeEntry.drawable
+                val animatedVectorDrawableLittle: AnimatedVectorDrawable =
+                    drawableLittle as AnimatedVectorDrawable
+                animatedVectorDrawableLittle.start()
+                holder.like.setImageResource(R.drawable.ic_baseline_favorite_24)
+            }
+
+            // this rebuilds the whole rv, we need to implement a diffUtil.
+//                binding.rvMeme.adapter?.notifyDataSetChanged()
+            holder.memeHeartAnim.alpha = 0.8f
+            val drawable: Drawable = holder.memeHeartAnim.drawable
+            val animatedVectorDrawable: AnimatedVectorDrawable =
+                drawable as AnimatedVectorDrawable
+            animatedVectorDrawable.start()
+
         }
     }
 }

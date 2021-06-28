@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
@@ -31,6 +32,7 @@ import com.spongycode.blankspace.databinding.FragmentFMemesBinding
 import com.spongycode.blankspace.databinding.MemeLayoutBinding
 import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelmemes.MemeModel
+import com.spongycode.blankspace.storage.removeMeme
 import com.spongycode.blankspace.storage.saveMemeToFavs
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
@@ -40,7 +42,7 @@ import com.spongycode.blankspace.util.ClickListener
 import java.io.ByteArrayOutputStream
 import java.util.*
 
-class FMemesFragment: Fragment() {
+class FMemesFragment : Fragment() {
 
     private var _binding: FragmentFMemesBinding? = null
     private val binding get() = _binding!!
@@ -56,7 +58,8 @@ class FMemesFragment: Fragment() {
 
         val toolbar: Toolbar = binding.toolFMemes
         (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar)
-        val navHostFragment = (activity as AppCompatActivity).supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
+        val navHostFragment =
+            (activity as AppCompatActivity).supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
         toolbar.setNavigationIcon(R.drawable.ic_nav_up)
@@ -84,7 +87,7 @@ class FMemesFragment: Fragment() {
 
     inner class MemeRecyclerAdapter(
         private val context: Context,
-        private val memeList: List<MemeModel>
+        private val memeList: MutableList<MemeModel>
     ) :
         RecyclerView.Adapter<MemeRecyclerAdapter.ViewHolder>() {
 
@@ -101,36 +104,17 @@ class FMemesFragment: Fragment() {
         @SuppressLint("ClickableViewAccessibility")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val meme: MemeModel = memeList[position]
-
-            if(meme.userId == ""){
-                holder.memeSenderUsername.visibility= View.GONE
-                holder.memeSenderImage.visibility= View.GONE
-                holder.memePostTimeTv.visibility= View.GONE
-            }else{
-                val listDate = meme.timestamp!!.toDate().toString().split(":| ".toRegex()).map { it.trim() }
-                val dateFinal = listDate[3] + ":" + listDate[4] + " on " + listDate[1] + " " + listDate[2]
-                holder.memePostTimeTv.text = dateFinal
-            }
-
-            firestore.collection("users")
-                .whereEqualTo("userId", meme.userId)
-                .get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        for (data in task.result!!) {
-                            val imageUrl = data.toObject(UserModel::class.java).imageUrl
-                            Glide.with(requireActivity()).load(imageUrl).into(holder.memeSenderImage)
-                            holder.memeSenderUsername.text = data.toObject(UserModel::class.java).username
-                        }
-                    }
-                }
-
-
+            holder.memeSenderUsername.visibility = View.GONE
+            holder.memeSenderImage.visibility = View.GONE
+            holder.memePostTimeTv.visibility = View.GONE
 
             holder.title.text = meme.title
             Glide.with(holder.itemView.context.applicationContext).load(meme.url).into(holder.image)
-            holder.like.setImageResource(if (meme.like) R.drawable.ic_heart_sign else R.drawable.ic_hearth)
-            holder.image.setOnTouchListener(TapListener(meme))
+            holder.like.setImageResource(
+                if (meme.like) R.drawable.ic_baseline_favorite_24 else
+                    R.drawable.ic_baseline_favorite_border_24
+            )
+            holder.image.setOnTouchListener(TapListener(meme, holder, memeList, position))
             holder.share.setOnClickListener {
 
                 Glide.with(requireActivity())
@@ -142,7 +126,7 @@ class FMemesFragment: Fragment() {
                             @Nullable transition: Transition<in Bitmap?>?
                         ) {
                             val os = ByteArrayOutputStream()
-                            resource.compress( Bitmap.CompressFormat.PNG, 100, os)
+                            resource.compress(Bitmap.CompressFormat.PNG, 100, os)
                             val path: String = MediaStore.Images.Media.insertImage(
                                 activity?.contentResolver,
                                 resource,
@@ -164,11 +148,13 @@ class FMemesFragment: Fragment() {
                         override fun onLoadCleared(@Nullable placeholder: Drawable?) {}
                     })
             }
-            holder.download.setOnClickListener { MainActivity().saveImage(
-                (activity as MainActivity),
-                holder.image.drawable,
-                meme.title
-            ) }
+            holder.download.setOnClickListener {
+                MainActivity().saveImage(
+                    (activity as MainActivity),
+                    holder.image.drawable,
+                    meme.title
+                )
+            }
             holder.like.setOnClickListener { meme.like = !meme.like }
         }
 
@@ -183,26 +169,54 @@ class FMemesFragment: Fragment() {
             internal val memeSenderImage: ImageView = view.findViewById(R.id.meme_sender_image)
             internal val memeSenderUsername: TextView = view.findViewById(R.id.meme_sender_username)
             internal val memePostTimeTv: TextView = view.findViewById(R.id.meme_post_time_tv)
+            internal val fMemeHeartAnim: ImageView = view.findViewById(R.id.meme_heart_anim_iv)
+            internal val fMemeLikeGone: ShapeableImageView = view.findViewById(R.id.like_gone)
         }
 
-        inner class TapListener(private val meme: MemeModel): ClickListener(context){
+        inner class TapListener(
+            private val meme: MemeModel,
+            private val holder: ViewHolder,
+            private val listMemes: MutableList<MemeModel>,
+            private val position: Int
+        ) : ClickListener(context) {
             override fun onLong() {
-                if (meme.gif){
-                    Toast.makeText(requireContext(), "Editing GIFS not supported", Toast.LENGTH_LONG).show()
-                }else{
+                if (meme.gif) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Editing GIFS not supported",
+                        Toast.LENGTH_LONG
+                    ).show()
+                } else {
                     val myIntent = Intent(context, EditActivity::class.java)
-                    Toast.makeText(requireContext(), meme.url.toLowerCase(Locale.ROOT).trim(), Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        requireContext(),
+                        meme.url.toLowerCase(Locale.ROOT).trim(),
+                        Toast.LENGTH_LONG
+                    ).show()
                     myIntent.putExtra("imageurl", meme.url)
                     context.startActivity(myIntent)
                 }
             }
 
             override fun onDouble() {
-                saveMemeToFavs(meme)
+                removeMeme(meme)
+                holder.like.setImageResource(0)
+                holder.fMemeLikeGone.alpha = 1f
+                val drawableLittle: Drawable = holder.fMemeLikeGone.drawable
+                val animatedVectorDrawableLittle: AnimatedVectorDrawable =
+                    drawableLittle as AnimatedVectorDrawable
+                animatedVectorDrawableLittle.start()
                 meme.like = !meme.like
-                // this rebuilds the whole rv, we need to implement a diffUtil.
-//                binding.rvMeme.adapter?.notifyDataSetChanged()
+                listMemes.removeAt(position)
+                notifyItemRemoved(position)
+                notifyItemRangeChanged(position, itemCount)
+                holder.fMemeHeartAnim.alpha = 0.8f
+                val drawable: Drawable = holder.fMemeHeartAnim.drawable
+                val animatedVectorDrawable: AnimatedVectorDrawable =
+                    drawable as AnimatedVectorDrawable
+                animatedVectorDrawable.start()
             }
+
             override fun onSingle() {
                 super.onSingle()
                 PhotoViewerDialog.newInstance(meme.url).show(parentFragmentManager, "hello")

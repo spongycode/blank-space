@@ -123,6 +123,7 @@ class GenerateFragment : Fragment() {
 
             override fun onDouble() {
                 if (img.fav){
+                    img.fav = false
                     removeTemplate(img)
                     holder.star.visibility = GONE
                 }else{
@@ -130,7 +131,6 @@ class GenerateFragment : Fragment() {
                     saveTemplate(img)
                     holder.star.visibility = VISIBLE
                 }
-                img.fav = !img.fav
                 holder.starAnim.alpha = 0.9f
                 val drawable: Drawable = holder.starAnim.drawable
                 val animatedVectorDrawable: AnimatedVectorDrawable =

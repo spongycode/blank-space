@@ -99,7 +99,7 @@
                 android:id="@+id/save_local"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:background="@drawable/ic_download"
+                android:background="@drawable/ic_baseline_arrow_download"
                 android:backgroundTint="#D34BE6"
                 app:layout_constraintBottom_toBottomOf="@id/cl_icons"
                 app:layout_constraintEnd_toEndOf="parent"
