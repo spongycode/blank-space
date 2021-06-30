@@ -99,11 +99,6 @@ class MainActivity : AppCompatActivity() {
                         binding.drawerLayout.close()
                         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                     }
-                    R.id.nav_profile -> {
-                        if (navController.currentDestination?.label == "MyProfileFragment") return false
-                        else navController.navigate(R.id.myProfileFragment)
-                        binding.drawerLayout.close()
-                    }
                     R.id.nav_settings -> {
                         if (navController.currentDestination?.label == "SettingFragment") return false
                         else navController.navigate(R.id.action_tabLayoutFragment_to_settingFragment)
@@ -117,7 +112,6 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
         })
-
     }
 
     fun saveImage(activity: Activity, image: Drawable, title: String) {

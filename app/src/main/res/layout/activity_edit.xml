@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#2B3547">
@@ -18,7 +19,7 @@
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/materialCardView"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="80dp"
         app:cardCornerRadius="0dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -26,99 +27,114 @@
             android:id="@+id/cl_icons"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/black">
+            android:background="#101820">
 
 
             <ImageButton
                 android:id="@+id/meme_add_text_no_bg"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="@dimen/edit_icons"
+                android:layout_height="@dimen/edit_icons"
                 android:background="@drawable/ic_text_no_bg"
                 android:backgroundTint="@color/white"
                 app:layout_constraintBottom_toBottomOf="@id/cl_icons"
-                app:layout_constraintStart_toEndOf="@+id/meme_undo"
+                app:layout_constraintEnd_toStartOf="@+id/meme_add_text_with_bg"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/cl_icons" />
 
 
             <ImageButton
                 android:id="@+id/meme_add_text_with_bg"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="@dimen/edit_icons"
+                android:layout_height="@dimen/edit_icons"
                 android:background="@drawable/ic_text_with_bg"
                 android:backgroundTint="@color/white"
                 app:layout_constraintBottom_toBottomOf="@id/cl_icons"
-                app:layout_constraintEnd_toStartOf="@+id/meme_redo"
-                app:layout_constraintTop_toTopOf="@+id/cl_icons" />
-
-
-            <ImageButton
-                android:id="@+id/meme_brush"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ic_brush"
-                android:backgroundTint="@color/white"
-                app:layout_constraintBottom_toBottomOf="@id/cl_icons"
-                app:layout_constraintEnd_toStartOf="@+id/save_local"
+                app:layout_constraintEnd_toStartOf="@+id/meme_brush"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toEndOf="@+id/meme_add_text_no_bg"
                 app:layout_constraintTop_toTopOf="@+id/cl_icons" />
 
 
             <ImageButton
+                android:id="@+id/meme_brush"
+                android:layout_width="@dimen/edit_icons"
+                android:layout_height="@dimen/edit_icons"
+                android:background="@drawable/ic_brush"
+                android:backgroundTint="@color/white"
+                app:layout_constraintBottom_toBottomOf="@id/cl_icons"
+                app:layout_constraintEnd_toStartOf="@+id/meme_eraser"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/meme_add_text_with_bg"
+                app:layout_constraintTop_toTopOf="@+id/cl_icons" />
+
+
+            <ImageButton
                 android:id="@+id/meme_eraser"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="@dimen/edit_icons"
+                android:layout_height="@dimen/edit_icons"
                 android:background="@drawable/ic_eraser"
                 android:backgroundTint="@color/white"
                 app:layout_constraintBottom_toBottomOf="@id/cl_icons"
-                app:layout_constraintEnd_toStartOf="@+id/meme_add_text_with_bg"
-                app:layout_constraintStart_toEndOf="@+id/save_local"
+                app:layout_constraintEnd_toStartOf="@+id/save_local"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/meme_brush"
                 app:layout_constraintTop_toTopOf="@+id/cl_icons" />
 
 
             <ImageButton
-                android:id="@+id/meme_undo"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ic_undo"
-                android:backgroundTint="#dda77b"
-                app:layout_constraintBottom_toBottomOf="@id/cl_icons"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/cl_icons" />
-
-            <ImageButton
-                android:id="@+id/meme_redo"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@drawable/ic_redo"
-                android:backgroundTint="#dda77b"
-                app:layout_constraintBottom_toBottomOf="@id/cl_icons"
+                android:id="@+id/upload_edit"
+                android:layout_width="45dp"
+                android:layout_height="45dp"
+                android:background="@drawable/ic_baseline_upload_24"
+                android:backgroundTint="#f2aa4c"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/cl_icons" />
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/save_local"
+                app:layout_constraintTop_toTopOf="parent" />
+
 
             <ImageButton
                 android:id="@+id/save_local"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:background="@drawable/ic_baseline_arrow_download"
-                android:backgroundTint="#D34BE6"
+                android:backgroundTint="#f2aa4c"
                 app:layout_constraintBottom_toBottomOf="@id/cl_icons"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/upload_edit"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/meme_eraser"
                 app:layout_constraintTop_toTopOf="@+id/cl_icons" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     </com.google.android.material.card.MaterialCardView>
 
+
     <ImageButton
-        android:id="@+id/upload_edit"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/ic_baseline_upload_24"
-        android:backgroundTint="#D34BE6"
+        android:id="@+id/meme_undo"
+        android:layout_width="@dimen/edit_icons"
+        android:layout_height="@dimen/edit_icons"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/ic_undo"
+        android:alpha="0.8"
+        android:backgroundTint="#dda77b"
         app:layout_constraintBottom_toBottomOf="@+id/photo_editor_view"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageButton
+        android:id="@+id/meme_redo"
+        android:layout_width="@dimen/edit_icons"
+        android:layout_height="@dimen/edit_icons"
+        android:alpha="0.8"
+        android:layout_marginHorizontal="@dimen/activity_horizontal_margin"
+        android:layout_marginVertical="8dp"
+        android:background="@drawable/ic_redo"
+        android:backgroundTint="#dda77b"
+        app:layout_constraintBottom_toBottomOf="@+id/photo_editor_view"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

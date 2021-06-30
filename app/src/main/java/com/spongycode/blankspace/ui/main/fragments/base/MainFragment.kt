@@ -19,6 +19,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.Nullable
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
@@ -26,6 +27,7 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentMainBinding
@@ -163,6 +165,8 @@ class MainFragment : Fragment() {
             }
             popupMenu.show()
         }
+
+        binding.rvMeme?.attachFab(binding.fabMemberEdits, activity as AppCompatActivity)
 
 //        binding.spCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 //            override fun onItemSelected(
@@ -355,8 +359,8 @@ class MainFragment : Fragment() {
                             val path: String = MediaStore.Images.Media.insertImage(
                                 activity?.contentResolver,
                                 resource,
-                                null,
-                                null
+                                "title",
+                                "desc"
                             )
 
                             val myIntent = Intent()
@@ -458,5 +462,21 @@ class MainFragment : Fragment() {
             animatedVectorDrawable.start()
 
         }
+    }
+
+    private fun RecyclerView.attachFab(fab: FloatingActionButton, activity: AppCompatActivity) {
+        this.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0) {
+                    fab.hide()
+
+                } else if (dy < 0) {
+                    fab.show()
+                    activity.supportActionBar!!.show()
+
+                }
+            }
+        })
     }
 }

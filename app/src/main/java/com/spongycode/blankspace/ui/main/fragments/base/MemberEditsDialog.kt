@@ -163,12 +163,16 @@ class MemberEditsDialog : DialogFragment() {
             }
             return@Continuation ref.downloadUrl
         }).addOnSuccessListener { task ->
-            downloadUri = task
+            try {
+                downloadUri = task
 
-            Glide.with(requireActivity()).load(imageUri)
-                .into(requireView().findViewById(R.id.member_edits_post_image))
-            requireView().findViewById<Button>(R.id.member_edits_btn_post).alpha = 1f
-            requireView().findViewById<Button>(R.id.member_edits_btn_post).isEnabled = true
+                Glide.with(requireActivity()).load(imageUri)
+                    .into(requireView().findViewById(R.id.member_edits_post_image))
+                requireView().findViewById<Button>(R.id.member_edits_btn_post).alpha = 1f
+                requireView().findViewById<Button>(R.id.member_edits_btn_post).isEnabled = true
+            }catch (e : Exception){
+
+            }
 
 
         }

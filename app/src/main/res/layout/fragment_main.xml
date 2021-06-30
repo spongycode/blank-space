@@ -69,9 +69,11 @@
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_member_edits"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_margin="@dimen/activity_horizontal_margin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/decent_green"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="50dp"
         android:src="@drawable/ic_create"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -11,5 +11,6 @@
     <dimen name="corner_radius">25dp</dimen>
     <dimen name="margin_hor">30dp</dimen>
     <dimen name="btn_rad">25dp</dimen>
+    <dimen name="edit_icons">40dp</dimen>
 
 </resources>

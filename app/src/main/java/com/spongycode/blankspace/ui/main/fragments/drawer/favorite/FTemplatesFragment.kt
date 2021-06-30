@@ -48,7 +48,7 @@ class FTemplatesFragment: Fragment() {
         (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar)
         val navHostFragment = (activity as AppCompatActivity).supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
-        toolbar.setNavigationIcon(R.drawable.ic_nav_up)
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_ios_24)
         binding.toolFTemplates.setNavigationOnClickListener {
             navController.navigate(R.id.action_FTemplatesFragment_to_tabLayoutFragment)
         }
