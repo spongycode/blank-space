@@ -78,6 +78,7 @@ class ChatScreenFragment: Fragment() {
                     return@addSnapshotListener
                 }
 
+                messageList.clear()
                 querySnapshot?.let {
 
                     // clear the list and message through every message
@@ -86,7 +87,6 @@ class ChatScreenFragment: Fragment() {
                         val chat = dc.document.toObject<ChatScreenMessage>()
                         messageList.add(0, chat)
                     }
-                    messageList.toSet()
                     binding.list.apply {
                         adapter = ListOfChatsAdapter(messageList)
                         adapter?.notifyDataSetChanged()

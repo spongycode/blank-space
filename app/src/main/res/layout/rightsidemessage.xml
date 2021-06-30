@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/rMessage"
@@ -15,7 +15,6 @@
         android:textAlignment="gravity"
         android:hint="messagem"
         android:ems="15"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-        android:background="@drawable/text_background"/>
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
 
 </RelativeLayout>

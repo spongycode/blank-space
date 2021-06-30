@@ -22,6 +22,9 @@ import com.spongycode.blankspace.model.modelChat.ChatMessage
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.util.Constants
 import com.spongycode.blankspace.viewmodel.ChatViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 
 class PrivateChatFragment: Fragment() {
@@ -107,9 +110,9 @@ class PrivateChatFragment: Fragment() {
 
         // reference of the chatRoom for the sender and receiver of the message
         val senderReference = Firebase.firestore
-            .collection("/user-messages/${sender.userId}/${receiver.userId}")
+            .collection("user-messages/${sender.userId}/${receiver.userId}")
         val receiverReference = Firebase.firestore
-            .collection("/user-messages/${receiver.userId}/${sender.userId}")
+            .collection("user-messages/${receiver.userId}/${sender.userId}")
 
         sender?.let { sender ->
             if (receiver == null) return
@@ -156,35 +159,41 @@ class PrivateChatFragment: Fragment() {
     // this will go to repo
     private fun receiveMessage(){
 
-        // listen to every event at this collection
-        // add every new messasge to the messages list
-        Firebase.firestore.collection(
-            "user-messages/${sender.userId}/${receiver.userId}")
-            .orderBy("timeStamp")
-            .addSnapshotListener { querySnapshot, error ->
+        CoroutineScope(Dispatchers.IO).launch{  // listen to every event at this collection
+            // add every new messasge to the messages list
+            Firebase.firestore.collection(
+                "user-messages/${sender.userId}/${receiver.userId}"
+            )
+                .orderBy("messageTime")
+                .addSnapshotListener { querySnapshot, error ->
 
-                // if error then log it
-                error?.let {
-                    Log.d("receiveMessage", error.message!!)
-                }
-
-                // clear the list for older messages and redownload all messages again
-                chatMessages.clear()
-                querySnapshot?.let{
-                    for (document in it){
-                        val message = document.toObject<ChatMessage>()
-                        chatMessages.add(message)
+                    // if error then log it
+                    error?.let {
+                        Log.d("receiveMessage", error.message!!)
                     }
 
-                    // clear duplicates from the list and submit the list
-                    chatMessages.toSet()
-                    // scroll to the just received message
-                    binding.list.adapter = PrivateChatAdapter(chatMessages)
-                    binding.list.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
-                    binding.list.adapter?.notifyDataSetChanged()
-                    binding.list.scrollToPosition(chatMessages.size - 1)
+                    // clear the list for older messages and redownload all messages again
+                    chatMessages.clear()
+                    Log.d("query", "quer: ${querySnapshot?.documents}, ${sender.userId}/${receiver.userId}")
+                    querySnapshot?.let {
+                        for (document in it) {
+                            val message = document.toObject<ChatMessage>()
+                            chatMessages.add(message)
+                        }
+
+                        // scroll to the just received message
+                        binding.list.adapter = PrivateChatAdapter(chatMessages)
+                        binding.list.addItemDecoration(
+                            DividerItemDecoration(
+                                requireContext(),
+                                DividerItemDecoration.VERTICAL
+                            )
+                        )
+                        binding.list.adapter?.notifyDataSetChanged()
+                        binding.list.scrollToPosition(chatMessages.size - 1)
+                    }
                 }
-            }
+        }
     }
 
     override fun onPause() {
