@@ -77,8 +77,7 @@ class MainActivity : AppCompatActivity() {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 when (item.itemId){
                     R.id.nav_home -> {
-                        if (navController.currentDestination?.label == "TabLayoutFragment") return false
-                        else navController.navigate(R.id.tabLayoutFragment)
+                        navController.navigate(R.id.tabLayoutFragment)
                         binding.drawerLayout.close()
                     }
                     R.id.nav_message -> {

@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EdgeEffect
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
@@ -65,6 +66,12 @@ class FMemesFragment : Fragment() {
         toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_ios_24)
         binding.toolFMemes.setNavigationOnClickListener {
             navController.navigate(R.id.action_FMemesFragment_to_tabLayoutFragment)
+        }
+        binding.rvFMeme.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+            override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                return EdgeEffect(view.context).apply { color = resources.getColor(R.color.decent_green)
+                }
+            }
         }
         requireActivity().onBackPressedDispatcher.addCallback {
             navController.navigate(R.id.action_FMemesFragment_to_tabLayoutFragment)

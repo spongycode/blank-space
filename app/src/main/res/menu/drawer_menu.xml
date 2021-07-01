@@ -3,24 +3,24 @@
 
     <item
     android:id="@+id/nav_home"
-    android:icon="@drawable/ic_nav_home"
+    android:icon="@drawable/ic_baseline_home_24"
     android:title="Home" />
 
     <item
         android:id="@+id/nav_message"
-        android:icon="@drawable/ic_nav_chat"
+        android:icon="@drawable/ic_baseline_message_24"
         android:title="Messages" />
 
     <item android:title="Favorites">
         <menu>
             <item
                 android:id="@+id/nav_fmemes"
-                android:icon="@drawable/ic_hearth"
+                android:icon="@drawable/ic_baseline_favorite_border_24"
                 android:title="Memes" />
 
             <item
                 android:id="@+id/nav_ftemplates"
-                android:icon="@drawable/ic_star"
+                android:icon="@drawable/ic_baseline_star_outline_24"
                 android:title="Templates" />
         </menu>
     </item>
@@ -29,12 +29,12 @@
         <menu>
             <item
                 android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_nav_account"
+                android:icon="@drawable/ic_baseline_account_circle_24"
                 android:title="My Profile" />
 
             <item
                 android:id="@+id/nav_logout"
-                android:icon="@drawable/ic_nav_out"
+                android:icon="@drawable/ic_baseline_logout_24"
                 android:title="Logout" />
         </menu>
     </item>

@@ -14,10 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
@@ -68,6 +65,7 @@ class MainFragment : Fragment() {
         memeViewModel.allMemeDb["Coding"] = memeViewModel.codingMemeList
         memeViewModel.allMemeDb["Science"] = memeViewModel.scienceMemeList
         memeViewModel.allMemeDb["Member Edits"] = memeViewModel.memberEditsMemeList
+        binding.currentCatTv.text = memeViewModel.currentMemeCategory
 
         if (memeViewModel.count == 0) {
             memeViewModel.memeFun(memeViewModel.currentMemeCategory).observe(
@@ -92,6 +90,12 @@ class MainFragment : Fragment() {
             )
             binding.rvMeme.adapter?.notifyDataSetChanged()
 
+        }
+        binding.rvMeme.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+            override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                return EdgeEffect(view.context).apply { color = resources.getColor(R.color.decent_green)
+                }
+            }
         }
 
         binding.pop.setOnClickListener {

@@ -12,6 +12,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.EdgeEffect
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -69,6 +70,12 @@ class GenerateFragment : Fragment() {
         }
 
         binding.list?.attachFab(binding.generateFab, activity as AppCompatActivity)
+        binding.list.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+            override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                return EdgeEffect(view.context).apply { color = resources.getColor(R.color.decent_green)
+                }
+            }
+        }
 
         binding.generateFab.setOnClickListener {
             val myIntent = Intent(requireContext(), EditActivity::class.java)
