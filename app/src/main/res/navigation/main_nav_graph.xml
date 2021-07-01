@@ -9,20 +9,17 @@
         android:name="com.spongycode.blankspace.ui.main.fragments.base.TabLayoutFragment"
         android:label="TabLayoutFragment" >
         <action
-            android:id="@+id/action_tabLayoutFragment_to_FMemesFragment"
-            app:destination="@id/FMemesFragment"
-            app:enterAnim="@anim/from_right"
-            app:exitAnim="@anim/to_left"/>
-        <action
             android:id="@+id/action_tabLayoutFragment_to_FTemplatesFragment"
-            app:destination="@id/FTemplatesFragment"
-            app:enterAnim="@anim/from_right"
-            app:exitAnim="@anim/to_left"/>
+            app:destination="@id/FTemplatesFragment" />
         <action
             android:id="@+id/action_tabLayoutFragment_to_settingFragment"
-            app:destination="@id/settingFragment"
-            app:enterAnim="@anim/from_right"
-            app:exitAnim="@anim/to_left"/>
+            app:destination="@id/settingFragment" />
+        <action
+            android:id="@+id/action_tabLayoutFragment_to_tabLayoutChatFragment"
+            app:destination="@id/tabLayoutChatFragment" />
+        <action
+            android:id="@+id/action_tabLayoutFragment_to_FMemesFragment"
+            app:destination="@id/FMemesFragment" />
     </fragment>
     <fragment
         android:id="@+id/FMemesFragment"
@@ -30,19 +27,7 @@
         android:label="FMemesFragment" >
         <action
             android:id="@+id/action_FMemesFragment_to_tabLayoutFragment"
-            app:destination="@id/tabLayoutFragment"
-            app:enterAnim="@anim/from_left"
-            app:exitAnim="@anim/to_right"/>
-    </fragment>
-    <fragment
-        android:id="@+id/FTemplatesFragment"
-        android:name="com.spongycode.blankspace.ui.main.fragments.drawer.favorite.FTemplatesFragment"
-        android:label="FTemplatesFragment" >
-        <action
-            android:id="@+id/action_FTemplatesFragment_to_tabLayoutFragment"
-            app:destination="@id/tabLayoutFragment"
-            app:enterAnim="@anim/from_left"
-            app:exitAnim="@anim/to_right"/>
+            app:destination="@id/tabLayoutFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatScreenFragment"
@@ -87,17 +72,35 @@
         android:label="SettingFragment" >
         <action
             android:id="@+id/action_settingFragment_to_tabLayoutFragment"
-            app:destination="@id/tabLayoutFragment"
-            app:enterAnim="@anim/from_left"
-            app:exitAnim="@anim/to_right"/>
+            app:destination="@id/tabLayoutFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/FTemplatesFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.drawer.favorite.FTemplatesFragment"
+        android:label="FTemplatesFragment" >
+        <action
+            android:id="@+id/action_FTemplatesFragment_to_tabLayoutFragment"
+            app:destination="@id/tabLayoutFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/generateFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.base.GenerateFragment"
+        android:label="GenerateFragment" />
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.base.MainFragment"
+        android:label="MainFragment" />
+    <fragment
+        android:id="@+id/tabLayoutChatFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.drawer.chat.TabLayoutChatFragment"
+        android:label="TabLayoutChatFragment" >
+        <action
+            android:id="@+id/action_tabLayoutChatFragment_to_tabLayoutFragment"
+            app:destination="@id/tabLayoutFragment" />
     </fragment>
     <activity
         android:id="@+id/authActivity"
         android:name="com.spongycode.blankspace.ui.auth.AuthActivity"
         android:label="activity_auth"
         tools:layout="@layout/activity_auth" />
-    <fragment
-        android:id="@+id/tabLayoutChatFragment"
-        android:name="com.spongycode.blankspace.ui.main.fragments.drawer.chat.TabLayoutChatFragment"
-        android:label="TabLayoutChatFragment" />
 </navigation>

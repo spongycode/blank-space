@@ -10,36 +10,43 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="@dimen/layout_margin"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/llayout"/>
+        app:layout_constraintBottom_toTopOf="@id/messageText"/>
 
-    <LinearLayout
-        android:id="@+id/llayout"
-        android:layout_width="match_parent"
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/messageText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_margin="@dimen/layout_margin"
+        android:background="@drawable/text_background"
+        android:hint="message"
+        android:textSize="15sp"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintEnd_toStartOf="@id/addImage"
+        />
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/messageText"
-            android:layout_width="350dp"
-            android:layout_height="match_parent"
-            android:paddingStart="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginVertical="@dimen/text_margin"
-            android:background="@drawable/text_background"
-            android:hint="message"
-            android:textSize="15sp"
-            android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"/>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/messageSend"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_margin="@dimen/layout_margin"
+        app:icon="@drawable/ic_send_m"
+        app:backgroundTint="@color/gray"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/messageSend"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:layout_marginEnd="16dp"
-            app:icon="@drawable/ic_send_m"
-            app:backgroundTint="@color/gray"/>
-    </LinearLayout>
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addImage"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:layout_margin="@dimen/layout_margin"
+        app:icon="@drawable/ic_add_sign"
+        app:backgroundTint="@color/gray"
+        app:layout_constraintEnd_toStartOf="@id/messageSend"
+        app:layout_constraintStart_toEndOf="@id/messageText"
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -4,8 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayout
+import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentTabLayoutBinding
 import com.spongycode.blankspace.ui.main.adapters.ChatAdapter
 
@@ -43,6 +46,9 @@ class TabLayoutChatFragment: Fragment() {
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
+        requireActivity().onBackPressedDispatcher.addCallback {
+            findNavController().navigate(R.id.action_tabLayoutChatFragment_to_tabLayoutFragment)
+        }
         return binding.root
     }
 

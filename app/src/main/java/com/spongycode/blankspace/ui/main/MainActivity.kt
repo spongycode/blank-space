@@ -79,6 +79,7 @@ class MainActivity : AppCompatActivity() {
                         if (navController.currentDestination?.label == "ChatScreenFragment") return false
                         else navController.navigate(R.id.tabLayoutChatFragment)
                         binding.drawerLayout.close()
+                        binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
 
                     }
                     R.id.nav_fmemes -> {
