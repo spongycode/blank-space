@@ -5,7 +5,6 @@ import android.app.Activity
 import android.content.ContentValues
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.graphics.Point
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -13,7 +12,6 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.DisplayMetrics
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -51,8 +49,6 @@ class MainActivity : AppCompatActivity() {
         lateinit var imageViewModel: ImageViewModel
         lateinit var memeViewModel: MemeViewModel
         lateinit var chatViewModel: ChatViewModel
-        var width: Int? = null
-        var height: Int? = null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,12 +62,11 @@ class MainActivity : AppCompatActivity() {
         memeViewModel = ViewModelProvider(this).get(MemeViewModel::class.java)
         chatViewModel = ViewModelProvider(this).get(ChatViewModel::class.java)
 
-        width = screenSizeInDp.x
-        height = screenSizeInDp.y
-
         // navigation
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
+
+
 
         binding.navigationView.setNavigationItemSelectedListener (object : NavigationView.OnNavigationItemSelectedListener{
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -181,29 +176,3 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
-
-// I was trying to do something extra, but didn't workout.
-
-// extension property to get display metrics instance
-val Activity.displayMetrics: DisplayMetrics
-    get() {
-        val displayMetrics = DisplayMetrics()
-        if (Build.VERSION.SDK_INT >= 30) {
-            display?.getRealMetrics(displayMetrics)
-        } else {
-            // getMetrica was deprecated in api level 30
-            windowManager.defaultDisplay.getMetrics(displayMetrics)
-        }
-        return displayMetrics
-    }
-
-// Extension property to get screen widht an dheight in dp
-val Activity.screenSizeInDp: Point
-    get() {
-        val point = Point()
-        displayMetrics.apply {
-            point.x = widthPixels
-            point.y = heightPixels
-        }
-        return point
-    }

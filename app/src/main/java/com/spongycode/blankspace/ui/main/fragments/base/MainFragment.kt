@@ -14,10 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
-import android.widget.EdgeEffect
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
@@ -190,11 +187,14 @@ class MainFragment : Fragment() {
 
         binding.rvMeme.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                if (newState == RecyclerView.SCROLL_STATE_IDLE){
-                    val ll = binding.rvMeme.layoutManager as LinearLayoutManager
+                val ll = binding.rvMeme.layoutManager as LinearLayoutManager
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
                     memeViewModel.position = ll.findLastVisibleItemPosition()
-                        Log.d("pos", "position: ${ll.findLastVisibleItemPosition()}")
-                        Log.d("positi", "position: ${memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]?.size}")
+                    Log.d("pos", "position: ${ll.findLastVisibleItemPosition()}")
+                    Log.d("positi", "position: ${memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]?.size}")
+
+                }
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
                     if (ll.findLastCompletelyVisibleItemPosition() == memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.size - 1
                         && memeViewModel.position == memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.size - 1
                             ){
