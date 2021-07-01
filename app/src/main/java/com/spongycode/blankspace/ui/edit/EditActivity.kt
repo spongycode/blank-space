@@ -276,6 +276,8 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
 
 
             imageRouteClear = true
+        }else{
+            finish()
         }
     }
 

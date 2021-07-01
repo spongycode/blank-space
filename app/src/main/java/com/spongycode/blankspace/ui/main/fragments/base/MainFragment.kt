@@ -442,8 +442,8 @@ class MainFragment : Fragment() {
                             val path: String = MediaStore.Images.Media.insertImage(
                                 activity?.contentResolver,
                                 resource,
-                                "title",
-                                "desc"
+                                System.currentTimeMillis().toString(),
+                                System.currentTimeMillis().toString()
                             )
 
                             val myIntent = Intent()
