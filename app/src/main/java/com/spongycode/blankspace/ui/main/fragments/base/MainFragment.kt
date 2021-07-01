@@ -31,6 +31,7 @@ import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder
 import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
+import com.google.android.material.snackbar.Snackbar
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentMainBinding
 import com.spongycode.blankspace.model.UserModel
@@ -115,10 +116,10 @@ class MainFragment : Fragment() {
                             memeViewModel.currentMemeCategory = item.title.toString()
                             binding.currentCatTv.text = item.title.toString()
                             memeFunObserve(item.title.toString())
-                            Toast.makeText(
-                                requireContext(),
-                                "Loading random memes" + item.title,
-                                Toast.LENGTH_SHORT
+                            Snackbar.make(
+                                (activity as AppCompatActivity).findViewById(android.R.id.content),
+                                "Loading Random Memes",
+                                Snackbar.LENGTH_SHORT
                             ).show()
                         }
                     }
@@ -127,10 +128,10 @@ class MainFragment : Fragment() {
                             memeViewModel.currentMemeCategory = item.title.toString()
                             binding.currentCatTv.text = item.title.toString()
                             memeFunObserve(item.title.toString())
-                            Toast.makeText(
-                                requireContext(),
-                                "Loading gaming memes",
-                                Toast.LENGTH_SHORT
+                            Snackbar.make(
+                                (activity as AppCompatActivity).findViewById(android.R.id.content),
+                                "Loading Gaming Memes",
+                                Snackbar.LENGTH_SHORT
                             ).show()
                         }
                     }
@@ -139,10 +140,10 @@ class MainFragment : Fragment() {
                             memeViewModel.currentMemeCategory = item.title.toString()
                             binding.currentCatTv.text = item.title.toString()
                             memeFunObserve(item.title.toString())
-                            Toast.makeText(
-                                requireContext(),
-                                "Loading coding memes",
-                                Toast.LENGTH_SHORT
+                            Snackbar.make(
+                                (activity as AppCompatActivity).findViewById(android.R.id.content),
+                                "Loading Coding Memes",
+                                Snackbar.LENGTH_SHORT
                             ).show()
                         }
                     }
@@ -151,10 +152,10 @@ class MainFragment : Fragment() {
                             memeViewModel.currentMemeCategory = item.title.toString()
                             binding.currentCatTv.text = item.title.toString()
                             memeFunObserve(item.title.toString())
-                            Toast.makeText(
-                                requireContext(),
-                                "Loading science memes",
-                                Toast.LENGTH_SHORT
+                            Snackbar.make(
+                                (activity as AppCompatActivity).findViewById(android.R.id.content),
+                                "Loading Science Memes",
+                                Snackbar.LENGTH_SHORT
                             ).show()
                         }
                     }
@@ -163,10 +164,10 @@ class MainFragment : Fragment() {
                             memeViewModel.currentMemeCategory = item.title.toString()
                             binding.currentCatTv.text = item.title.toString()
                             memeFunObserve(item.title.toString())
-                            Toast.makeText(
-                                requireContext(),
-                                "Loading member edits",
-                                Toast.LENGTH_SHORT
+                            Snackbar.make(
+                                (activity as AppCompatActivity).findViewById(android.R.id.content),
+                                "Loading Member Edits",
+                                Snackbar.LENGTH_SHORT
                             ).show()
                         }
                     }
