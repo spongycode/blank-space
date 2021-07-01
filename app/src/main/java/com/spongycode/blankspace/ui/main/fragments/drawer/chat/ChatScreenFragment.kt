@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -53,8 +52,6 @@ class ChatScreenFragment: Fragment() {
 
         listenForLatestMessages()
         binding.fab.setOnClickListener { findNavController().navigate(R.id.listOfUsersFragment) }
-        binding.bottomNavigationView.setupWithNavController(findNavController())
-        binding.bottomNavigationView.setOnNavigationItemReselectedListener { return@setOnNavigationItemReselectedListener }
         return binding.root
     }
 

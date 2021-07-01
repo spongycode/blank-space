@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     R.id.nav_message -> {
                         if (navController.currentDestination?.label == "ChatScreenFragment") return false
-                        else navController.navigate(R.id.chatScreenFragment)
+                        else navController.navigate(R.id.tabLayoutChatFragment)
                         binding.drawerLayout.close()
 
                     }

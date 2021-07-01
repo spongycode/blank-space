@@ -96,4 +96,8 @@
         android:name="com.spongycode.blankspace.ui.auth.AuthActivity"
         android:label="activity_auth"
         tools:layout="@layout/activity_auth" />
+    <fragment
+        android:id="@+id/tabLayoutChatFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.drawer.chat.TabLayoutChatFragment"
+        android:label="TabLayoutChatFragment" />
 </navigation>
