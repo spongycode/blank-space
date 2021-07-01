@@ -10,7 +10,7 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#30BE76"
+        android:background="@color/decent_green"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/gadugi"
                 android:letterSpacing="0.05"
-                android:text="Settings"
+                android:text="Profile"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
 

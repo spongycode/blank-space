@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.storage.FirebaseStorage
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.ui.edit.fragments.PropertiesBSFragment
@@ -69,7 +70,7 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
         memeRedo = findViewById(R.id.meme_redo)
         memeBrush = findViewById(R.id.meme_brush)
         memeEraser = findViewById(R.id.meme_eraser)
-        memeEraser = findViewById(R.id.upload_edit)
+        memeUpload = findViewById(R.id.upload_edit)
 
         Helper.buttonEffect(memeAddTextBG, "#FF03DAC5")
         Helper.buttonEffect(memeAddText, "#FF03DAC5")
@@ -78,6 +79,7 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
         Helper.buttonEffect(memeRedo, "#9E693F")
         Helper.buttonEffect(memeBrush, "#FF03DAC5")
         Helper.buttonEffect(memeEraser, "#FF03DAC5")
+        Helper.buttonEffect(memeUpload, "#FF863BF1")
 
 
         if (url == "none") {
@@ -89,7 +91,7 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
         }
 
 
-        val mTextRobotoTf = ResourcesCompat.getFont(this, R.font.impact)
+        val mTextRobotoTf = ResourcesCompat.getFont(this, R.font.gadugi)
         mPhotoEditor = PhotoEditor.Builder(this, mPhotoEditorView)
             .setPinchTextScalable(true)
             .setDefaultTextTypeface(mTextRobotoTf)
@@ -130,7 +132,7 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
 
 
         memeAddTextBG.setOnClickListener {
-            val typeface: Typeface? = ResourcesCompat.getFont(this, R.font.impact)
+            val typeface: Typeface? = ResourcesCompat.getFont(this, R.font.gadugi)
             val textStyleBuilder: TextStyleBuilder = TextStyleBuilder()
             textStyleBuilder.withTextSize(40F)
             textStyleBuilder.withTextColor(resources.getColor(R.color.black))
@@ -143,7 +145,7 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
 
         }
         memeAddText.setOnClickListener {
-            val typeface: Typeface? = ResourcesCompat.getFont(this, R.font.impact)
+            val typeface: Typeface? = ResourcesCompat.getFont(this, R.font.gadugi)
             val textStyleBuilder: TextStyleBuilder = TextStyleBuilder()
             textStyleBuilder.withTextSize(40F)
             textStyleBuilder.withTextColor(resources.getColor(R.color.black))
@@ -220,8 +222,11 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
                                 .show(supportFragmentManager, "hello")
 //                            postFire(mUri)
                         } else {
-                            Toast.makeText(applicationContext, "Image Saved", Toast.LENGTH_LONG)
-                                .show()
+                            Snackbar.make(
+                                findViewById(android.R.id.content),
+                                "Image Saved",
+                                Snackbar.LENGTH_SHORT
+                            ).show()
                         }
 
                     }

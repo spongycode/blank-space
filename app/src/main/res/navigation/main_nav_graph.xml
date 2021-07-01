@@ -78,10 +78,6 @@
             app:destination="@id/chatScreenFragment" />
     </fragment>
     <fragment
-        android:id="@+id/myProfileFragment"
-        android:name="com.spongycode.blankspace.ui.main.fragments.drawer.profile.MyProfileFragment"
-        android:label="MyProfileFragment" />
-    <fragment
         android:id="@+id/privateChatFragment"
         android:name="com.spongycode.blankspace.ui.main.fragments.drawer.chat.PrivateChatFragment"
         android:label="PrivateChatFragment" />

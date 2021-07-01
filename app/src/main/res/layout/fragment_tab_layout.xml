@@ -13,22 +13,23 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#DCC5F3"
+            android:background="@color/decent_green"
             app:layout_scrollFlags="scroll|enterAlways|snap">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-
                 <TextView
                     android:id="@+id/name_logo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Blank Space"
-                    app:layout_constraintHorizontal_bias="0.2"
-                    android:textColor="#373636"
+                    android:fontFamily="@font/gadugi"
+                    android:textColor="@color/white"
                     android:textSize="20sp"
+                    android:letterSpacing="0.08"
+                    app:layout_constraintHorizontal_bias="0.35"
                     android:textStyle="bold"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -43,7 +44,7 @@
             android:id="@+id/tabLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#DCC5F3"
+            android:background="@color/decent_green"
             app:tabIndicatorHeight="0dp"
             app:tabSelectedTextColor="#FAFAFA">
 
@@ -56,6 +57,7 @@
         android:id="@+id/viewPager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:overScrollMode="never"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

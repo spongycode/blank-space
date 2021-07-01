@@ -12,6 +12,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.EdgeEffect
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -69,6 +70,12 @@ class GenerateFragment : Fragment() {
         }
 
         binding.list?.attachFab(binding.generateFab, activity as AppCompatActivity)
+        binding.list.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+            override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                return EdgeEffect(view.context).apply { color = resources.getColor(R.color.decent_green)
+                }
+            }
+        }
 
         binding.generateFab.setOnClickListener {
             val myIntent = Intent(requireContext(), EditActivity::class.java)
@@ -123,6 +130,7 @@ class GenerateFragment : Fragment() {
 
             override fun onDouble() {
                 if (img.fav){
+                    img.fav = false
                     removeTemplate(img)
                     holder.star.visibility = GONE
                 }else{
@@ -130,7 +138,6 @@ class GenerateFragment : Fragment() {
                     saveTemplate(img)
                     holder.star.visibility = VISIBLE
                 }
-                img.fav = !img.fav
                 holder.starAnim.alpha = 0.9f
                 val drawable: Drawable = holder.starAnim.drawable
                 val animatedVectorDrawable: AnimatedVectorDrawable =

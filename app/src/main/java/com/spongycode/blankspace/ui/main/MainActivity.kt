@@ -77,8 +77,7 @@ class MainActivity : AppCompatActivity() {
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
                 when (item.itemId){
                     R.id.nav_home -> {
-                        if (navController.currentDestination?.label == "TabLayoutFragment") return false
-                        else navController.navigate(R.id.tabLayoutFragment)
+                        navController.navigate(R.id.tabLayoutFragment)
                         binding.drawerLayout.close()
                     }
                     R.id.nav_message -> {
@@ -99,11 +98,6 @@ class MainActivity : AppCompatActivity() {
                         binding.drawerLayout.close()
                         binding.drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED)
                     }
-                    R.id.nav_profile -> {
-                        if (navController.currentDestination?.label == "MyProfileFragment") return false
-                        else navController.navigate(R.id.myProfileFragment)
-                        binding.drawerLayout.close()
-                    }
                     R.id.nav_settings -> {
                         if (navController.currentDestination?.label == "SettingFragment") return false
                         else navController.navigate(R.id.action_tabLayoutFragment_to_settingFragment)
@@ -117,7 +111,6 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
         })
-
     }
 
     fun saveImage(activity: Activity, image: Drawable, title: String) {
@@ -165,7 +158,7 @@ class MainActivity : AppCompatActivity() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             if (ContextCompat.checkSelfPermission(activity.applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 == PackageManager.PERMISSION_DENIED || ContextCompat.checkSelfPermission(activity.applicationContext, Manifest.permission.READ_EXTERNAL_STORAGE)
-            == PackageManager.PERMISSION_DENIED  ){ // Request Permission
+                == PackageManager.PERMISSION_DENIED  ){ // Request Permission
                 ActivityCompat.requestPermissions(activity,
                     arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE),
                     STORAGE_PERMISSION_CODE)

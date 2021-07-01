@@ -14,11 +14,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.annotation.Nullable
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
@@ -26,12 +24,13 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentMainBinding
 import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelmemes.MemeModel
-import com.spongycode.blankspace.storage.saveMemeToFavs
+import com.spongycode.blankspace.storage.*
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
@@ -66,6 +65,7 @@ class MainFragment : Fragment() {
         memeViewModel.allMemeDb["Coding"] = memeViewModel.codingMemeList
         memeViewModel.allMemeDb["Science"] = memeViewModel.scienceMemeList
         memeViewModel.allMemeDb["Member Edits"] = memeViewModel.memberEditsMemeList
+        binding.currentCatTv.text = memeViewModel.currentMemeCategory
 
         if (memeViewModel.count == 0) {
             memeViewModel.memeFun(memeViewModel.currentMemeCategory).observe(
@@ -90,6 +90,12 @@ class MainFragment : Fragment() {
             )
             binding.rvMeme.adapter?.notifyDataSetChanged()
 
+        }
+        binding.rvMeme.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
+            override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
+                return EdgeEffect(view.context).apply { color = resources.getColor(R.color.decent_green)
+                }
+            }
         }
 
         binding.pop.setOnClickListener {
@@ -163,6 +169,8 @@ class MainFragment : Fragment() {
             }
             popupMenu.show()
         }
+
+        binding.rvMeme?.attachFab(binding.fabMemberEdits, activity as AppCompatActivity)
 
 //        binding.spCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 //            override fun onItemSelected(
@@ -299,27 +307,31 @@ class MainFragment : Fragment() {
                 val dateFinal =
                     listDate[3] + ":" + listDate[4] + " on " + listDate[1] + " " + listDate[2]
                 holder.memePostTimeTv.text = dateFinal
-            }
-
-            firestore.collection("users")
-                .whereEqualTo("userId", meme.userId)
-                .get()
-                .addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        for (data in task.result!!) {
-                            val imageUrl = data.toObject(UserModel::class.java).imageUrl
-                            Glide.with(requireActivity()).load(imageUrl)
-                                .into(holder.memeSenderImage)
-                            holder.memeSenderUsername.text =
-                                data.toObject(UserModel::class.java).username
+                firestore.collection("users")
+                    .whereEqualTo("userId", meme.userId)
+                    .get()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            for (data in task.result!!) {
+                                val imageUrl = data.toObject(UserModel::class.java).imageUrl
+                                Glide.with(requireActivity()).load(imageUrl)
+                                    .into(holder.memeSenderImage)
+                                holder.memeSenderUsername.text =
+                                    data.toObject(UserModel::class.java).username
+                            }
                         }
                     }
-                }
+            }
 
-
-
+            checkMemeIsFav(meme)
+            holder.like.setImageResource(if (meme.like) R.drawable.ic_baseline_favorite_24 else
+                R.drawable.ic_baseline_favorite_border_24)
 
             holder.title.text = meme.title
+
+            holder.memeLikeEntry.setOnClickListener {
+                onDoubleWorker(holder, meme)
+            }
 
 
             val circularProgressDrawable = CircularProgressDrawable(requireContext())
@@ -334,7 +346,7 @@ class MainFragment : Fragment() {
                 .into(holder.image)
 
 
-            holder.like.setImageResource(if (meme.like) R.drawable.ic_heart_sign else R.drawable.ic_hearth)
+
             holder.image.setOnTouchListener(TapListener(meme, holder))
             holder.share.setOnClickListener {
 
@@ -351,8 +363,8 @@ class MainFragment : Fragment() {
                             val path: String = MediaStore.Images.Media.insertImage(
                                 activity?.contentResolver,
                                 resource,
-                                null,
-                                null
+                                "title",
+                                "desc"
                             )
 
                             val myIntent = Intent()
@@ -391,6 +403,8 @@ class MainFragment : Fragment() {
             internal val memeSenderUsername: TextView = view.findViewById(R.id.meme_sender_username)
             internal val memePostTimeTv: TextView = view.findViewById(R.id.meme_post_time_tv)
             internal val memeHeartAnim: ImageView = view.findViewById(R.id.meme_heart_anim_iv)
+            internal val memeLikeEntry: ShapeableImageView = view.findViewById(R.id.like_entry)
+            internal val memeLikeGone: ShapeableImageView = view.findViewById(R.id.like_gone)
         }
 
         inner class TapListener(private val meme: MemeModel, private val holder: ViewHolder) :
@@ -410,15 +424,7 @@ class MainFragment : Fragment() {
             }
 
             override fun onDouble() {
-                saveMemeToFavs(meme)
-                meme.like = !meme.like
-                // this rebuilds the whole rv, we need to implement a diffUtil.
-//                binding.rvMeme.adapter?.notifyDataSetChanged()
-                holder.memeHeartAnim.alpha = 0.8f
-                val drawable: Drawable = holder.memeHeartAnim.drawable
-                val animatedVectorDrawable: AnimatedVectorDrawable =
-                    drawable as AnimatedVectorDrawable
-                animatedVectorDrawable.start()
+                onDoubleWorker(holder,meme)
             }
 
             override fun onSingle() {
@@ -426,5 +432,55 @@ class MainFragment : Fragment() {
                 PhotoViewerDialog.newInstance(meme.url).show(parentFragmentManager, "hello")
             }
         }
+
+        private fun onDoubleWorker(holder: ViewHolder,meme: MemeModel) {
+            if (meme.like){
+                meme.like = false
+                removeMeme(meme)
+                holder.like.setImageResource(0)
+                holder.memeLikeEntry.alpha = 0f
+                holder.memeLikeGone.alpha = 1f
+                val drawableLittle: Drawable = holder.memeLikeGone.drawable
+                val animatedVectorDrawableLittle: AnimatedVectorDrawable =
+                    drawableLittle as AnimatedVectorDrawable
+                animatedVectorDrawableLittle.start()
+
+            }else{
+                meme.like = true
+                saveMemeToFavs(meme)
+                holder.memeLikeEntry.alpha = 1f
+                holder.memeLikeGone.alpha = 0f
+                val drawableLittle: Drawable = holder.memeLikeEntry.drawable
+                val animatedVectorDrawableLittle: AnimatedVectorDrawable =
+                    drawableLittle as AnimatedVectorDrawable
+                animatedVectorDrawableLittle.start()
+                holder.like.setImageResource(R.drawable.ic_baseline_favorite_24)
+            }
+
+            // this rebuilds the whole rv, we need to implement a diffUtil.
+//                binding.rvMeme.adapter?.notifyDataSetChanged()
+            holder.memeHeartAnim.alpha = 0.8f
+            val drawable: Drawable = holder.memeHeartAnim.drawable
+            val animatedVectorDrawable: AnimatedVectorDrawable =
+                drawable as AnimatedVectorDrawable
+            animatedVectorDrawable.start()
+
+        }
+    }
+
+    private fun RecyclerView.attachFab(fab: FloatingActionButton, activity: AppCompatActivity) {
+        this.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy > 0) {
+                    fab.hide()
+
+                } else if (dy < 0) {
+                    fab.show()
+                    activity.supportActionBar!!.show()
+
+                }
+            }
+        })
     }
 }

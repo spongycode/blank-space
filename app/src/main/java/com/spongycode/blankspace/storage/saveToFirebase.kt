@@ -58,6 +58,18 @@ fun removeTemplate(image: Image) {
     }
 }
 
+fun removeMeme(meme: MemeModel) {
+    var name =
+        meme.url  // changing to url from title as sometimes title is blank as also always not unique
+    val re = Regex("[^A-Za-z0-9 ]")
+    name = re.replace(name, "") // remove all special characters
+    meme?.let {
+        imageCollection
+            .document("${AuthActivity().firebaseAuth.currentUser?.email}/favMemes/$name")
+            .delete()
+    }
+}
+
 fun getMemeFromFavs(): LiveData<List<MemeModel>> {
     val memeLiveData: MutableLiveData<List<MemeModel>> = MutableLiveData()
     Firebase.firestore.collection("userImages/${AuthActivity().firebaseAuth.currentUser?.email}/favMemes")
@@ -108,6 +120,19 @@ fun checkTemplateIsFav(img: Image) {
             if (task.isSuccessful) {
                 if (task.result!!.size() > 0) {
                     img.fav = true
+                }
+            }
+        }
+}
+
+fun checkMemeIsFav(meme: MemeModel) {
+    Firebase.firestore.collection("userImages/${AuthActivity().firebaseAuth.currentUser?.email}/favMemes")
+        .whereEqualTo("url", meme.url)
+        .get()
+        .addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                if (task.result!!.size() > 0) {
+                    meme.like = true
                 }
             }
         }
