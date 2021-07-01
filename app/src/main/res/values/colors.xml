@@ -28,5 +28,6 @@
 
     // decent green
     <color name="decent_green">#9DAC5A</color>
+    <color name="decent_blue">#549BD3</color>
 
 </resources>

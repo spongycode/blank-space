@@ -44,6 +44,7 @@ import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
 import com.spongycode.blankspace.util.ClickListener
 import com.spongycode.blankspace.util.userdata
 import java.io.ByteArrayOutputStream
+import java.util.*
 
 
 @Suppress("DEPRECATION")
@@ -459,11 +460,13 @@ class MainFragment : Fragment() {
                     })
             }
             holder.download.setOnClickListener {
-                MainActivity().saveImage(
-                    (activity as MainActivity),
-                    holder.image.drawable,
-                    meme.title
-                )
+                if(meme.url.substring(meme.url.lastIndexOf(".")).toLowerCase(Locale.ROOT).trim() != ".gif") {
+                    MainActivity().saveImage(
+                        (activity as MainActivity),
+                        holder.image.drawable,
+                        meme.title
+                    )
+                }
             }
             holder.like.setOnClickListener { meme.like = !meme.like }
         }

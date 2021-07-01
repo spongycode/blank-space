@@ -74,7 +74,7 @@
         android:id="@+id/fab_member_edits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/decent_green"
+        android:backgroundTint="@color/decent_blue"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="50dp"
         android:src="@drawable/ic_create"
