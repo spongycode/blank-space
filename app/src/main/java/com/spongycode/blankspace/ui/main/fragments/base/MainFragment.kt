@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.net.Uri
@@ -25,6 +26,9 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.elconfidencial.bubbleshowcase.BubbleShowCase
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseBuilder
+import com.elconfidencial.bubbleshowcase.BubbleShowCaseSequence
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.imageview.ShapeableImageView
 import com.spongycode.blankspace.R
@@ -48,6 +52,7 @@ class MainFragment : Fragment() {
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
     private val memeViewModel = MainActivity.memeViewModel
+    private var isShown = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -226,7 +231,7 @@ class MainFragment : Fragment() {
                 viewLifecycleOwner, {
                     // set up and populate view
                     memeViewModel.allMemeDb[category]?.apply {
-                        addAll(0,it)
+                        addAll(0, it)
                         toSet()
                         toList()
                         Log.d("meme", "meme: ${memeViewModel.allMemeDb[category]!!}")
@@ -357,6 +362,68 @@ class MainFragment : Fragment() {
 
 
 
+            binding.rvMeme.viewTreeObserver
+                .addOnGlobalLayoutListener {
+                    if (!isShown) {
+                        val showcaseMainIv: ImageView =
+                            binding.rvMeme.getChildAt(0).findViewById<ImageView>(R.id.meme_iv)
+                        val showCaseShareIv: ImageView =
+                            binding.rvMeme.getChildAt(0).findViewById(R.id.share)
+                        val showCaseFilter: ImageButton =
+                            (activity as MainActivity).findViewById(R.id.pop)
+                        val firstShowCaseBuilder = BubbleShowCaseBuilder(activity as MainActivity)
+                            .title("Hold to Edit")
+                            .description("Tap and Hold the image to edit them with you texts and more.")
+                            .arrowPosition(BubbleShowCase.ArrowPosition.TOP)
+                            .backgroundColor(Color.WHITE)
+                            .textColor(Color.BLACK)
+                            .titleTextSize(17)
+                            .descriptionTextSize(15)
+                            .image(resources.getDrawable(R.drawable.ic_create))
+                            .showOnce("BUBBLE_SHOW_EDIT_ID")
+                            .targetView(showcaseMainIv)
+                        val secondShowCaseBuilder = BubbleShowCaseBuilder(activity as MainActivity)
+                            .title("Double Tap to Favorite")
+                            .description("Double tap on your favorite Memes and Templates to bookmark them and access easily.")
+                            .arrowPosition(BubbleShowCase.ArrowPosition.TOP)
+                            .backgroundColor(Color.WHITE)
+                            .textColor(Color.BLACK)
+                            .titleTextSize(17)
+                            .descriptionTextSize(15)
+                            .image(resources.getDrawable(R.drawable.ic_baseline_favorite_24))
+                            .showOnce("BUBBLE_SHOW_FAV_ID")
+                            .targetView(showcaseMainIv)
+                        val thirdShowCaseBuilder = BubbleShowCaseBuilder(activity as MainActivity)
+                            .title("Easy Share")
+                            .description("Share Memes with your friends easily.")
+                            .arrowPosition(BubbleShowCase.ArrowPosition.RIGHT)
+                            .backgroundColor(Color.WHITE)
+                            .textColor(Color.BLACK)
+                            .titleTextSize(17)
+                            .descriptionTextSize(15)
+                            .image(resources.getDrawable(R.drawable.ic_baseline_share_24))
+                            .showOnce("BUBBLE_SHOW_SHARE_ID")
+                            .targetView(showCaseShareIv)
+                        val fourthShowCaseBuilder = BubbleShowCaseBuilder(activity as MainActivity)
+                            .title("Filter Categories")
+                            .description("Access new memes in different categories.")
+                            .arrowPosition(BubbleShowCase.ArrowPosition.TOP)
+                            .backgroundColor(Color.WHITE)
+                            .textColor(Color.BLACK)
+                            .titleTextSize(17)
+                            .descriptionTextSize(15)
+                            .image(resources.getDrawable(R.drawable.ic_baseline_filter_list_24))
+                            .showOnce("BUBBLE_SHOW_FILTER_ID")
+                            .targetView(showCaseFilter)
+                        BubbleShowCaseSequence()
+                            .addShowCase(fourthShowCaseBuilder)
+                            .addShowCase(firstShowCaseBuilder)
+                            .addShowCase(secondShowCaseBuilder)
+                            .addShowCase(thirdShowCaseBuilder)
+                            .show()
+                        isShown = true
+                    }
+                }
             holder.image.setOnTouchListener(TapListener(meme, holder))
             holder.share.setOnClickListener {
 
@@ -434,7 +501,7 @@ class MainFragment : Fragment() {
             }
 
             override fun onDouble() {
-                onDoubleWorker(holder,meme)
+                onDoubleWorker(holder, meme)
             }
 
             override fun onSingle() {
@@ -443,7 +510,7 @@ class MainFragment : Fragment() {
             }
         }
 
-        private fun onDoubleWorker(holder: ViewHolder,meme: MemeModel) {
+        private fun onDoubleWorker(holder: ViewHolder, meme: MemeModel) {
             if (meme.like){
                 meme.like = false
                 removeMeme(meme)
