@@ -41,6 +41,7 @@ class SignUpFragment : Fragment() {
         requireActivity().onBackPressedDispatcher.addCallback {
             activity?.finish()
         }
+        Helper.buttonEffect(binding.signUpButton, "#C665F37D")
         return binding.root
     }
 

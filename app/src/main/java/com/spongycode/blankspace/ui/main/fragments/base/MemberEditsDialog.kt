@@ -89,9 +89,9 @@ class MemberEditsDialog : DialogFragment() {
             initiateUpload(Uri.parse(uploadImageUrl))
             view.findViewById<Button>(R.id.member_edits_btn).visibility = GONE
         }
-
-        Glide.with(requireActivity()).load(profileImageUrl)
-            .into(view.findViewById(R.id.member_edits_iv))
+        if(profileImageUrl != ""){
+            Glide.with(requireActivity()).load(profileImageUrl).into(view.findViewById(R.id.member_edits_iv))
+        }
         view.findViewById<Button>(R.id.member_edits_btn_post).isEnabled = false
         view.findViewById<Button>(R.id.member_edits_btn_post).alpha = 0.5f
         Helper.buttonEffect(view.findViewById<Button>(R.id.member_edits_btn_post), "#C665F37D")

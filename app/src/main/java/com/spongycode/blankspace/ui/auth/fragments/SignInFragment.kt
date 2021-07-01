@@ -16,6 +16,7 @@ import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentSigninBinding
 import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.ui.auth.AuthActivity
+import com.spongycode.blankspace.util.Helper
 import com.spongycode.blankspace.util.userdata
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -38,6 +39,7 @@ class SignInFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentSigninBinding.inflate(inflater, container, false)
+        Helper.buttonEffect(binding.signInButton, "#C665F37D")
         return binding.root
     }
 

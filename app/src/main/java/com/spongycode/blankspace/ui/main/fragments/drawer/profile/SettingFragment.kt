@@ -85,7 +85,9 @@ class SettingFragment : Fragment() {
         }
         storageReference = FirebaseStorage.getInstance().reference
         ivProPic = binding.ivProfilePic
-        Glide.with(this).load(userdata.afterLoginUserData.imageUrl).into(ivProPic)
+        if(userdata.afterLoginUserData.imageUrl != ""){
+            Glide.with(this).load(userdata.afterLoginUserData.imageUrl).into(ivProPic)
+        }
 
         username = binding.textInputEditText
         username.setText(userdata.afterLoginUserData.username)
