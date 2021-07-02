@@ -17,29 +17,15 @@ import com.spongycode.blankspace.databinding.RightsidemessageBinding
 import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelChat.ChatMessage
 import com.spongycode.blankspace.ui.main.MainActivity
+import com.spongycode.blankspace.util.Constants.groupId
 import com.spongycode.blankspace.viewmodel.ChatViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
-class GroupChatFragment: Fragment() {
 
-    /*
-    * the layout is as basic, but still i think we should separate it/ create it's own layout,
-    * there are tiny diferences and later it will have way more diferences
-    *
-    * how will it work?
-    * in private chat the message is send to path - sender/receiver and vice-versa
-    * in group chat we still want to just send messages, but slightly differently
-    * sender/group,  group/sender, no receiver, i think so, we'll just differ from senders
-    *
-    * there's just no receiver Id, but it can't be sender/group, because that will be a different path
-    * for every user, and the path needs to be the same
-    * message-group, message-group, no sender
-    * and then just download all messages from the group, but the message should still hold
-    * info of the sender and the receiver(groupId)
-    * */
+class GroupChatFragment: Fragment() {
 
     private var _binding: FragmentGroupChatBinding? = null
     private val binding get() = _binding!!
@@ -48,7 +34,6 @@ class GroupChatFragment: Fragment() {
     private val chatViewModel: ChatViewModel = MainActivity.chatViewModel
     private val chatMessages = mutableListOf<ChatMessage>()
     private var sender = UserModel()
-    private val groupId = "blankspacegroup  "
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

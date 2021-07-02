@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -17,6 +18,7 @@ import com.spongycode.blankspace.databinding.FragmentSigninBinding
 import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.ui.auth.AuthActivity
 import com.spongycode.blankspace.util.Helper
+import com.spongycode.blankspace.util.NetworkCheck.hasInternetConnection
 import com.spongycode.blankspace.util.userdata
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -65,19 +67,27 @@ class SignInFragment: Fragment() {
         email: String,
         password: String
     ) {
-        if(email.isNotBlank() && password.isNotBlank()){
-            CoroutineScope(Dispatchers.IO).launch {
-                try {
-                    firebaseAuth.signInWithEmailAndPassword(email, password).await()
-                    checkSignInState()
-                } catch (e: FirebaseAuthException){
-                    withContext(Dispatchers.Main){
-                        Toast.makeText(requireContext(), "Failed to login, try again", Toast.LENGTH_SHORT).show()
-                        Log.w("authloginFailed", e.stackTrace.toString())
+        try {
+            if(hasInternetConnection((activity as AuthActivity).application)) {
+                if (email.isNotBlank() && password.isNotBlank()) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        try {
+                            firebaseAuth.signInWithEmailAndPassword(email, password).await()
+                            checkSignInState()
+                        } catch (e: FirebaseAuthException) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Failed to login, try again",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                Log.w("authloginFailed", e.stackTrace.toString())
+                            }
+                        }
                     }
                 }
-            }
-        }
+            } else { Toast.makeText(context, "No internet connection", Toast.LENGTH_LONG).show() }
+        } catch (e: FirebaseNetworkException){ Log.e("networkException", e.message!!) }
     }
 
     private fun checkSignInState() {

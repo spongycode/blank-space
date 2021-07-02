@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.auth.FirebaseAuthException
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -18,6 +19,7 @@ import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.ui.auth.AuthActivity
 import com.spongycode.blankspace.ui.auth.AuthActivity.Companion.usersCollectionReference
 import com.spongycode.blankspace.util.Helper
+import com.spongycode.blankspace.util.NetworkCheck.hasInternetConnection
 import com.spongycode.blankspace.util.userdata
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -69,39 +71,44 @@ class SignUpFragment : Fragment() {
         email: String,
         password: String
     ) {
-        if (email.isNotBlank() && password.isNotBlank()) {
-            CoroutineScope(Dispatchers.IO).launch {
-                if (Helper.isUniqueUsername(name)) {
-                    try {
-                        firebaseAuth.createUserWithEmailAndPassword(email, password).await()
-                        val userId = firebaseAuth.currentUser!!.uid
-                        usersCollectionReference.document(userId)
-                            .set(
-                                UserModel( userId, email, name
-                                )
-                            )
-                        checkSignUpState()
-                    } catch (e: FirebaseAuthException) {
-                        withContext(Dispatchers.Main) {
-                            Toast.makeText(
-                                requireContext(),
-                                "Failed to register, try again",
-                                Toast.LENGTH_LONG
-                            ).show()
-                            Log.w("authregisterFailed", e.stackTrace.toString())
+        try{
+            if (hasInternetConnection((activity as AuthActivity).application)){
+                if (email.isNotBlank() && password.isNotBlank()) {
+                    CoroutineScope(Dispatchers.IO).launch {
+                        if (Helper.isUniqueUsername(name)) {
+                            try {
+                                firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+                                val userId = firebaseAuth.currentUser!!.uid
+                                usersCollectionReference.document(userId)
+                                    .set(
+                                        UserModel(
+                                            userId, email, name
+                                        )
+                                    )
+                                checkSignUpState()
+                            } catch (e: FirebaseAuthException) {
+                                withContext(Dispatchers.Main) {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        "Failed to register, try again",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                    Log.w("authregisterFailed", e.stackTrace.toString())
+                                }
+                            }
+                        } else {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Pick unique username",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
                         }
                     }
-                } else {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(
-                            requireContext(),
-                            "Pick unique username",
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
                 }
-            }
-        }
+            } else { Toast.makeText(context, "No internet connection", Toast.LENGTH_LONG).show() }
+        } catch (e: FirebaseNetworkException){ Log.e("networkException", e.message!!) }
     }
 
     private fun checkSignUpState() {

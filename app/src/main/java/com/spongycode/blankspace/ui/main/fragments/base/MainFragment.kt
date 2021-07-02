@@ -1,5 +1,6 @@
 package com.spongycode.blankspace.ui.main.fragments.base
 
+import android.accounts.NetworkErrorException
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
@@ -43,6 +44,7 @@ import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
 import com.spongycode.blankspace.util.ClickListener
+import com.spongycode.blankspace.util.NetworkCheck
 import com.spongycode.blankspace.util.userdata
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -75,24 +77,32 @@ class MainFragment : Fragment() {
         memeViewModel.allMemeDb["Member Edits"] = memeViewModel.memberEditsMemeList
         binding.currentCatTv.text = memeViewModel.currentMemeCategory
 
-        if (memeViewModel.count == 0) {
-            memeViewModel.memeFun(memeViewModel.currentMemeCategory).observe(
-                viewLifecycleOwner, {
-                    // set up and populate view
-                    memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]?.apply {
-                        addAll(it)
-                        toSet()
-                        toList()
-                    }
-                    binding.rvMeme.adapter =
-                        MemeRecyclerAdapter(requireContext(), memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!)
-                    binding.rvMeme.adapter?.notifyDataSetChanged()
+        try{
+            if (NetworkCheck.hasInternetConnection((activity as MainActivity).application)) {
+                if (memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.isEmpty()) {
+                    memeViewModel.memeFun(memeViewModel.currentMemeCategory).observe(
+                        viewLifecycleOwner, {
+                            // set up and populate view
+                            memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]?.apply {
+                                addAll(it)
+                                toSet()
+                                toList()
+                            }
+                            binding.rvMeme.adapter =
+                                MemeRecyclerAdapter(
+                                    requireContext(),
+                                    memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!
+                                )
+                            binding.rvMeme.adapter?.notifyDataSetChanged()
+                        }
+                    )
                 }
-            )
-            
-            memeViewModel.count = 1
-        }
-        if (memeViewModel.count == 1) {
+            } else {
+                Toast.makeText(context, "No internet connection", Toast.LENGTH_LONG).show()
+            }
+        }catch (e: NetworkErrorException) { Log.e("networkException", e.message!!) }
+
+        if (!memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.isEmpty()) {
             binding.rvMeme.adapter = MemeRecyclerAdapter(
                 requireContext(),
                 memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!
@@ -204,6 +214,7 @@ class MainFragment : Fragment() {
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
                     if (ll.findLastCompletelyVisibleItemPosition() == memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.size - 1
                         && memeViewModel.position == memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.size - 1
+                        && memeViewModel.currentMemeCategory != "Member Edits"
                             ){
                         memeViewModel.memeFun(memeViewModel.currentMemeCategory).observe(
                             viewLifecycleOwner, {
@@ -249,51 +260,6 @@ class MainFragment : Fragment() {
             binding.rvMeme.adapter?.notifyDataSetChanged()
         }
     }
-
-    // This should be in its own file (repository)
-//    private fun fetchMemeByCategory(category: String) {
-//
-//        if (category == "Member Edits"){
-//            return
-//        }
-//
-//        when(category){
-//            "Random" -> apiInterface = ApiInterface.create().getMemesRandom()
-//            "Coding" -> apiInterface = ApiInterface.create().getMemesProgram()
-//            "Science" -> apiInterface = ApiInterface.create().getMemesScience()
-//            "Gaming" -> apiInterface = ApiInterface.create().getMemesGaming()
-//        }
-//
-//
-//        apiInterface.enqueue(object : Callback<MemeList?> {
-//            override fun onResponse(call: Call<MemeList?>, response: Response<MemeList?>) {
-//
-//                if (response.body() != null) {
-//                    val memeList: MutableList<MemeModel> = mutableListOf()
-//                    for (i in response.body()!!.memes!!) {
-//                        memeList.add(i)
-//                    }
-//
-//                    val linearLayoutManager =
-//                        LinearLayoutManager(requireContext(), RecyclerView.VERTICAL, false)
-//                    binding.rvMeme.layoutManager = linearLayoutManager
-//                    binding.rvMeme.adapter = MemeRecyclerAdapter(requireActivity(), memeList)
-//                    val adapter = binding.rvMeme.adapter
-//                    adapter?.notifyDataSetChanged()
-//
-//                } else {
-//                    Toast.makeText(requireActivity(), "Error fetching", Toast.LENGTH_LONG).show()
-//
-//                }
-//
-//            }
-//
-//            override fun onFailure(call: Call<MemeList?>, t: Throwable) {
-//                Log.d(TAG, "Error Fetching: ${t.printStackTrace()}")
-//                Toast.makeText(requireActivity(), t.toString(), Toast.LENGTH_LONG).show()
-//            }
-//        })
-//    }
 
     inner class MemeRecyclerAdapter(
         private val context: Context,

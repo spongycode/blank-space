@@ -109,6 +109,8 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+
+
     fun saveImage(activity: Activity, image: Drawable, title: String) {
 
         checkPermission(activity)
