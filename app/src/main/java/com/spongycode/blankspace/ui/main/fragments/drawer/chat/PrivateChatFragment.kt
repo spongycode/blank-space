@@ -3,7 +3,6 @@ package com.spongycode.blankspace.ui.main.fragments.drawer.chat
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +12,6 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentPrivateChatBinding
 import com.spongycode.blankspace.databinding.LeftsidemessageBinding
 import com.spongycode.blankspace.databinding.RightsidemessageBinding
@@ -58,12 +56,6 @@ class PrivateChatFragment: Fragment() {
 
         receiveMessage()
 
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         binding.apply {
 
             messageText.setText(chatViewModel.currentText)
@@ -80,30 +72,7 @@ class PrivateChatFragment: Fragment() {
         (activity as MainActivity).supportActionBar?.title = receiver.username
         (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-    }
-
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.private_chat, menu)
-    }
-
-    // Maybe we'll have time to add voice or video chat
-    // But first we need to be able to share images in chat
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId){
-        R.id.voiceCall -> {
-            Toast.makeText(requireContext(),
-                "you tried to call ${receiver.username}",
-                Toast.LENGTH_SHORT).show()
-            true
-        }
-
-        R.id.videoCall -> {
-            Toast.makeText(requireContext(),
-                "you tried to video ${receiver.username}",
-                Toast.LENGTH_SHORT).show()
-            true
-        }
-        else -> super.onOptionsItemSelected(item)
+        return binding.root
     }
 
     private fun sendMessage(){
@@ -121,9 +90,13 @@ class PrivateChatFragment: Fragment() {
             val message = ChatMessage(
                 UUID.randomUUID().toString(),
                 binding.messageText.text.toString(),
-                sender.userId,
+                Calendar.getInstance().timeInMillis,
                 receiver.userId,
-                Calendar.getInstance().timeInMillis / 1000
+                receiver.username,
+                "",
+                sender.userId,
+                sender.username,
+                ""
             )
 
             senderReference.add(message)
@@ -133,7 +106,7 @@ class PrivateChatFragment: Fragment() {
             // every message sent overrides the previous
             val messageMap = hashMapOf(
                 "messageId" to message.messageId,
-                "messageReceiverId" to message.messageReceiverID,
+                "messageReceiverId" to message.messageReceiverId,
                 "nameReceiver" to receiver.username,
                 "profilePictureReceiver" to receiver.imageUrl,
                 "messageSenderId" to sender.userId,
@@ -181,7 +154,7 @@ class PrivateChatFragment: Fragment() {
                             chatMessages.add(message)
                         }
 
-                        // scroll to the just received message
+                        chatMessages.sortByDescending { it.messageTime }
                         binding.list.adapter = PrivateChatAdapter(chatMessages)
                         binding.list.addItemDecoration(
                             DividerItemDecoration(
@@ -190,6 +163,7 @@ class PrivateChatFragment: Fragment() {
                             )
                         )
                         binding.list.adapter?.notifyDataSetChanged()
+                        // scroll to the just received message
                         binding.list.scrollToPosition(chatMessages.size - 1)
                     }
                 }
@@ -215,7 +189,7 @@ class PrivateChatFragment: Fragment() {
             }
 
         override fun getItemViewType(position: Int): Int {
-            return if(messages[position].messageSenderID
+            return if(messages[position].messageSenderId
                 == FirebaseAuth.getInstance().currentUser!!.uid) 0 else 1
         }
 

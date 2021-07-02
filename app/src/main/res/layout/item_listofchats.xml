@@ -35,29 +35,14 @@
 
     </LinearLayout>
 
-    <LinearLayout
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/time"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/text_margin"
-            android:hint="10:00"
-            android:textAppearance="?attr/textAppearanceOverline" />
-
-        <com.google.android.material.textview.MaterialTextView
-            android:id="@+id/messageCount"
-            android:layout_width="wrap_content"
-            android:layout_height="26dp"
-            android:layout_margin="@dimen/text_margin"
-            android:gravity="bottom"
-            android:hint="100"
-            android:textAlignment="gravity"
-            android:textAppearance="?attr/textAppearanceOverline" />
-    </LinearLayout>
-
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="15dp"
+        android:layout_marginHorizontal="@dimen/text_margin"
+        android:hint="10:00"
+        android:textAppearance="?attr/textAppearanceOverline" />
 
 </LinearLayout>

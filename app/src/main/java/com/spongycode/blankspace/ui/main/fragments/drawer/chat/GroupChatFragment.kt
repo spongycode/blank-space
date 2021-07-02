@@ -52,25 +52,8 @@ class GroupChatFragment: Fragment() {
         })
         Log.d("sender", "sender: $sender")
 
-        val messageList = listOf(
-            ChatMessage("asdfkid", "messaeg text",
-            "${FirebaseAuth.getInstance().currentUser?.uid}", "$groupId", 12342341),
-            ChatMessage("fdsasdf", "messaege text",
-            "${FirebaseAuth.getInstance().currentUser?.uid}", "$groupId", 12342361),
-            ChatMessage("fasdfasfd", "messaeg etext",
-            "${FirebaseAuth.getInstance().currentUser?.uid}", "$groupId", 12342351),
-        )
-
-        binding.list.adapter = GroupChatAdapter(messageList)
+        binding.list.adapter = GroupChatAdapter(listOf())
         binding.list.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
-        receiveMessage()
-
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
         receiveMessage()
 
         binding.apply {
@@ -89,8 +72,8 @@ class GroupChatFragment: Fragment() {
         (activity as MainActivity).supportActionBar?.title = "Blank Space"
         (activity as MainActivity).supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        return binding.root
     }
-
     private fun sendMessage(){
 
         // reference of the chatRoom for the sender and receiver of the message
@@ -103,26 +86,16 @@ class GroupChatFragment: Fragment() {
             val message = ChatMessage(
                 UUID.randomUUID().toString(),
                 binding.messageText.text.toString(),
-                sender.userId,
+                Calendar.getInstance().timeInMillis,
                 groupId,
-                Calendar.getInstance().timeInMillis / 1000
+                "",
+                "",
+                sender.userId,
+                sender.username,
+                ""
             )
 
             senderReference.add(message)
-
-            // send the same message to the latest message node
-            // every message sent overrides the previous
-            // will think about this tomorrow, but no receiver,
-            // i just need the receiver logic to set up the view, in this case it's always the group
-            // only thing that will change is the message, but in chat we'll need to know who sent it
-            // and we have that info from the sender, we don't hve that...
-            // we do have it in the map below, but that's for chatScreen, i need it now in the chatMessage Model
-            // only names, no pictures needed
-
-            // on the other hand, messages in this fragment won't be presented on chatScreen
-            // maybe later when we add features, and users find themselves able to create groups, but
-            // group chat fragment is exactly what the name says. (general chat)
-
         }
 
     }
@@ -146,7 +119,7 @@ class GroupChatFragment: Fragment() {
                         val message = doc.toObject<ChatMessage>()
                         chatMessages.add(message)
                     }
-
+                    chatMessages.sortByDescending { it.messageTime }
                     binding.list.adapter = GroupChatAdapter(chatMessages)
                     binding.list.adapter?.notifyDataSetChanged()
                     binding.list.scrollToPosition(chatMessages.size - 1)
@@ -176,7 +149,7 @@ class GroupChatFragment: Fragment() {
         }
 
         override fun getItemViewType(position: Int): Int {
-            return if(messages[position].messageSenderID
+            return if(messages[position].messageSenderId
                 == FirebaseAuth.getInstance().currentUser!!.uid) 0 else 1
         }
 
@@ -212,7 +185,7 @@ class GroupChatFragment: Fragment() {
                 if (this is PrivateChatReceiverViewHolder) {
 //                    well, i guess i will have to build an unique message with all features, better than having three
                     this.lMessage.text = message.messageText
-                    this.lName.text = message.messageSenderID
+                    this.lName.text = message.nameSender
                 }
             }
         }

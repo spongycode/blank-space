@@ -1,6 +1,7 @@
 package com.spongycode.blankspace.ui.main.fragments.drawer.chat
 
 import android.os.Bundle
+import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -22,12 +23,13 @@ import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentChatScreenBinding
 import com.spongycode.blankspace.databinding.ItemListofchatsBinding
 import com.spongycode.blankspace.model.UserModel
-import com.spongycode.blankspace.model.modelChat.ChatScreenMessage
+import com.spongycode.blankspace.model.modelChat.ChatMessage
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.util.Constants.USERR_KEY
 import com.spongycode.blankspace.util.Constants.USER_KEY
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
+import java.util.*
 
 class ChatScreenFragment: Fragment() {
 
@@ -36,7 +38,7 @@ class ChatScreenFragment: Fragment() {
     private lateinit var chatRoomBinding: ItemListofchatsBinding
     private val firebaseAuth = MainActivity.firebaseAuth
     private val chatViewModel = MainActivity.chatViewModel
-    private val messageList = mutableListOf<ChatScreenMessage>()
+    private val messageList = mutableListOf<ChatMessage>()
     private lateinit var currentUser: UserModel
 
     override fun onCreateView(
@@ -85,7 +87,7 @@ class ChatScreenFragment: Fragment() {
                     // clear the list and message through every message
                     // thinking about this, it's better to user on type.added
                     for (dc in it.documentChanges) {
-                        val chat = dc.document.toObject<ChatScreenMessage>()
+                        val chat = dc.document.toObject<ChatMessage>()
                         messageList.add(0, chat)
                     }
                     binding.list.apply {
@@ -98,29 +100,28 @@ class ChatScreenFragment: Fragment() {
             }
     }
 
-    inner class ListOfChatsAdapter(private val listMessage: List<ChatScreenMessage>):
+    inner class ListOfChatsAdapter(private val listMessage: List<ChatMessage>):
         RecyclerView.Adapter<ListOfChatsAdapter.ListOfChatsViewHolder>(){
         inner class ListOfChatsViewHolder(binding: ItemListofchatsBinding):
             RecyclerView.ViewHolder(binding.root){
                 internal val profile: CircleImageView = binding.profile
                 internal val name: MaterialTextView = binding.name
                 internal val message: MaterialTextView = binding.message
-                internal val messageCount: MaterialTextView = binding.messageCount
                 internal val messageTime: MaterialTextView = binding.time
             }
 
         // not working
-        private val diffUtil = object : DiffUtil.ItemCallback<ChatScreenMessage>(){
+        private val diffUtil = object : DiffUtil.ItemCallback<ChatMessage>(){
             override fun areItemsTheSame(
-                oldItem: ChatScreenMessage,
-                newItem: ChatScreenMessage
+                oldItem: ChatMessage,
+                newItem: ChatMessage
             ): Boolean {
                 return oldItem.messageId == newItem.messageId
             }
 
             override fun areContentsTheSame(
-                oldItem: ChatScreenMessage,
-                newItem: ChatScreenMessage
+                oldItem: ChatMessage,
+                newItem: ChatMessage
             ): Boolean {
                 return oldItem.messageTime == newItem.messageTime
             }
@@ -137,11 +138,12 @@ class ChatScreenFragment: Fragment() {
 
         override fun onBindViewHolder(holder: ListOfChatsViewHolder, position: Int) {
             val message = listMessage.get(position)
+            val myDate = "dd/MM, HH:mm"
             var user: UserModel
             with(holder){
                 with(message){
                     holder.message.text = messageText.toString()
-                    holder.messageTime.text = messageTime.toString()
+                    holder.messageTime.text = DateFormat.format(myDate, messageTime)
 
                     if (message.messageReceiverId == FirebaseAuth.getInstance().currentUser!!.uid){
                         holder.name.text = message.nameSender

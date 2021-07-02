@@ -5,10 +5,16 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.util.Log
 
 object NetworkCheck {
 
+    /*
+    * on emulator unless the wifi and mobile data are both disabled it will return true, even
+    * if computer wifi is off
+    * */
     fun hasInternetConnection(application: Application): Boolean {
+        Log.d("network", "i will check for connectivity")
         val connectivityManager = application.getSystemService(
             Context.CONNECTIVITY_SERVICE
         ) as ConnectivityManager

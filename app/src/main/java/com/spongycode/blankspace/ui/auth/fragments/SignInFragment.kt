@@ -69,6 +69,7 @@ class SignInFragment: Fragment() {
     ) {
         try {
             if(hasInternetConnection((activity as AuthActivity).application)) {
+                Log.d("network", "boolean:  ${hasInternetConnection(requireActivity().application)}")
                 if (email.isNotBlank() && password.isNotBlank()) {
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
