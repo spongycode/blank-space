@@ -1,15 +1,16 @@
 package com.spongycode.blankspace.ui.main.fragments.drawer.chat
 
+import android.accounts.NetworkErrorException
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.spongycode.blankspace.databinding.FragmentGroupChatBinding
 import com.spongycode.blankspace.databinding.LeftsidemessageBinding
@@ -18,10 +19,8 @@ import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelChat.ChatMessage
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.util.Constants.groupId
+import com.spongycode.blankspace.util.NetworkCheck
 import com.spongycode.blankspace.viewmodel.ChatViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -50,11 +49,24 @@ class GroupChatFragment: Fragment() {
         chatViewModel.user.observe(viewLifecycleOwner, {
             sender = it.get(0)
         })
-        Log.d("sender", "sender: $sender")
 
-        binding.list.adapter = GroupChatAdapter(listOf())
-        binding.list.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
-        receiveMessage()
+        try{
+            if (NetworkCheck.hasInternetConnection((activity as MainActivity).application)){
+                chatViewModel.receiveMessage("user-messages/group/$groupId").observe(viewLifecycleOwner, {
+                    chatViewModel.groupMessages.addAll(it)
+                })
+                Log.d("error", "group: ${chatViewModel.groupMessages}")
+                binding.list.apply {
+                    adapter = GroupChatAdapter(chatViewModel.groupMessages)
+                    addItemDecoration(DividerItemDecoration((activity as MainActivity).baseContext,
+                        DividerItemDecoration.VERTICAL))
+                    adapter?.notifyDataSetChanged()
+                    scrollToPosition(chatMessages.size - 1)
+                }
+            }else {
+                Toast.makeText(context, "No internet connection", Toast.LENGTH_LONG).show()
+            }
+        } catch (e: NetworkErrorException) { Log.e("networkException", e.message!!) }
 
         binding.apply {
 
@@ -74,6 +86,8 @@ class GroupChatFragment: Fragment() {
 
         return binding.root
     }
+
+    // I could move this to chatToFirebase.kt, but then it would take a lot of parameters.
     private fun sendMessage(){
 
         // reference of the chatRoom for the sender and receiver of the message
@@ -100,34 +114,6 @@ class GroupChatFragment: Fragment() {
 
     }
 
-    // this will go to repo
-    private fun receiveMessage(){
-        CoroutineScope(Dispatchers.IO).launch{
-            val a = Firebase.firestore
-                .collection("user-messages/group/$groupId")
-            a
-                .orderBy("messageTime")
-                .addSnapshotListener { value, error ->
-                error?.let {
-                    Log.w("error", error)
-                }
-
-                value?.let {
-                    chatMessages.clear()
-                    Log.d("error", "data: ${it.documents}")
-                    for (doc in it){
-                        val message = doc.toObject<ChatMessage>()
-                        chatMessages.add(message)
-                    }
-                    chatMessages.sortByDescending { it.messageTime }
-                    binding.list.adapter = GroupChatAdapter(chatMessages)
-                    binding.list.adapter?.notifyDataSetChanged()
-                    binding.list.scrollToPosition(chatMessages.size - 1)
-
-                }
-            }
-        }
-    }
 
     override fun onPause() {
         super.onPause()

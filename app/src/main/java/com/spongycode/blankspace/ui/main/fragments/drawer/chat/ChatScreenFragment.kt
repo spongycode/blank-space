@@ -138,7 +138,7 @@ class ChatScreenFragment: Fragment() {
 
         override fun onBindViewHolder(holder: ListOfChatsViewHolder, position: Int) {
             val message = listMessage.get(position)
-            val myDate = "dd/MM, HH:mm"
+            val myDate = "dd/MM HH:mm"
             var user: UserModel
             with(holder){
                 with(message){

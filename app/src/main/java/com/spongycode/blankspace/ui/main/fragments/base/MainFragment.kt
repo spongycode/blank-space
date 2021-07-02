@@ -100,7 +100,7 @@ class MainFragment : Fragment() {
             } else {
                 Toast.makeText(context, "No internet connection", Toast.LENGTH_LONG).show()
             }
-        }catch (e: NetworkErrorException) { Log.e("networkException", e.message!!) }
+        } catch (e: NetworkErrorException) { Log.e("networkException", e.message!!) }
 
         if (!memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.isEmpty()) {
             binding.rvMeme.adapter = MemeRecyclerAdapter(
