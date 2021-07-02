@@ -433,6 +433,8 @@ class MainFragment : Fragment() {
                         holder.image.drawable,
                         meme.title
                     )
+                }else{
+                    Toast.makeText(requireContext(), "Gif download not supported.", Toast.LENGTH_LONG).show()
                 }
             }
             holder.like.setOnClickListener { meme.like = !meme.like }
