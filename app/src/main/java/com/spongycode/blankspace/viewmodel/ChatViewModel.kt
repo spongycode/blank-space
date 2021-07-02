@@ -4,7 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelChat.ChatMessage
-import com.spongycode.blankspace.storage.receiveMessages
+import com.spongycode.blankspace.storage.receiveChatMessage
+import com.spongycode.blankspace.storage.receiveGroupMessage
 import com.spongycode.blankspace.storage.requestAllUsers
 import com.spongycode.blankspace.storage.requestCurrentUser
 
@@ -24,10 +25,17 @@ class ChatViewModel: ViewModel() {
 
     // group chat
     val groupMessages = mutableListOf<ChatMessage>()
-    val chatMessages = mutableListOf<ChatMessage>()
-    fun receiveMessage(collection: String): LiveData<List<ChatMessage>>{
+    fun receiveGroupMessages(collection: String): LiveData<List<ChatMessage>>{
         val messages: LiveData<List<ChatMessage>>
-        = receiveMessages(collection)
+        = receiveGroupMessage(collection)
+        return messages
+    }
+
+    // private chat
+    val chatMessages = mutableListOf<ChatMessage>()
+    fun receiveChatMessages(collection: String): LiveData<List<ChatMessage>>{
+        val messages: LiveData<List<ChatMessage>>
+        = receiveChatMessage(collection)
         return messages
     }
 

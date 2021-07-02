@@ -31,13 +31,10 @@ import com.google.android.material.imageview.ShapeableImageView
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.FragmentFMemesBinding
 import com.spongycode.blankspace.databinding.MemeLayoutBinding
-import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelmemes.MemeModel
 import com.spongycode.blankspace.storage.removeMeme
-import com.spongycode.blankspace.storage.saveMemeToFavs
 import com.spongycode.blankspace.ui.edit.EditActivity
 import com.spongycode.blankspace.ui.main.MainActivity
-import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
 import com.spongycode.blankspace.ui.main.fragments.base.PhotoViewerDialog
 import com.spongycode.blankspace.util.ClickListener
 import java.io.ByteArrayOutputStream
@@ -137,7 +134,7 @@ class FMemesFragment : Fragment() {
                             val path: String = MediaStore.Images.Media.insertImage(
                                 activity?.contentResolver,
                                 resource,
-                                null,
+                                System.currentTimeMillis().toString(),
                                 null
                             )
 

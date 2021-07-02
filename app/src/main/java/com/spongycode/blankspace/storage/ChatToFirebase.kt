@@ -57,42 +57,42 @@ fun requestAllUsers(): LiveData<List<UserModel>> {
 }
 
 // and then this one requires parameters anyway
-//private fun receiveChatMessage(): LiveData<List<ChatMessage>> {
-//
-//    val chatMessages = mutableListOf<ChatMessage>()
-//    CoroutineScope(Dispatchers.IO).launch{  // listen to every event at this collection
-//        // add every new messasge to the messages list
-//        Firebase.firestore.collection(
-//            "user-messages/${sender.userId}/${receiver.userId}"
-//        )
-//            .orderBy("messageTime")
-//            .addSnapshotListener { querySnapshot, error ->
-//
-//                // if error then log it
-//                error?.let {
-//                    Log.d("receiveMessage", error.message!!)
-//                }
-//
-//                // clear the list for older messages and redownload all messages again
-//                chatMessages.clear()
-//                Log.d("query", "quer: ${querySnapshot?.documents}, ${sender.userId}/${receiver.userId}")
-//                querySnapshot?.let {
-//                    for (document in it) {
-//                        val message = document.toObject<ChatMessage>()
-//                        chatMessages.add(message)
-//                    }
-//
-//                    chatMessages.sortByDescending { it.messageTime }
-//
-//                }
-//            }
-//    }
-//}
 
-// the only diference about this and receiveChatMessage is the collection
-// i could use the same funciton and pass the collection as a parameter, but it might be bug prone
-fun receiveMessages(collection: String): LiveData<List<ChatMessage>> {
-    val messages = mutableListOf<ChatMessage>()
+val message = mutableListOf<ChatMessage>()
+fun receiveChatMessage(collection: String): LiveData<List<ChatMessage>>{
+    val messagesLiveData = MutableLiveData<List<ChatMessage>>()
+    CoroutineScope(Dispatchers.IO).launch{  // listen to every event at this collection
+        // add every new messasge to the messages list
+        Firebase.firestore.collection(collection)
+            .orderBy("messageTime")
+            .addSnapshotListener { querySnapshot, error ->
+
+                // if error then log it
+                error?.let {
+                    Log.d("receiveMessage", error.message!!)
+                }
+
+                // clear the list for older messages and redownload all messages again
+                message.clear()
+                querySnapshot?.let {
+                    for (document in it) {
+                        val message = document.toObject<ChatMessage>()
+                        messages.add(message)
+                    }
+
+                    message.sortByDescending { it.messageTime }
+                }
+            }
+    }
+    messagesLiveData.value = message
+    return messagesLiveData
+}
+
+// i tried to use repository pattern, call receiveMessages from viewModel
+// but there's a bug, and i have no more time to fix it
+// i think i should separate the functions
+val messages = mutableListOf<ChatMessage>()
+fun receiveGroupMessage(collection: String): LiveData<List<ChatMessage>> {
     val messageLiveData = MutableLiveData<List<ChatMessage>>()
     CoroutineScope(Dispatchers.IO).launch{
         val a = Firebase.firestore
@@ -109,12 +109,12 @@ fun receiveMessages(collection: String): LiveData<List<ChatMessage>> {
                     for (doc in it){
                         val message = doc.toObject<ChatMessage>()
                         messages.add(message)
+                        Log.d("error", "data: ${messages}")
                     }
                     messages.sortByDescending { it.messageTime }
                 }
             }
     }
-    Log.d("error", "data: ${messages}")
     messageLiveData.value = messages
     return messageLiveData
 }

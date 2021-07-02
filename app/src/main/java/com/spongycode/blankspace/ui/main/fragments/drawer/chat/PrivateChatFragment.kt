@@ -1,10 +1,9 @@
 package com.spongycode.blankspace.ui.main.fragments.drawer.chat
 
-import android.accounts.NetworkErrorException
+
 import android.os.Bundle
 import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
@@ -12,6 +11,7 @@ import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.spongycode.blankspace.databinding.FragmentPrivateChatBinding
 import com.spongycode.blankspace.databinding.LeftsidemessageBinding
@@ -20,8 +20,10 @@ import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelChat.ChatMessage
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.util.Constants
-import com.spongycode.blankspace.util.NetworkCheck
 import com.spongycode.blankspace.viewmodel.ChatViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 
 class PrivateChatFragment: Fragment() {
@@ -34,6 +36,11 @@ class PrivateChatFragment: Fragment() {
     private val chatMessages = mutableListOf<ChatMessage>()
     private lateinit var receiver: UserModel
     private lateinit var sender: UserModel
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -48,29 +55,23 @@ class PrivateChatFragment: Fragment() {
         receiver = arguments?.getSerializable(Constants.USER_KEY) as UserModel
         Log.d("sender", "receiver: $receiver")
 
-        try{
-            if (NetworkCheck.hasInternetConnection((activity as MainActivity).application)){
-                chatViewModel.receiveMessage("user-messages/${sender.userId}/${receiver.userId}")
-                    .observe(viewLifecycleOwner, {
-                        chatViewModel.chatMessages.addAll(it)
-                })
+        receiveMessage()
 
-                Log.d("error", "private: ${chatViewModel.chatMessages}")
-                binding.list.adapter = PrivateChatAdapter(chatViewModel.chatMessages)
-                binding.list.addItemDecoration(
-                    DividerItemDecoration(
-                        (activity as MainActivity).baseContext,
-                        DividerItemDecoration.VERTICAL
-                    )
-                )
-                binding.list.adapter?.notifyDataSetChanged()
-                // scroll to the just received message
-                binding.list.scrollToPosition(chatMessages.size - 1)
-
-            }else {
-                Toast.makeText(context, "No internet connection", Toast.LENGTH_LONG).show()
-            }
-        } catch (e: NetworkErrorException) { Log.e("networkException", e.message!!) }
+//        chatViewModel.receiveChatMessages("user-messages/${sender.userId}/${receiver.userId}").observe(
+//            viewLifecycleOwner, {
+//                chatViewModel.chatMessages.addAll(it)
+//                binding.list.adapter = PrivateChatAdapter(chatViewModel.chatMessages)
+//                binding.list.addItemDecoration(
+//                    DividerItemDecoration(
+//                        requireContext(),
+//                        DividerItemDecoration.VERTICAL
+//                    )
+//                )
+//                binding.list.adapter?.notifyDataSetChanged()
+//                // scroll to the just received message
+//                binding.list.scrollToPosition(chatViewModel.chatMessages.size - 1)
+//            }
+//        )
 
         binding.apply {
 
@@ -145,6 +146,47 @@ class PrivateChatFragment: Fragment() {
 
     }
 
+    // this will go to repo
+    private fun receiveMessage(){
+
+        CoroutineScope(Dispatchers.IO).launch{  // listen to every event at this collection
+            // add every new messasge to the messages list
+            Firebase.firestore.collection(
+                "user-messages/${sender.userId}/${receiver.userId}"
+            )
+                .orderBy("messageTime")
+                .addSnapshotListener { querySnapshot, error ->
+
+                    // if error then log it
+                    error?.let {
+                        Log.d("receiveMessage", error.message!!)
+                    }
+
+                    // clear the list for older messages and redownload all messages again
+                    chatMessages.clear()
+                    Log.d("query", "quer: ${querySnapshot?.documents}, ${sender.userId}/${receiver.userId}")
+                    querySnapshot?.let {
+                        for (document in it) {
+                            val message = document.toObject<ChatMessage>()
+                            chatMessages.add(message)
+                        }
+
+                        chatMessages.sortByDescending { it.messageTime }
+                        binding.list.adapter = PrivateChatAdapter(chatMessages)
+                        binding.list.addItemDecoration(
+                            DividerItemDecoration(
+                                requireContext(),
+                                DividerItemDecoration.VERTICAL
+                            )
+                        )
+                        binding.list.adapter?.notifyDataSetChanged()
+                        // scroll to the just received message
+                        binding.list.scrollToPosition(chatMessages.size - 1)
+                    }
+                }
+        }
+    }
+
     override fun onPause() {
         super.onPause()
         chatViewModel.currentText = binding.messageText.text.toString()
@@ -155,13 +197,13 @@ class PrivateChatFragment: Fragment() {
 
         inner class PrivateChatSenderViewHolder(binding: RightsidemessageBinding):
             RecyclerView.ViewHolder(binding.root){
-                internal val rMessage: MaterialTextView = binding.rMessage
-            }
+            internal val rMessage: MaterialTextView = binding.rMessage
+        }
 
         inner class PrivateChatReceiverViewHolder(binding: LeftsidemessageBinding):
             RecyclerView.ViewHolder(binding.root){
-                internal val lMessage: MaterialTextView = binding.lMessage
-            }
+            internal val lMessage: MaterialTextView = binding.lMessage
+        }
 
         override fun getItemViewType(position: Int): Int {
             return if(messages[position].messageSenderId
