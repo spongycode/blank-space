@@ -21,3 +21,7 @@ Blank Space allows you to share your thought and ideas in a general group chat, 
 
 
 Me (rColeJnr) and spongycode and eargerly waiting for your likes on our app, and we hope you will stil be around to enjoy the update.
+
+
+![app logo](https://user-images.githubusercontent.com/72414394/124271483-2f23c880-db46-11eb-8bd4-16d220ed532c.jpg)
+![like animation](https://user-images.githubusercontent.com/72414394/124271533-3e0a7b00-db46-11eb-992e-174d0d9b9f6c.jpg)
