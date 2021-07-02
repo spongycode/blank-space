@@ -1,4 +1,4 @@
-# blank-space
+# Blank-Space
 
 Blank Space is a social network driven application, with the meme theme
 done according to the recommendations of Philipp Lackner, for his "appwars"
