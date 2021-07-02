@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -34,6 +35,9 @@ class ListOfUsersFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentListOfUsersBinding.inflate(inflater, container, false)
+        requireActivity().onBackPressedDispatcher.addCallback {
+            findNavController().navigateUp()
+        }
 
         // there's a better way to do this
         chatViewModel.user.observe(viewLifecycleOwner, {

@@ -11,8 +11,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_marginTop="4dp"
-        android:src="@drawable/ic_nav_account"
-        android:background="@color/black"
+        android:src="@drawable/ic_baseline_account_circle_24"
         />
 
     <LinearLayout
@@ -35,7 +34,6 @@
             android:layout_margin="@dimen/text_margin"
             android:maxLines="1"
             android:ems="18"
-            android:hint="something stupid or something usefull"
             android:textAppearance="?attr/textAppearanceListItemSecondary"/>
 
 

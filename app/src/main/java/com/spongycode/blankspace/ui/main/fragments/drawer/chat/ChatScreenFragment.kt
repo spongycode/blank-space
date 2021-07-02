@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -44,6 +45,9 @@ class ChatScreenFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentChatScreenBinding.inflate(inflater, container, false)
+        requireActivity().onBackPressedDispatcher.addCallback {
+            findNavController().navigateUp()
+        }
 
         chatViewModel.user.observe(viewLifecycleOwner, {
             currentUser = it.get(0)

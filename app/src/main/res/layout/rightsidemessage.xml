@@ -6,12 +6,15 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/rMessage"
-        android:layout_width="match_parent"
+        android:layout_width="230dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/text_margin"
         android:layout_alignParentEnd="true"
-        android:paddingHorizontal="8dp"
+        android:textColor="@color/white"
+        android:paddingRight="12dp"
         android:gravity="end"
+        android:paddingVertical="8dp"
+        android:background="@drawable/right_message_bg"
         android:textAlignment="gravity"
         android:hint="messagem"
         android:ems="15"

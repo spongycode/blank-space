@@ -12,15 +12,21 @@
         android:layout_height="0dp"
         android:layout_margin="@dimen/layout_margin"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/messageText"/>
+        app:layout_constraintBottom_toTopOf="@id/messageText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:reverseLayout="true" />
 
     <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/messageText"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:textCursorDrawable="@drawable/cursor"
+        android:layout_height="45dp"
         android:layout_margin="@dimen/layout_margin"
         android:background="@drawable/text_background"
-        android:hint="message"
+        android:hint="Enter Message"
+        android:paddingHorizontal="15dp"
         android:textSize="15sp"
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         app:layout_constraintStart_toStartOf="parent"
@@ -30,13 +36,16 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/messageSend"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_margin="@dimen/layout_margin"
-        app:icon="@drawable/ic_send_m"
-        app:backgroundTint="@color/gray"
+        app:backgroundTint="@color/decent_green"
+        app:cornerRadius="100dp"
+        app:icon="@drawable/ic_baseline_send_24"
+        app:iconGravity="textEnd"
+        app:layout_constraintBottom_toBottomOf="@+id/messageText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toTopOf="@+id/messageText" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/addImage"
@@ -44,6 +53,7 @@
         android:layout_height="25dp"
         android:layout_margin="@dimen/layout_margin"
         app:icon="@drawable/ic_add_sign"
+        android:visibility="gone"
         app:backgroundTint="@color/gray"
         app:layout_constraintEnd_toStartOf="@id/messageSend"
         app:layout_constraintStart_toEndOf="@id/messageText"
