@@ -21,6 +21,8 @@ import androidx.annotation.Nullable
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
@@ -48,6 +50,7 @@ import com.spongycode.blankspace.util.NetworkCheck
 import com.spongycode.blankspace.util.userdata
 import java.io.ByteArrayOutputStream
 import java.util.*
+import kotlin.concurrent.schedule
 
 
 @Suppress("DEPRECATION")
@@ -76,6 +79,7 @@ class MainFragment : Fragment() {
         memeViewModel.allMemeDb["Science"] = memeViewModel.scienceMemeList
         memeViewModel.allMemeDb["Member Edits"] = memeViewModel.memberEditsMemeList
         binding.currentCatTv.text = memeViewModel.currentMemeCategory
+        val mainAdapter = MemeRecyclerAdapter(requireContext())
 
         try{
             if (NetworkCheck.hasInternetConnection((activity as MainActivity).application)) {
@@ -88,11 +92,9 @@ class MainFragment : Fragment() {
                                 toSet()
                                 toList()
                             }
-                            binding.rvMeme.adapter =
-                                MemeRecyclerAdapter(
-                                    requireContext(),
-                                    memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!
-                                )
+                            binding.rvMeme.adapter = mainAdapter
+                            mainAdapter.mainDiffer
+                                .submitList(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory])
                             binding.rvMeme.adapter?.notifyDataSetChanged()
                         }
                     )
@@ -103,11 +105,9 @@ class MainFragment : Fragment() {
         } catch (e: NetworkErrorException) { Log.e("networkException", e.message!!) }
 
         if (!memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.isEmpty()) {
-            binding.rvMeme.adapter = MemeRecyclerAdapter(
-                requireContext(),
-                memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!
-            )
-            binding.rvMeme.adapter?.notifyDataSetChanged()
+            binding.rvMeme.adapter = mainAdapter
+            mainAdapter.mainDiffer
+                .submitList(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory])
         }
         binding.rvMeme.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
             override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
@@ -206,39 +206,49 @@ class MainFragment : Fragment() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 val ll = binding.rvMeme.layoutManager as LinearLayoutManager
                 if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
+                    val ll = binding.rvMeme.layoutManager as LinearLayoutManager
                     memeViewModel.position = ll.findLastVisibleItemPosition()
-                    Log.d("pos", "position: ${ll.findLastVisibleItemPosition()}")
-                    Log.d("positi", "position: ${memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]?.size}")
 
-                }
-                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL){
                     if (ll.findLastCompletelyVisibleItemPosition() == memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.size - 1
                         && memeViewModel.position == memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.size - 1
-                        && memeViewModel.currentMemeCategory != "Member Edits"
-                            ){
+                    ){
+                        // My commit today will be i don't know how, but it works
+                        binding.progressBar.visibility = View.VISIBLE
+                        val oldList = mutableListOf<MemeModel>()
+                        val newList = mutableListOf<MemeModel>()
                         memeViewModel.memeFun(memeViewModel.currentMemeCategory).observe(
                             viewLifecycleOwner, {
                                 // set up and populate view
-                                memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]?.apply {
-                                    addAll(it)
-                                    toSet()
-                                    toList()
+                                newList.addAll(it)
+                                newList.removeAll(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!)
+                                for (meme in  memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!) {
+                                    for (me in newList){
+                                        if (me.title == meme.title) {
+                                            oldList.add(me)
+                                        }
+                                    }
                                 }
-                                binding.rvMeme.adapter =
-                                    MemeRecyclerAdapter(requireContext(), memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!)
+
+                                newList.removeAll(oldList)
+                                memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.addAll(newList)
+                                MemeRecyclerAdapter(requireContext()).mainDiffer
+                                    .submitList(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory])
                                 binding.rvMeme.scrollToPosition(memeViewModel.position)
-                                binding.rvMeme.adapter?.notifyDataSetChanged()
+
+                                Timer().schedule(300){
+                                    binding.progressBar.visibility = View.INVISIBLE
+                                }
                             }
                         )
-                    }
+                    } else {binding.progressBar.visibility = View.INVISIBLE}
                 }
-
             }
         })
 
     }
 
     private fun memeFunObserve(category: String) {
+        val mainAdapter = MemeRecyclerAdapter(requireContext())
         if (memeViewModel.allMemeDb[category]!!.isEmpty()){
             memeViewModel.memeFun(category).observe(
                 viewLifecycleOwner, {
@@ -248,24 +258,36 @@ class MainFragment : Fragment() {
                         toSet()
                         toList()
                         Log.d("meme", "meme: ${memeViewModel.allMemeDb[category]!!}")
-                        binding.rvMeme.adapter =
-                            MemeRecyclerAdapter(requireContext(), memeViewModel.allMemeDb[category]!!)
+                        binding.rvMeme.adapter = mainAdapter
+                        mainAdapter.mainDiffer
+                            .submitList(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory])
                         binding.rvMeme.adapter?.notifyDataSetChanged()
                     }
                 }
             )
         }else{
-            binding.rvMeme.adapter =
-                MemeRecyclerAdapter(requireContext(), memeViewModel.allMemeDb[category]!!)
-            binding.rvMeme.adapter?.notifyDataSetChanged()
+            binding.rvMeme.adapter = mainAdapter
+            mainAdapter.mainDiffer
+                .submitList(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.toList())
         }
     }
 
     inner class MemeRecyclerAdapter(
-        private val context: Context,
-        private val memeList: List<MemeModel>
+        private val context: Context
     ) :
         RecyclerView.Adapter<MemeRecyclerAdapter.ViewHolder>() {
+
+        private val mainDiffUtil = object : DiffUtil.ItemCallback<MemeModel>(){
+            override fun areItemsTheSame(oldItem: MemeModel, newItem: MemeModel): Boolean {
+                return oldItem.url == newItem.url
+            }
+
+            override fun areContentsTheSame(oldItem: MemeModel, newItem: MemeModel): Boolean {
+                return oldItem.title == newItem.title
+            }
+        }
+
+        val mainDiffer = AsyncListDiffer(this, mainDiffUtil)
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
             val view = LayoutInflater.from(parent.context).inflate(
@@ -279,7 +301,8 @@ class MainFragment : Fragment() {
 
         @SuppressLint("ClickableViewAccessibility")
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-            val meme: MemeModel = memeList[position]
+//            val meme: MemeModel = memeList[position]
+            val meme: MemeModel = mainDiffer.currentList.get(position)
             if (meme.userId == "") {
                 holder.memeSenderUsername.visibility = GONE
                 holder.memeSenderImage.visibility = GONE
@@ -440,7 +463,7 @@ class MainFragment : Fragment() {
             holder.like.setOnClickListener { meme.like = !meme.like }
         }
 
-        override fun getItemCount() = memeList.size
+        override fun getItemCount() = mainDiffer.currentList.size
 
         inner class ViewHolder internal constructor(view: View) : RecyclerView.ViewHolder(view) {
             internal val title: TextView = view.findViewById(R.id.meme_title)

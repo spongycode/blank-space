@@ -17,7 +17,6 @@ class MemeViewModel: ViewModel() {
     var allMemeDb = hashMapOf<String, MutableList<MemeModel>>()
     var currentMemeCategory: String = "Random"
 
-
     fun memeFun(category: String = "Random"): LiveData<List<MemeModel>>{
         val memeLiveData: LiveData<List<MemeModel>>
         = ApiFetchr().fetchMemeByCategory(category)
