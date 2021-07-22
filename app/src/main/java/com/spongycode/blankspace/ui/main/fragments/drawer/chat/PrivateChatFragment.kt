@@ -1,26 +1,34 @@
 package com.spongycode.blankspace.ui.main.fragments.drawer.chat
 
-
+import android.app.Activity
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.*
+import androidx.core.net.toUri
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.imageview.ShapeableImageView
 import com.google.android.material.textview.MaterialTextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.spongycode.blankspace.databinding.FragmentPrivateChatBinding
-import com.spongycode.blankspace.databinding.LeftsidemessageBinding
-import com.spongycode.blankspace.databinding.RightsidemessageBinding
+import com.spongycode.blankspace.R
+import com.spongycode.blankspace.databinding.*
 import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelChat.ChatMessage
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.util.Constants
+import com.spongycode.blankspace.util.Constants.ImageShare
 import com.spongycode.blankspace.viewmodel.ChatViewModel
+import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -80,9 +88,17 @@ class PrivateChatFragment: Fragment() {
             // clear the textField after sending the message
             messageSend.setOnClickListener {
                 if (messageText.text!!.isNotBlank()) {
-                    sendMessage(); messageText.text?.clear()
+                    sendMessage(receiver, sender, messageText.text.toString()); messageText.text?.clear()
                 } else return@setOnClickListener
             }
+            imageSend.setOnClickListener {
+                val gallery = Intent(
+                    Intent.ACTION_PICK,
+                    MediaStore.Images.Media.INTERNAL_CONTENT_URI
+                )
+                startActivityForResult(gallery, 5)
+            }
+
         }
 
         // change app bar title to receivers name
@@ -92,28 +108,42 @@ class PrivateChatFragment: Fragment() {
         return binding.root
     }
 
-    private fun sendMessage(){
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK && requestCode == 5 && data != null && data.data != null) {
+            loadImage(data.data!!)
+        }
+    }
+
+    private fun loadImage(mUri : Uri){
+
+        val bundle = bundleOf(ImageShare to mUri.toString(), "s" to sender, "r" to receiver)
+        findNavController().navigate(R.id.imageShareFragment, bundle)
+    }
+
+    fun sendMessage(r: UserModel, s: UserModel, messageText: String, messageImage: String = ""){
 
         // reference of the chatRoom for the sender and receiver of the message
         val senderReference = Firebase.firestore
-            .collection("user-messages/${sender.userId}/${receiver.userId}")
+            .collection("user-messages/${s.userId}/${r.userId}")
         val receiverReference = Firebase.firestore
-            .collection("user-messages/${receiver.userId}/${sender.userId}")
+            .collection("user-messages/${r.userId}/${s.userId}")
 
-        sender?.let { sender ->
-            if (receiver == null) return
+        s?.let { sender ->
+            if (r == null) return
 
             // create the message typed by the user
             val message = ChatMessage(
                 UUID.randomUUID().toString(),
-                binding.messageText.text.toString(),
+                messageText,
                 Calendar.getInstance().timeInMillis,
-                receiver.userId,
-                receiver.username,
+                r.userId,
+                r.username,
                 "",
-                sender.userId,
-                sender.username,
-                ""
+                s.userId,
+                s.username,
+                "",
+                messageImage
             )
 
             senderReference.add(message)
@@ -124,23 +154,24 @@ class PrivateChatFragment: Fragment() {
             val messageMap = hashMapOf(
                 "messageId" to message.messageId,
                 "messageReceiverId" to message.messageReceiverId,
-                "nameReceiver" to receiver.username,
-                "profilePictureReceiver" to receiver.imageUrl,
-                "messageSenderId" to sender.userId,
-                "nameSender" to sender.username,
-                "profilePictureSender" to sender.imageUrl,
-                "messageText" to message.messageText,
-                "messageTime" to message.messageTime
+                "nameReceiver" to r.username,
+                "profilePictureReceiver" to r.imageUrl,
+                "messageSenderId" to s.userId,
+                "nameSender" to s.username,
+                "profilePictureSender" to s.imageUrl,
+                "messageText" to messageText,
+                "messageTime" to message.messageTime,
+                "messageImage" to messageImage
             )
 
             Firebase.firestore
-                .collection("latest/messages/${sender.userId}")
-                .document(receiver.userId)
+                .collection("latest/messages/${s.userId}")
+                .document(r.userId)
                 .set(messageMap, SetOptions.merge())
 
             Firebase.firestore
-                .collection("latest/messages/${receiver.userId}")
-                .document(sender.userId)
+                .collection("latest/messages/${r.userId}")
+                .document(s.userId)
                 .set(messageMap, SetOptions.merge())
         }
 
@@ -198,11 +229,13 @@ class PrivateChatFragment: Fragment() {
         inner class PrivateChatSenderViewHolder(binding: RightsidemessageBinding):
             RecyclerView.ViewHolder(binding.root){
             internal val rMessage: MaterialTextView = binding.rMessage
+            internal val rImage: ShapeableImageView = binding.rImage
         }
 
         inner class PrivateChatReceiverViewHolder(binding: LeftsidemessageBinding):
             RecyclerView.ViewHolder(binding.root){
             internal val lMessage: MaterialTextView = binding.lMessage
+            internal val lImage: ShapeableImageView = binding.lImage
         }
 
         override fun getItemViewType(position: Int): Int {
@@ -238,9 +271,21 @@ class PrivateChatFragment: Fragment() {
             with(holder){
                 if (this is PrivateChatSenderViewHolder) {
                     this.rMessage.text = message.messageText
+                    if (message.image.isNotBlank()){
+                        this.rImage.visibility = View.VISIBLE
+                        Picasso.get().load(message.image.toUri()).into(this.rImage)
+                    } else {
+                        this.rImage.visibility = View.GONE
+                    }
                 }
                 if (this is PrivateChatReceiverViewHolder) {
                     this.lMessage.text = message.messageText
+                    if (message.image.isNotBlank()){
+                        this.lImage.visibility = View.VISIBLE
+                        Picasso.get().load(message.image.toUri()).into(this.lImage)
+                    } else {
+                        this.lImage.visibility = View.GONE
+                    }
                 }
             }
         }

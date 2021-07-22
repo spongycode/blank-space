@@ -7,4 +7,6 @@ object Constants {
     const val USERR_KEY = "userr"
     const val DOUBLE_CLICK_TIME_DELTA = 300 // milliseconds
     const val groupId = "BlankSpaceGroup"
+    const val ImageShare = "image"
+    const val MessageShare = "message"
 }

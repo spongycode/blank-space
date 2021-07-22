@@ -11,5 +11,6 @@ data class ChatMessage(
     var profilePictureReceiver: String = "",
     var messageSenderId: String = "",
     var nameSender: String = "",
-    var profilePictureSender: String = ""
+    var profilePictureSender: String = "",
+    var image: String = ""
 ): Serializable

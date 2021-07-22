@@ -103,4 +103,8 @@
         android:name="com.spongycode.blankspace.ui.auth.AuthActivity"
         android:label="activity_auth"
         tools:layout="@layout/activity_auth" />
+    <fragment
+        android:id="@+id/imageShareFragment"
+        android:name="com.spongycode.blankspace.ui.main.fragments.drawer.chat.ImageShareFragment"
+        android:label="ImageShareFragment" />
 </navigation>

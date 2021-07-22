@@ -13,6 +13,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -20,9 +21,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.net.toUri
 import androidx.fragment.app.DialogFragment
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
@@ -129,7 +128,7 @@ class MemberEditsDialog : DialogFragment() {
 
     }
 
-    private fun initiateUpload(mUri: Uri) {
+    fun initiateUpload(mUri: Uri) {
 
         val circularProgressDrawable = CircularProgressDrawable(requireContext())
         circularProgressDrawable.strokeWidth = 10f
@@ -171,14 +170,14 @@ class MemberEditsDialog : DialogFragment() {
                 requireView().findViewById<Button>(R.id.member_edits_btn_post).alpha = 1f
                 requireView().findViewById<Button>(R.id.member_edits_btn_post).isEnabled = true
             }catch (e : Exception){
-
+                Log.e("e", e.message!!)
             }
 
 
         }
     }
 
-    private fun getImageByteArray(imageUri: Uri): Any {
+    fun getImageByteArray(imageUri: Uri): Any {
         val originalBitmap = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
             val source =
                 ImageDecoder.createSource(

@@ -31,7 +31,7 @@
         android:textAppearance="@style/TextAppearance.MaterialComponents.Body2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/addImage"
+        app:layout_constraintEnd_toStartOf="@id/imageSend"
         />
 
     <com.google.android.material.button.MaterialButton
@@ -48,13 +48,14 @@
         app:layout_constraintTop_toTopOf="@+id/messageText" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/addImage"
-        android:layout_width="25dp"
-        android:layout_height="25dp"
+        android:id="@+id/imageSend"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
         android:layout_margin="@dimen/layout_margin"
-        app:icon="@drawable/ic_add_sign"
-        android:visibility="gone"
-        app:backgroundTint="@color/gray"
+        app:cornerRadius="100dp"
+        android:gravity="center"
+        app:icon="@drawable/ic_image_share"
+        android:backgroundTint="@color/decent_green"
         app:layout_constraintEnd_toStartOf="@id/messageSend"
         app:layout_constraintStart_toEndOf="@id/messageText"
         app:layout_constraintBottom_toBottomOf="parent"/>
