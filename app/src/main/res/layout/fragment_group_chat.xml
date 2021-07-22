@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:layout_width="match_parent"
@@ -31,8 +30,23 @@
         android:textCursorDrawable="@drawable/cursor"
         android:textSize="15sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/messageSend"
+        app:layout_constraintEnd_toStartOf="@+id/imageSend"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/imageSend"
+        android:layout_width="45dp"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/layout_margin"
+        android:layout_marginBottom="664dp"
+        android:backgroundTint="@color/decent_green"
+        android:gravity="center"
+        app:cornerRadius="100dp"
+        app:icon="@drawable/ic_image_share"
+        app:layout_constraintStart_toEndOf="@id/messageText"
+        app:layout_constraintTop_toTopOf="@id/messageText"
+        app:layout_constraintBottom_toBottomOf="@id/messageText"
+        app:layout_constraintEnd_toStartOf="@id/messageSend"/>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/messageSend"

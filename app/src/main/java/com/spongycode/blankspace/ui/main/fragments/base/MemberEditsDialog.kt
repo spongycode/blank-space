@@ -36,6 +36,7 @@ import com.spongycode.blankspace.model.modelmemes.MemeModel
 import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
 import com.spongycode.blankspace.util.BitmapScaler
 import com.spongycode.blankspace.util.Helper
+import com.spongycode.blankspace.util.gallery
 import com.spongycode.blankspace.util.userdata
 import java.io.ByteArrayOutputStream
 import java.util.*
@@ -95,10 +96,6 @@ class MemberEditsDialog : DialogFragment() {
         view.findViewById<Button>(R.id.member_edits_btn_post).alpha = 0.5f
         Helper.buttonEffect(view.findViewById<Button>(R.id.member_edits_btn_post), "#C665F37D")
         view.findViewById<Button>(R.id.member_edits_btn).setOnClickListener {
-            val gallery = Intent(
-                Intent.ACTION_PICK,
-                MediaStore.Images.Media.INTERNAL_CONTENT_URI
-            )
             startActivityForResult(gallery, pickImage)
         }
         view.findViewById<Button>(R.id.member_edits_btn_post).setOnClickListener {
@@ -193,7 +190,7 @@ class MemberEditsDialog : DialogFragment() {
         }
         val scaledBitmap = BitmapScaler.scaleToFitHeight(originalBitmap, 1000)
         val byteOutputStream = ByteArrayOutputStream()
-        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 25, byteOutputStream)
+        scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteOutputStream)
         return byteOutputStream.toByteArray()
     }
 
