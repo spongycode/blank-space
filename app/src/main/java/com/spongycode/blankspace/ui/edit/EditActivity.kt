@@ -205,14 +205,14 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
             ) == PackageManager.PERMISSION_GRANTED
         ) {
             mPhotoEditor.saveAsFile(
-                Environment.getExternalStorageDirectory().toString() + "/${tShot}.jpg",
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).toString() + "/${tShot}.jpg",
                 object : PhotoEditor.OnSaveListener {
                     override fun onSuccess(imagePath: String) {
                         if (uploadStatus) {
                             val mUri: Uri = Uri.fromFile(
                                 File(
-                                    Environment.getExternalStorageDirectory()
-                                        .toString() + "/${tShot}.jpg"
+                                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                                    "/${tShot}.jpg"
                                 )
                             )
                             MemberEditsDialog.newInstance(
