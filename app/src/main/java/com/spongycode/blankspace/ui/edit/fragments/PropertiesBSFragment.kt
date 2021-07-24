@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import android.widget.SeekBar.OnSeekBarChangeListener
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
@@ -48,6 +49,7 @@ class PropertiesBSFragment : BottomSheetDialogFragment(), OnSeekBarChangeListene
                     dismiss()
                     mProperties!!.onColorChanged(colorCode)
                 }
+                activity?.findViewById<View>(R.id.current_color_indicator)?.setBackgroundColor(colorCode)
             }
         })
         rvColor.adapter = colorPickerAdapter
