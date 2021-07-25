@@ -60,6 +60,11 @@ class SignInFragment: Fragment() {
             requireActivity().onBackPressedDispatcher.addCallback {
                 findNavController().navigate(R.id.action_signInFragment_to_signUpFragment)
             }
+
+            resetPasswordInit.setOnClickListener {
+                ResetPasswordDialog.newInstance().show(parentFragmentManager, "reset")
+
+            }
         }
     }
 

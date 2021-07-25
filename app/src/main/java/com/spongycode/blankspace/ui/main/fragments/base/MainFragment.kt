@@ -475,6 +475,7 @@ class MainFragment : Fragment() {
             internal val memeSenderUsername: TextView = view.findViewById(R.id.meme_sender_username)
             internal val memePostTimeTv: TextView = view.findViewById(R.id.meme_post_time_tv)
             internal val memeHeartAnim: ImageView = view.findViewById(R.id.meme_heart_anim_iv)
+            internal val memeHeartAnimOut: ImageView = view.findViewById(R.id.meme_heart_anim_out_iv)
             internal val memeLikeEntry: ShapeableImageView = view.findViewById(R.id.like_entry)
             internal val memeLikeGone: ShapeableImageView = view.findViewById(R.id.like_gone)
         }
@@ -516,6 +517,11 @@ class MainFragment : Fragment() {
                 val animatedVectorDrawableLittle: AnimatedVectorDrawable =
                     drawableLittle as AnimatedVectorDrawable
                 animatedVectorDrawableLittle.start()
+                holder.memeHeartAnimOut.alpha = 0.8f
+                val drawable: Drawable = holder.memeHeartAnimOut.drawable
+                val animatedVectorDrawable: AnimatedVectorDrawable =
+                    drawable as AnimatedVectorDrawable
+                animatedVectorDrawable.start()
 
             }else{
                 meme.like = true
@@ -527,15 +533,16 @@ class MainFragment : Fragment() {
                     drawableLittle as AnimatedVectorDrawable
                 animatedVectorDrawableLittle.start()
                 holder.like.setImageResource(R.drawable.ic_baseline_favorite_24)
+                holder.memeHeartAnim.alpha = 0.8f
+                val drawable: Drawable = holder.memeHeartAnim.drawable
+                val animatedVectorDrawable: AnimatedVectorDrawable =
+                    drawable as AnimatedVectorDrawable
+                animatedVectorDrawable.start()
             }
 
             // this rebuilds the whole rv, we need to implement a diffUtil.
 //                binding.rvMeme.adapter?.notifyDataSetChanged()
-            holder.memeHeartAnim.alpha = 0.8f
-            val drawable: Drawable = holder.memeHeartAnim.drawable
-            val animatedVectorDrawable: AnimatedVectorDrawable =
-                drawable as AnimatedVectorDrawable
-            animatedVectorDrawable.start()
+
 
         }
     }
