@@ -11,4 +11,8 @@ object Constants {
     const val MessageShare = "message"
     const val CHANNEL_ID = "BlankSpace"
     const val POLL_WORK = "Poll_work"
+    const val ACTION_SHOW_NOTIFICATION = "com.spongycode.blankspace.SHOW_NOTIFICATION"
+    const val PERM_PRIVATE = "com.spongycode.blankspace.PRIVATE"
+    const val REQUEST_CODE = "REQUEST_CODE"
+    const val NOTIFICATION = "NOTIFICATION"
 }

@@ -43,6 +43,7 @@ class GroupChatFragment: Fragment() {
     private val chatViewModel: ChatViewModel = MainActivity.chatViewModel
     private val chatMessages = mutableListOf<ChatMessage>()
     private var sender = UserModel()
+    private var query = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,15 +58,8 @@ class GroupChatFragment: Fragment() {
 
         receiveMessage()
 
-//        chatViewModel.receiveGroupMessages("user-messages/group/$groupId").observe(
-//            viewLifecycleOwner, {
-//                chatViewModel.groupMessages.addAll(it)
-//                binding.list.adapter = GroupChatAdapter(chatViewModel.groupMessages)
-//                binding.list.addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
-//                binding.list.adapter?.notifyDataSetChanged()
-//                binding.list.scrollToPosition(chatViewModel.groupMessages.size - 1)
-//            }
-//        )
+        binding.list.addItemDecoration(DividerItemDecoration((activity as MainActivity).applicationContext,
+            DividerItemDecoration.VERTICAL))
 
         binding.apply {
 
@@ -116,11 +110,8 @@ class GroupChatFragment: Fragment() {
                             chatMessages.add(message)
                         }
                         chatMessages.sortByDescending { it.messageTime }
-                        val query = chatMessages[0].messageText
-                        QueryPreferenc.setLastResultId((activity as MainActivity).baseContext, query)
+                        query = chatMessages[0].messageText
                         binding.list.adapter = GroupChatAdapter(chatMessages)
-                        binding.list.addItemDecoration(DividerItemDecoration((activity as MainActivity).baseContext,
-                            DividerItemDecoration.VERTICAL))
                         binding.list.adapter?.notifyDataSetChanged()
                     }
                 }
@@ -134,6 +125,7 @@ class GroupChatFragment: Fragment() {
 //    }
     override fun onPause() {
         super.onPause()
+        QueryPreferenc.setLastResultId((activity as MainActivity).applicationContext, query)
         chatViewModel.currentText = binding.messageText.text.toString()
     }
 

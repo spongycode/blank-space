@@ -2,10 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.spongycode.blankspace">
 
+    <permission android:name="com.spongycode.blankspace.PRIVATE"
+        android:protectionLevel="signature"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="com.spongycode.blankspace.PRIVATE"/>
 
     <application
         android:name=".BlankSpaceApplication"
@@ -37,13 +40,15 @@
                 android:resource="@xml/path" />
         </provider>
 
-        <service
-            android:name=".ui.main.MainActivity"
+        <receiver android:name=".util.NotificationReceiver"
+            android:permission="com.spongycode.blankspace.PRIVATE"
             android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            <intent-filter android:priority="-999">
+                <action
+                    android:name="com.spongycode.blankspace.SHOW_NOTIFICATION"/>
             </intent-filter>
-        </service>
+        </receiver>
+
     </application>
 
 

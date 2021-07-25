@@ -1,11 +1,11 @@
 package com.spongycode.blankspace.storage
 
+import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.firebase.firestore.ktx.firestore
@@ -16,6 +16,10 @@ import com.spongycode.blankspace.model.modelChat.ChatMessage
 import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.ui.main.QueryPreferenc
 import com.spongycode.blankspace.util.Constants
+import com.spongycode.blankspace.util.Constants.ACTION_SHOW_NOTIFICATION
+import com.spongycode.blankspace.util.Constants.NOTIFICATION
+import com.spongycode.blankspace.util.Constants.PERM_PRIVATE
+import com.spongycode.blankspace.util.Constants.REQUEST_CODE
 
 private const val CHANNEL_ID = "1"
 
@@ -25,6 +29,7 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
         val chatMessages = mutableListOf<ChatMessage>()
         val query = QueryPreferenc.getLastResultId(context)
         var string = ""
+        var name = ""
 
         val a = Firebase.firestore
             .collection("user-messages/group/${Constants.groupId}")
@@ -43,6 +48,7 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
                     }
                     chatMessages.sortByDescending { it.messageTime }
                     string = chatMessages[0].messageText
+                    name = chatMessages[0].nameSender
                     Log.d("messageJn5", "mes: $string, $query")
                     if (query == string) {
                         // honestly, just do nothing
@@ -58,35 +64,29 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
 
                         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
                             .setSmallIcon(R.drawable.logo)
-                            .setContentTitle("stuff")
+                            .setContentTitle(name)
                             .setContentText(string)
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                             .setContentIntent(pendingIntent)
                             .setAutoCancel(true)
+                            .build()
 
-                        with(NotificationManagerCompat.from(context)) {
-                            notify(0, notification.build())
-                        }
+                        showBackgroundNotification(0, notification)
+
                     }
                 }
             }
         return Result.success()
     }
 
-    fun getNotification(title: String, text: String){
-        // Create an explicit intent for an Activity in your app
-//        val intent = Intent(this, MainActivity::class.java).apply {
-//            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-//        }
-//        val pendingIntent: PendingIntent = PendingIntent.getActivity(this, 3, intent, 0)
-//
-//        var builder = NotificationCompat.Builder(this, CHANNEL_ID)
-//            .setSmallIcon(R.drawable.logo)
-//            .setContentTitle(title)
-//            .setContentText(text)
-//            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-//            .setContentIntent(pendingIntent)
-//            .setAutoCancel(true)
+    private fun showBackgroundNotification(requestCode: Int, notification: Notification){
+        val intent = Intent(ACTION_SHOW_NOTIFICATION).apply {
+            putExtra(REQUEST_CODE, requestCode)
+            putExtra(NOTIFICATION, notification)
+        }
+
+        context.sendOrderedBroadcast(intent, PERM_PRIVATE)
 
     }
+
 }
