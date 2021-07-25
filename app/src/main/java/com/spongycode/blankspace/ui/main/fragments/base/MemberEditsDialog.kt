@@ -139,11 +139,11 @@ class MemberEditsDialog : DialogFragment() {
         requireView().findViewById<Button>(R.id.member_edits_btn).visibility = GONE
 
         val imageUri: Uri = mUri
-        val extension: String =
-            imageUri.toString().substring(imageUri.toString().lastIndexOf("."))
+//        val extension: String =
+//            imageUri.toString().substring(imageUri.toString().lastIndexOf("."))
         val ref = mStorageRef.child("pics/${System.currentTimeMillis()}")
         val uploadTask: UploadTask
-        uploadTask = if (extension.toLowerCase(Locale.ROOT).trim() != ".gif") {
+        uploadTask = if (true) {
             val imageByteArray = getImageByteArray(imageUri)
             ref.putBytes(imageByteArray as ByteArray)
         } else {

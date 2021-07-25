@@ -13,8 +13,6 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.*
 import androidx.activity.addCallback
@@ -26,7 +24,6 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
-import com.google.android.material.button.MaterialButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
@@ -252,11 +249,11 @@ class SettingFragment : Fragment() {
 
 
             val imageUri: Uri = data.data!!
-            val extension: String =
-                imageUri.toString().substring(imageUri.toString().lastIndexOf("."))
+//            val extension: String =
+//                imageUri.toString().substring(imageUri.toString().lastIndexOf("."))
             val ref = storageReference!!.child("profilepics/${System.currentTimeMillis()}")
             val uploadTask: UploadTask
-            uploadTask = if (extension.toLowerCase(Locale.ROOT).trim() != ".gif") {
+            uploadTask = if (true) {
                 val imageByteArray = getImageByteArray(imageUri)
                 ref.putBytes(imageByteArray as ByteArray)
             } else {

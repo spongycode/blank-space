@@ -25,6 +25,7 @@ import com.spongycode.blankspace.databinding.ItemListofchatsBinding
 import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelChat.ChatMessage
 import com.spongycode.blankspace.ui.main.MainActivity
+import com.spongycode.blankspace.ui.main.QueryPreferenc
 import com.spongycode.blankspace.util.Constants.USERR_KEY
 import com.spongycode.blankspace.util.Constants.USER_KEY
 import com.squareup.picasso.Picasso
@@ -40,6 +41,7 @@ class ChatScreenFragment: Fragment() {
     private val chatViewModel = MainActivity.chatViewModel
     private val messageList = mutableListOf<ChatMessage>()
     private lateinit var currentUser: UserModel
+    private var query = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,6 +59,7 @@ class ChatScreenFragment: Fragment() {
         })
 
         listenForLatestMessages()
+        binding.list.addItemDecoration(DividerItemDecoration((activity as MainActivity).baseContext, DividerItemDecoration.VERTICAL))
         binding.fab.setOnClickListener { findNavController().navigate(R.id.listOfUsersFragment) }
         return binding.root
     }
@@ -90,12 +93,11 @@ class ChatScreenFragment: Fragment() {
                         val chat = dc.document.toObject<ChatMessage>()
                         messageList.add(0, chat)
                     }
+                    query = messageList[0].messageText
                     binding.list.apply {
                         adapter = ListOfChatsAdapter(messageList)
                         adapter?.notifyDataSetChanged()
-                        addItemDecoration(DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL))
                     }
-
                 }
             }
     }
@@ -187,4 +189,8 @@ class ChatScreenFragment: Fragment() {
 
     }
 
+    override fun onStop() {
+        super.onStop()
+        QueryPreferenc.setLastResultIdText((activity as MainActivity).baseContext, query)
+    }
 }

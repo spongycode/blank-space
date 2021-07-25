@@ -34,6 +34,8 @@ import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.ActivityMainBinding
 import com.spongycode.blankspace.storage.PollWorker
 import com.spongycode.blankspace.util.Constants.POLL_WORK
+import com.spongycode.blankspace.util.Constants.PREF_LAST_RESULT_ID
+import com.spongycode.blankspace.util.Constants.PREF_LAST_RESULT_ID_TEXT
 import com.spongycode.blankspace.util.Constants.STORAGE_PERMISSION_CODE
 import com.spongycode.blankspace.viewmodel.ChatViewModel
 import com.spongycode.blankspace.viewmodel.ImageViewModel
@@ -187,9 +189,6 @@ class MainActivity : AppCompatActivity() {
     }
 }
 
-
-private const val PREF_LAST_RESULT_ID = "lastResultId"
-
 object QueryPreferenc {
 
     fun getLastResultId(context: Context): String {
@@ -200,6 +199,17 @@ object QueryPreferenc {
     fun setLastResultId(context: Context, lastResultId: String) {
         PreferenceManager.getDefaultSharedPreferences(context).edit {
             putString(PREF_LAST_RESULT_ID, lastResultId)
+        }
+    }
+
+    fun getLastResultIdText(context: Context): String {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+            .getString(PREF_LAST_RESULT_ID_TEXT, "")!!
+    }
+
+    fun setLastResultIdText(context: Context, lastResultId: String) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit {
+            putString(PREF_LAST_RESULT_ID_TEXT, lastResultId)
         }
     }
 }

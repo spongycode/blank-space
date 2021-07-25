@@ -15,4 +15,6 @@ object Constants {
     const val PERM_PRIVATE = "com.spongycode.blankspace.PRIVATE"
     const val REQUEST_CODE = "REQUEST_CODE"
     const val NOTIFICATION = "NOTIFICATION"
+    const val PREF_LAST_RESULT_ID = "lastResultId"
+    const val PREF_LAST_RESULT_ID_TEXT = "lastResultIdtext"
 }

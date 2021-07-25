@@ -20,6 +20,7 @@ import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelChat.ChatMessage
 import com.spongycode.blankspace.storage.sendMessage
 import com.spongycode.blankspace.ui.main.MainActivity
+import com.spongycode.blankspace.ui.main.QueryPreferenc
 import com.spongycode.blankspace.ui.main.fragments.base.PhotoViewerDialog
 import com.spongycode.blankspace.util.Constants
 import com.spongycode.blankspace.util.gallery
@@ -38,9 +39,10 @@ class PrivateChatFragment: Fragment() {
     private lateinit var lMessageBinding: LeftsidemessageBinding
     private lateinit var rMessageBinding: RightsidemessageBinding
     private val chatViewModel: ChatViewModel = MainActivity.chatViewModel
-    private val chatMessages = mutableListOf<ChatMessage>()
+    private val chatMessages = mutableListOf<ChatMessage>(ChatMessage("randomId", "hi, you have no messages"))
     private lateinit var receiver: UserModel
     private lateinit var sender: UserModel
+    var textQuery = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,12 +57,17 @@ class PrivateChatFragment: Fragment() {
         _binding = FragmentPrivateChatBinding.inflate(inflater, container, false)
 
         sender = arguments?.getSerializable(Constants.USERR_KEY) as UserModel
-        Log.d("sender", "sender: $sender")
         // get the user selected by the sender.
         receiver = arguments?.getSerializable(Constants.USER_KEY) as UserModel
-        Log.d("sender", "receiver: $receiver")
 
         receiveMessage()
+
+        binding.list.addItemDecoration(
+            DividerItemDecoration(
+                (activity as MainActivity).baseContext,
+                DividerItemDecoration.VERTICAL
+            )
+        )
 
 //        chatViewModel.receiveChatMessages("user-messages/${sender.userId}/${receiver.userId}").observe(
 //            viewLifecycleOwner, {
@@ -109,7 +116,7 @@ class PrivateChatFragment: Fragment() {
     }
 
     // this will go to repo
-    private fun receiveMessage(){
+    fun receiveMessage(): ChatMessage{
 
         CoroutineScope(Dispatchers.IO).launch{  // listen to every event at this collection
             // add every new messasge to the messages list
@@ -126,7 +133,6 @@ class PrivateChatFragment: Fragment() {
 
                     // clear the list for older messages and redownload all messages again
                     chatMessages.clear()
-                    Log.d("query", "quer: ${querySnapshot?.documents}, ${sender.userId}/${receiver.userId}")
                     querySnapshot?.let {
                         for (document in it) {
                             val message = document.toObject<ChatMessage>()
@@ -135,22 +141,19 @@ class PrivateChatFragment: Fragment() {
 
                         chatMessages.sortByDescending { it.messageTime }
                         binding.list.adapter = PrivateChatAdapter(chatMessages)
-                        binding.list.addItemDecoration(
-                            DividerItemDecoration(
-                                (activity as MainActivity).baseContext,
-                                DividerItemDecoration.VERTICAL
-                            )
-                        )
                         binding.list.adapter?.notifyDataSetChanged()
                         // scroll to the just received message
-                        binding.list.scrollToPosition(chatMessages.size - 1)
+                        binding.list.scrollToPosition(0)
+                        textQuery = chatMessages[0].messageText
                     }
                 }
         }
+        return chatMessages[0]
     }
 
     override fun onPause() {
         super.onPause()
+        QueryPreferenc.setLastResultIdText((activity as MainActivity).applicationContext, textQuery)
         chatViewModel.currentText = binding.messageText.text.toString()
     }
 

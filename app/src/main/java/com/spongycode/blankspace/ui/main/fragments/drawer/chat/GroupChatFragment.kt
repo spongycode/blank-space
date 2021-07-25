@@ -113,6 +113,7 @@ class GroupChatFragment: Fragment() {
                         query = chatMessages[0].messageText
                         binding.list.adapter = GroupChatAdapter(chatMessages)
                         binding.list.adapter?.notifyDataSetChanged()
+                        binding.list.scrollToPosition(0)
                     }
                 }
         }

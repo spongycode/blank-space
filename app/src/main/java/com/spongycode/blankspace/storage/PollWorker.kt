@@ -14,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.model.modelChat.ChatMessage
 import com.spongycode.blankspace.ui.main.MainActivity
+import com.spongycode.blankspace.ui.main.MainActivity.Companion.firebaseAuth
 import com.spongycode.blankspace.ui.main.QueryPreferenc
 import com.spongycode.blankspace.util.Constants
 import com.spongycode.blankspace.util.Constants.ACTION_SHOW_NOTIFICATION
@@ -26,11 +27,25 @@ private const val CHANNEL_ID = "1"
 class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(context, workerParams) {
 
     override fun doWork(): Result {
+        // group chat
         val chatMessages = mutableListOf<ChatMessage>()
         val query = QueryPreferenc.getLastResultId(context)
         var string = ""
         var name = ""
 
+        // private chcta
+        val messageList = mutableListOf<ChatMessage>()
+        var queryText = QueryPreferenc.getLastResultIdText(context)
+        var stringText = ""
+        var nameText = ""
+
+        val intent = Intent(context, MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        }
+        val pendingIntent: PendingIntent =
+            PendingIntent.getActivity(context, 0, intent, 0)
+
+        // group caht listener
         val a = Firebase.firestore
             .collection("user-messages/group/${Constants.groupId}")
         a
@@ -50,21 +65,13 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
                     string = chatMessages[0].messageText
                     name = chatMessages[0].nameSender
                     Log.d("messageJn5", "mes: $string, $query")
-                    if (query == string) {
-                        // honestly, just do nothing
-                    } else { // Create an explic
+                    if (query != string) {
                         // it intent for an Activity in your app
                         QueryPreferenc.setLastResultId(context, string)
 
-                        val intent = Intent(context, MainActivity::class.java).apply {
-                            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        }
-                        val pendingIntent: PendingIntent =
-                            PendingIntent.getActivity(context, 0, intent, 0)
-
                         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
                             .setSmallIcon(R.drawable.logo)
-                            .setContentTitle(name)
+                            .setContentTitle("group message from $name")
                             .setContentText(string)
                             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                             .setContentIntent(pendingIntent)
@@ -72,10 +79,50 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
                             .build()
 
                         showBackgroundNotification(0, notification)
-
                     }
                 }
             }
+
+        val sender = firebaseAuth.currentUser!!.uid
+        Firebase.firestore.collection("latest/messages/$sender")
+            .orderBy("messageTime").addSnapshotListener{ querySnapshot, error ->
+
+                error?.let {
+                    Log.w("Lmessages", error.message!!)
+                    return@addSnapshotListener
+                }
+
+                messageList.clear()
+                querySnapshot?.let {
+
+                    // clear the list and message through every message
+                    // thinking about this, it's better to user on type.added
+                    for (dc in it.documentChanges) {
+                        val chat = dc.document.toObject<ChatMessage>()
+                        messageList.add(0, chat)
+                    }
+                    stringText = messageList[0].messageText
+                    nameText = messageList[0].nameSender
+                    if (stringText != queryText) {
+                        QueryPreferenc.setLastResultIdText(context, stringText)
+
+                        val notification = NotificationCompat.Builder(context, CHANNEL_ID)
+                            .setSmallIcon(R.drawable.logo)
+                            .setContentTitle("private text from $nameText,")
+                            .setContentText(stringText)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                            .setContentIntent(pendingIntent)
+                            .setAutoCancel(true)
+                            .build()
+
+                        showBackgroundNotification(0, notification)
+                    }
+
+                }
+            }
+
+        Log.d("query", "mes: ${stringText} / $queryText")
+
         return Result.success()
     }
 
