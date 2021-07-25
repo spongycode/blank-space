@@ -142,8 +142,9 @@ fun sendGroupMessage(groupId: String, sender: UserModel?, messageText: String, m
 
 }
 
-// and then this one requires parameters anyway
 
+
+// and then this one requires parameters anyway
 val message = mutableListOf<ChatMessage>()
 fun receiveChatMessage(collection: String): LiveData<List<ChatMessage>>{
     val messagesLiveData = MutableLiveData<List<ChatMessage>>()

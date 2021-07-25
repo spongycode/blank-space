@@ -21,6 +21,7 @@ import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelChat.ChatMessage
 import com.spongycode.blankspace.storage.sendGroupMessage
 import com.spongycode.blankspace.ui.main.MainActivity
+import com.spongycode.blankspace.ui.main.QueryPreferenc
 import com.spongycode.blankspace.ui.main.fragments.base.PhotoViewerDialog
 import com.spongycode.blankspace.util.Constants.groupId
 import com.spongycode.blankspace.util.gallery
@@ -97,7 +98,7 @@ class GroupChatFragment: Fragment() {
 
     // this will go to repo
     // this failed to go to repo, it shall remain here
-    private fun receiveMessage(){
+    fun receiveMessage(){
         CoroutineScope(Dispatchers.IO).launch{
             val a = Firebase.firestore
                 .collection("user-messages/group/$groupId")
@@ -110,12 +111,13 @@ class GroupChatFragment: Fragment() {
 
                     value?.let {
                         chatMessages.clear()
-                        Log.d("error", "data: ${it.documents}")
                         for (doc in it){
                             val message = doc.toObject<ChatMessage>()
                             chatMessages.add(message)
                         }
                         chatMessages.sortByDescending { it.messageTime }
+                        val query = chatMessages[0].messageText
+                        QueryPreferenc.setLastResultId((activity as MainActivity).baseContext, query)
                         binding.list.adapter = GroupChatAdapter(chatMessages)
                         binding.list.addItemDecoration(DividerItemDecoration((activity as MainActivity).baseContext,
                             DividerItemDecoration.VERTICAL))

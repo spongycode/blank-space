@@ -137,7 +137,7 @@ class PrivateChatFragment: Fragment() {
                         binding.list.adapter = PrivateChatAdapter(chatMessages)
                         binding.list.addItemDecoration(
                             DividerItemDecoration(
-                                requireContext(),
+                                (activity as MainActivity).baseContext,
                                 DividerItemDecoration.VERTICAL
                             )
                         )

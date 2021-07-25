@@ -23,4 +23,6 @@
     <string name="menu_slideshow">Slideshow</string>
     <string name="open_drawer">open</string>
     <string name="close_drawer">close</string>
+    <string name="channel__name">Blank-Space</string>
+    <string name="channel_description">chatNotification</string>
 </resources>

@@ -3,6 +3,7 @@ package com.spongycode.blankspace.ui.main
 import android.Manifest
 import android.app.Activity
 import android.content.ContentValues
+import android.content.Context
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -11,15 +12,18 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.preference.PreferenceManager
 import android.provider.MediaStore
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
+import androidx.work.*
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
@@ -28,6 +32,8 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.databinding.ActivityMainBinding
+import com.spongycode.blankspace.storage.PollWorker
+import com.spongycode.blankspace.util.Constants.POLL_WORK
 import com.spongycode.blankspace.util.Constants.STORAGE_PERMISSION_CODE
 import com.spongycode.blankspace.viewmodel.ChatViewModel
 import com.spongycode.blankspace.viewmodel.ImageViewModel
@@ -35,7 +41,7 @@ import com.spongycode.blankspace.viewmodel.MemeViewModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
-
+import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
 
@@ -54,7 +60,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -66,7 +71,11 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
 
-
+        val workRequest = PeriodicWorkRequest
+            .Builder(PollWorker::class.java, 1, TimeUnit.MINUTES)
+            .build()
+        WorkManager.getInstance()
+            .enqueueUniquePeriodicWork(POLL_WORK, ExistingPeriodicWorkPolicy.KEEP, workRequest)
 
         binding.navigationView.setNavigationItemSelectedListener (object : NavigationView.OnNavigationItemSelectedListener{
             override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -108,8 +117,6 @@ class MainActivity : AppCompatActivity() {
             }
         })
     }
-
-
 
     fun saveImage(activity: Activity, image: Drawable, title: String) {
 
@@ -179,3 +186,36 @@ class MainActivity : AppCompatActivity() {
         }
     }
 }
+
+
+private const val PREF_LAST_RESULT_ID = "lastResultId"
+
+object QueryPreferenc {
+
+    fun getLastResultId(context: Context): String {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+            .getString(PREF_LAST_RESULT_ID, "")!!
+    }
+
+    fun setLastResultId(context: Context, lastResultId: String) {
+        PreferenceManager.getDefaultSharedPreferences(context).edit {
+            putString(PREF_LAST_RESULT_ID, lastResultId)
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

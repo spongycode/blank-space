@@ -9,4 +9,6 @@ object Constants {
     const val groupId = "BlankSpaceGroup"
     const val ImageShare = "image"
     const val MessageShare = "message"
+    const val CHANNEL_ID = "BlankSpace"
+    const val POLL_WORK = "Poll_work"
 }
