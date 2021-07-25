@@ -36,6 +36,7 @@
         app:layout_constraintVertical_bias="0.070" />
 
     <View
+        android:id="@+id/view"
         android:layout_width="200dp"
         android:layout_height="4dp"
         android:layout_marginHorizontal="@dimen/margin_hor"
@@ -90,8 +91,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginHorizontal="@dimen/margin_hor"
-        android:keyboardNavigationCluster="true"
         android:hint="Email"
+        android:keyboardNavigationCluster="true"
         app:boxBackgroundColor="@color/white"
         app:boxCornerRadiusBottomEnd="@dimen/corner_radius"
         app:boxCornerRadiusBottomStart="@dimen/corner_radius"
@@ -122,9 +123,9 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
         android:layout_marginHorizontal="@dimen/margin_hor"
-        android:keyboardNavigationCluster="true"
         android:focusable="false"
         android:hint="Password"
+        android:keyboardNavigationCluster="true"
         app:boxBackgroundColor="@color/white"
         app:boxCornerRadiusBottomEnd="@dimen/corner_radius"
         app:boxCornerRadiusBottomStart="@dimen/corner_radius"
@@ -158,8 +159,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="@dimen/margin_hor"
-        android:keyboardNavigationCluster="true"
         android:backgroundTint="@color/black"
+        android:keyboardNavigationCluster="true"
         android:paddingHorizontal="25dp"
         android:paddingVertical="15dp"
         android:text="Sign in"
@@ -169,6 +170,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/passwordTextField"
         app:layout_constraintVertical_bias="0.40" />
+
+    <TextView
+        android:id="@+id/reset_password_init"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Forgot password?"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="@+id/signInButton"
+        app:layout_constraintStart_toStartOf="@+id/signInButton"
+        app:layout_constraintTop_toBottomOf="@+id/signInButton" />
 
 
     <ImageView
