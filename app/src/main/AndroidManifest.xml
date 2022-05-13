@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.spongycode.blankspace">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <permission android:name="com.spongycode.blankspace.PRIVATE"
         android:protectionLevel="signature"/>
@@ -20,7 +19,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MaterialComponents.Light.NoActionBar">
         <activity android:name=".ui.edit.EditActivity" />
-        <activity android:name=".ui.splash.SplashActivity" >
+        <activity android:name=".ui.splash.SplashActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

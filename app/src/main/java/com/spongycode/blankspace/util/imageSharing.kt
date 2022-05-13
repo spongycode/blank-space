@@ -5,7 +5,7 @@ import android.net.Uri
 import android.provider.MediaStore
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import com.spongycode.blankspace.R
 import com.spongycode.blankspace.model.UserModel
 

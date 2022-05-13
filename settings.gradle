@@ -1,2 +1,18 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.PREFER_PROJECT)
+    repositories {
+        google()
+        jcenter()
+        maven { url "https://www.jitpack.io" }
+        mavenCentral()
+    }
+}
 include ':app'
 rootProject.name = "Blank Space"
