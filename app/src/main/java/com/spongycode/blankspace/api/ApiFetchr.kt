@@ -42,7 +42,7 @@ class ApiFetchr {
                 if (response.body() != null) {
                     val memeList: MutableList<MemeModel> = mutableListOf()
                     for (i in response.body()!!.memes!!) {
-                        i.gif = i.url.substring(i.url.lastIndexOf(".")).toLowerCase(Locale.ROOT)
+                        i.gif = i.url.substring(i.url.lastIndexOf(".")).lowercase(Locale.ROOT)
                             .trim() == ".gif"
                         memeList.add(i)
                     }

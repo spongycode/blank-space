@@ -45,8 +45,8 @@ import java.util.*
 class MemberEditsDialog : DialogFragment() {
 
     private val pickImage = 100
-    var mStorage = FirebaseStorage.getInstance()
-    val mStorageRef = mStorage.reference
+    private var mStorage = FirebaseStorage.getInstance()
+    private val mStorageRef = mStorage.reference
     private var downloadUri: Uri? = null
     private var isGif: Boolean = false
 
@@ -80,7 +80,7 @@ class MemberEditsDialog : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT));
+        dialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
         val profileImageUrl = arguments?.getString("IMAGE_URL")
         val uploadImageUrl = arguments?.getString("UPLOAD_IMAGE_URL")
@@ -142,13 +142,9 @@ class MemberEditsDialog : DialogFragment() {
 //        val extension: String =
 //            imageUri.toString().substring(imageUri.toString().lastIndexOf("."))
         val ref = mStorageRef.child("pics/${System.currentTimeMillis()}")
-        val uploadTask: UploadTask
-        uploadTask = if (true) {
+        val uploadTask: UploadTask = run {
             val imageByteArray = getImageByteArray(imageUri)
             ref.putBytes(imageByteArray as ByteArray)
-        } else {
-            isGif = true
-            ref.putFile(imageUri)
         }
 
         uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->

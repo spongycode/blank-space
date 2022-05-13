@@ -67,7 +67,7 @@ fun sendMessage(r: UserModel, s: UserModel, messageText: String, messageImage: S
     val receiverReference = Firebase.firestore
         .collection("user-messages/${r.userId}/${s.userId}")
 
-    s?.let { sender ->
+    s.let { sender ->
         if (r == null) return
 
         // create the message typed by the user

@@ -153,7 +153,7 @@ class FMemesFragment : Fragment() {
                     })
             }
             holder.download.setOnClickListener {
-                if(meme.url.substring(meme.url.lastIndexOf(".")).toLowerCase(Locale.ROOT).trim() != ".gif") {
+                if(meme.url.substring(meme.url.lastIndexOf(".")).lowercase(Locale.ROOT).trim() != ".gif") {
                     MainActivity().saveImage(
                         (activity as MainActivity),
                         holder.image.drawable,
@@ -198,7 +198,7 @@ class FMemesFragment : Fragment() {
                     val myIntent = Intent(context, EditActivity::class.java)
                     Toast.makeText(
                         requireContext(),
-                        meme.url.toLowerCase(Locale.ROOT).trim(),
+                        meme.url.lowercase(Locale.ROOT).trim(),
                         Toast.LENGTH_LONG
                     ).show()
                     myIntent.putExtra("imageurl", meme.url)

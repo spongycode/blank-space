@@ -39,7 +39,7 @@ class SignInFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentSigninBinding.inflate(inflater, container, false)
         Helper.buttonEffect(binding.signInButton, "#C665F37D")
         return binding.root

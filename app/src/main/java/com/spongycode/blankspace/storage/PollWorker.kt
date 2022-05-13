@@ -30,12 +30,12 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
         // group chat
         val chatMessages = mutableListOf<ChatMessage>()
         val query = QueryPreferenc.getLastResultId(context)
-        var string = ""
-        var name = ""
+        var string: String
+        var name: String
 
         // private chcta
         val messageList = mutableListOf<ChatMessage>()
-        var queryText = QueryPreferenc.getLastResultIdText(context)
+        val queryText = QueryPreferenc.getLastResultIdText(context)
         var stringText = ""
         var nameText = ""
 
@@ -123,7 +123,7 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
                 }
             }
 
-        Log.d("query", "mes: ${stringText} / $queryText")
+        Log.d("query", "mes: $stringText / $queryText")
 
         return Result.success()
     }

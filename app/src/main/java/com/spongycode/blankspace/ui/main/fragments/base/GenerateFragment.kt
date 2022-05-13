@@ -69,7 +69,7 @@ class GenerateFragment : Fragment() {
             binding.list.adapter?.notifyDataSetChanged()
         }
 
-        binding.list?.attachFab(binding.generateFab, activity as AppCompatActivity)
+        binding.list.attachFab(binding.generateFab, activity as AppCompatActivity)
         binding.list.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
             override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
                 return EdgeEffect(view.context).apply { color = resources.getColor(R.color.decent_green)

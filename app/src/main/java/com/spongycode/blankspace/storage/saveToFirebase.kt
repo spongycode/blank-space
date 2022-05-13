@@ -1,24 +1,17 @@
 package com.spongycode.blankspace.storage
 
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.navigation.fragment.findNavController
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.spongycode.blankspace.R
-import com.spongycode.blankspace.model.UserModel
 import com.spongycode.blankspace.model.modelmemes.MemeModel
 import com.spongycode.blankspace.model.modelsImages.Image
 import com.spongycode.blankspace.ui.auth.AuthActivity
-import com.spongycode.blankspace.ui.main.MainActivity.Companion.firestore
-import com.spongycode.blankspace.util.userdata
-import kotlinx.coroutines.tasks.await
 
-val TAG: String = "firebase"
+const val TAG: String = "firebase"
 val imageCollection = Firebase.firestore.collection("userImages")
 val memeList = mutableListOf<MemeModel>()
 val imageList = mutableListOf<Image>()
@@ -28,7 +21,7 @@ fun saveMemeToFavs(meme: MemeModel) {
         meme.url // changing to url from title as sometimes title is blank as also always not unique
     val re = Regex("[^A-Za-z0-9 ]")
     title = re.replace(title, "") // remove all special characters
-    meme?.let {
+    meme.let {
         imageCollection
             .document("${AuthActivity().firebaseAuth.currentUser?.email}/favMemes/$title")
             .set(meme, SetOptions.merge())
@@ -40,7 +33,7 @@ fun saveTemplate(image: Image) {
         image.url  // changing to url from title as sometimes title is blank as also always not unique
     val re = Regex("[^A-Za-z0-9 ]")
     name = re.replace(name, "") // remove all special characters
-    image?.let {
+    image.let {
         imageCollection
             .document("${AuthActivity().firebaseAuth.currentUser?.email}/favTemplates/$name")
             .set(image, SetOptions.merge())
@@ -51,7 +44,7 @@ fun removeTemplate(image: Image) {
         image.url  // changing to url from title as sometimes title is blank as also always not unique
     val re = Regex("[^A-Za-z0-9 ]")
     name = re.replace(name, "") // remove all special characters
-    image?.let {
+    image.let {
         imageCollection
             .document("${AuthActivity().firebaseAuth.currentUser?.email}/favTemplates/$name")
             .delete()
@@ -63,7 +56,7 @@ fun removeMeme(meme: MemeModel) {
         meme.url  // changing to url from title as sometimes title is blank as also always not unique
     val re = Regex("[^A-Za-z0-9 ]")
     name = re.replace(name, "") // remove all special characters
-    meme?.let {
+    meme.let {
         imageCollection
             .document("${AuthActivity().firebaseAuth.currentUser?.email}/favMemes/$name")
             .delete()

@@ -282,7 +282,7 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
     }
 
     override fun onColorChanged(colorCode: Int) {
-        mPhotoEditor.setBrushColor(colorCode)
+        mPhotoEditor.brushColor = colorCode
     }
 
     override fun onOpacityChanged(opacity: Int) {
@@ -290,6 +290,6 @@ class EditActivity : AppCompatActivity(), PropertiesBSFragment.Properties {
     }
 
     override fun onBrushSizeChanged(brushSize: Int) {
-        mPhotoEditor.setBrushSize(brushSize.toFloat())
+        mPhotoEditor.brushSize = brushSize.toFloat()
     }
 }
