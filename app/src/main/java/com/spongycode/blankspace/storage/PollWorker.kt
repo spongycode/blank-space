@@ -101,9 +101,11 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
                         val chat = dc.document.toObject<ChatMessage>()
                         messageList.add(0, chat)
                     }
-                    stringText = messageList[0].messageText
-                    nameText = messageList[0].nameSender
-                    if (stringText != queryText) {
+                    if (messageList.isNotEmpty()) {
+                        stringText = messageList[0].messageText
+                        nameText = messageList[0].nameSender
+                    }
+                    if (stringText != queryText && stringText.isNotEmpty()) {
                         QueryPreferenc.setLastResultIdText(context, stringText)
 
                         val notification = NotificationCompat.Builder(context, CHANNEL_ID)

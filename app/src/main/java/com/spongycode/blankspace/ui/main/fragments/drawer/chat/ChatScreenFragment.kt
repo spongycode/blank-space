@@ -30,9 +30,8 @@ import com.spongycode.blankspace.util.Constants.USERR_KEY
 import com.spongycode.blankspace.util.Constants.USER_KEY
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
-import java.util.*
 
-class ChatScreenFragment: Fragment() {
+class ChatScreenFragment : Fragment() {
 
     private var _binding: FragmentChatScreenBinding? = null
     private val binding get() = _binding!!
@@ -53,13 +52,18 @@ class ChatScreenFragment: Fragment() {
             findNavController().navigateUp()
         }
 
-        chatViewModel.user.observe(viewLifecycleOwner, {
+        chatViewModel.user.observe(viewLifecycleOwner) {
             currentUser = it.get(0)
             Log.d("user", "Itx : $currentUser")
-        })
+        }
 
         listenForLatestMessages()
-        binding.list.addItemDecoration(DividerItemDecoration((activity as MainActivity).baseContext, DividerItemDecoration.VERTICAL))
+        binding.list.addItemDecoration(
+            DividerItemDecoration(
+                (activity as MainActivity).baseContext,
+                DividerItemDecoration.VERTICAL
+            )
+        )
         binding.fab.setOnClickListener { findNavController().navigate(R.id.listOfUsersFragment) }
         return binding.root
     }
@@ -74,10 +78,10 @@ class ChatScreenFragment: Fragment() {
 
     // this needs to be in repository, same as send and receive message
     // and accessed from viewModel
-    private fun listenForLatestMessages(){
+    private fun listenForLatestMessages() {
         val sender = firebaseAuth.currentUser!!.uid
         Firebase.firestore.collection("latest/messages/$sender")
-            .orderBy("messageTime").addSnapshotListener{ querySnapshot, error ->
+            .orderBy("messageTime").addSnapshotListener { querySnapshot, error ->
 
                 error?.let {
                     Log.w("Lmessages", error.message!!)
@@ -93,7 +97,7 @@ class ChatScreenFragment: Fragment() {
                         val chat = dc.document.toObject<ChatMessage>()
                         messageList.add(0, chat)
                     }
-                    query = messageList[0].messageText
+                    if (messageList.isNotEmpty()) query = messageList[0].messageText
                     binding.list.apply {
                         adapter = ListOfChatsAdapter(messageList)
                         adapter?.notifyDataSetChanged()
@@ -102,18 +106,18 @@ class ChatScreenFragment: Fragment() {
             }
     }
 
-    inner class ListOfChatsAdapter(private val listMessage: List<ChatMessage>):
-        RecyclerView.Adapter<ListOfChatsAdapter.ListOfChatsViewHolder>(){
-        inner class ListOfChatsViewHolder(binding: ItemListofchatsBinding):
-            RecyclerView.ViewHolder(binding.root){
-                internal val profile: CircleImageView = binding.profile
-                internal val name: MaterialTextView = binding.name
-                internal val message: MaterialTextView = binding.message
-                internal val messageTime: MaterialTextView = binding.time
-            }
+    inner class ListOfChatsAdapter(private val listMessage: List<ChatMessage>) :
+        RecyclerView.Adapter<ListOfChatsAdapter.ListOfChatsViewHolder>() {
+        inner class ListOfChatsViewHolder(binding: ItemListofchatsBinding) :
+            RecyclerView.ViewHolder(binding.root) {
+            internal val profile: CircleImageView = binding.profile
+            internal val name: MaterialTextView = binding.name
+            internal val message: MaterialTextView = binding.message
+            internal val messageTime: MaterialTextView = binding.time
+        }
 
         // not working
-        private val diffUtil = object : DiffUtil.ItemCallback<ChatMessage>(){
+        private val diffUtil = object : DiffUtil.ItemCallback<ChatMessage>() {
             override fun areItemsTheSame(
                 oldItem: ChatMessage,
                 newItem: ChatMessage
@@ -142,20 +146,20 @@ class ChatScreenFragment: Fragment() {
             val message = listMessage.get(position)
             val myDate = "dd/MM HH:mm"
             var user: UserModel
-            with(holder){
-                with(message){
+            with(holder) {
+                with(message) {
                     holder.message.text = messageText.toString()
                     holder.messageTime.text = DateFormat.format(myDate, messageTime)
 
-                    if (message.messageReceiverId == FirebaseAuth.getInstance().currentUser!!.uid){
+                    if (message.messageReceiverId == FirebaseAuth.getInstance().currentUser!!.uid) {
                         holder.name.text = message.nameSender
-                        if (message.profilePictureSender.isNotBlank()){
+                        if (message.profilePictureSender.isNotBlank()) {
                             Picasso.get().load(message.profilePictureSender)
                                 .into(holder.profile)
                         }
-                    } else{
+                    } else {
                         holder.name.text = message.nameReceiver
-                        if (message.profilePictureReceiver.isNotBlank()){
+                        if (message.profilePictureReceiver.isNotBlank()) {
                             Picasso.get().load(message.profilePictureReceiver)
                                 .into(holder.profile)
                         }
@@ -163,7 +167,7 @@ class ChatScreenFragment: Fragment() {
                 }
 
                 itemView.setOnClickListener {
-                    if (message.messageReceiverId == firebaseAuth.currentUser!!.uid){
+                    if (message.messageReceiverId == firebaseAuth.currentUser!!.uid) {
                         user = UserModel(
                             message.messageSenderId,
                             "",
