@@ -1,9 +1,7 @@
 package com.spongycode.blankspace.ui.main.fragments.base
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -32,7 +30,6 @@ import com.spongycode.blankspace.ui.main.MainActivity
 import com.spongycode.blankspace.util.ClickListener
 import com.spongycode.blankspace.viewmodel.ImageViewModel
 import com.squareup.picasso.Picasso
-import java.util.*
 
 
 class GenerateFragment : Fragment() {
@@ -52,19 +49,18 @@ class GenerateFragment : Fragment() {
 
         imageList = imageViewModel.imageList
 
-        if(imageList.isEmpty()){
+        if (imageList.isEmpty()) {
             imageViewModel.imageLiveData.observe(
-                viewLifecycleOwner, {
-                    // set up and populate view
-
-                    imageList.addAll(it)
-                    imageList.toSet()
-                    imageList.toList()
-                    binding.list.adapter = GenerateFragmentAdapter(imageList)
-                    binding.list.adapter?.notifyDataSetChanged()
-                }
-            )
-        } else{
+                viewLifecycleOwner
+            ) {
+                // set up and populate view
+                imageList.addAll(it)
+                imageList.toSet()
+                imageList.toList()
+                binding.list.adapter = GenerateFragmentAdapter(imageList)
+                binding.list.adapter?.notifyDataSetChanged()
+            }
+        } else {
             binding.list.adapter = GenerateFragmentAdapter(imageList)
             binding.list.adapter?.notifyDataSetChanged()
         }
@@ -72,7 +68,8 @@ class GenerateFragment : Fragment() {
         binding.list.attachFab(binding.generateFab, activity as AppCompatActivity)
         binding.list.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
             override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
-                return EdgeEffect(view.context).apply { color = resources.getColor(R.color.decent_green)
+                return EdgeEffect(view.context).apply {
+                    color = resources.getColor(R.color.decent_green)
                 }
             }
         }
@@ -104,12 +101,13 @@ class GenerateFragment : Fragment() {
         }
 
         private lateinit var image: Image
+
         @SuppressLint("ClickableViewAccessibility")
         override fun onBindViewHolder(holder: GenerateFragmentViewHolder, position: Int) {
             image = listImages.get(position)
             holder.title.text = image.name
             checkTemplateIsFav(image)
-            holder.star.visibility = if(image.fav) VISIBLE else GONE
+            holder.star.visibility = if (image.fav) VISIBLE else GONE
             Picasso.get().load(image.url)
                 .error(R.drawable.meme)
                 .into(holder.image)
@@ -121,7 +119,7 @@ class GenerateFragment : Fragment() {
         inner class TapListener(
             private val img: Image,
             private val holder: GenerateFragmentViewHolder
-        ): ClickListener(this@GenerateFragment.requireContext()){
+        ) : ClickListener(this@GenerateFragment.requireContext()) {
             override fun onLong() {
                 val myIntent = Intent(requireContext(), EditActivity::class.java)
                 myIntent.putExtra("imageurl", img.url)
@@ -129,11 +127,11 @@ class GenerateFragment : Fragment() {
             }
 
             override fun onDouble() {
-                if (img.fav){
+                if (img.fav) {
                     img.fav = false
                     removeTemplate(img)
                     holder.star.visibility = GONE
-                }else{
+                } else {
                     img.fav = true
                     saveTemplate(img)
                     holder.star.visibility = VISIBLE
@@ -144,6 +142,7 @@ class GenerateFragment : Fragment() {
                     drawable as AnimatedVectorDrawable
                 animatedVectorDrawable.start()
             }
+
             override fun onSingle() {
                 super.onSingle()
                 PhotoViewerDialog.newInstance(img.url).show(parentFragmentManager, "hello")

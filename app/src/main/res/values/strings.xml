@@ -32,4 +32,20 @@
     <string name="check_your_email">Check your mail</string>
     <string name="failed_to_register">Failed to register, try again</string>
     <string name="change_user_name">Pick unique username</string>
+    <string name="loading_random_memems">Loading Random Memes</string>
+    <string name="loading_gaming_memes">Loading Gaming Memes</string>
+    <string name="loading_coding_memes">Loading Coding Memes</string>
+    <string name="loading_science_memes">Loading Science Memes</string>
+    <string name="loading_member_edits">Loading Member Edits</string>
+    <string name="double_show_edit">BUBBLE_SHOW_EDIT_ID</string>
+    <string name="tap_twice_to_fav">Double Tap to Favorite</string>
+    <string name="double_tap_meme_to_bookmark">Double tap on your favorite Memes and Templates to bookmark them and access easily.</string>
+    <string name="tap_and_hold_to_edit">Tap and Hold the image to edit them with you texts and more.</string>
+    <string name="hold_to_edit">Hold to Edit</string>
+    <string name="filter_categories">Filter Categories</string>
+    <string name="access_dif_memes">Access new memes in different categories.</string>
+    <string name="no_gif_download">Gif download not supported.</string>
+    <string name="no_gif_edit">Editing GIFS not supported</string>
+    <string name="uploading">Uploading...</string>
+    <string name="working_on_wait">Working on it, Please Wait</string>
 </resources>

@@ -41,7 +41,9 @@ import com.spongycode.blankspace.util.userdata
 import java.io.ByteArrayOutputStream
 import java.util.*
 
-
+private const val MEMBEREDITS = "memberedits"
+private const val IMAGE_URL = "IMAGE_URL"
+private const val UPDLOAD_IMAGE_URL = "UPLOAD_IMAGE_URL"
 class MemberEditsDialog : DialogFragment() {
 
     private val pickImage = 100
@@ -53,8 +55,8 @@ class MemberEditsDialog : DialogFragment() {
     companion object {
         fun newInstance(imageUrl: String, uploadImageUri: Uri? = null): MemberEditsDialog {
             val args = Bundle()
-            args.putString("IMAGE_URL", imageUrl)
-            args.putString("UPLOAD_IMAGE_URL", uploadImageUri.toString())
+            args.putString(IMAGE_URL, imageUrl)
+            args.putString(UPDLOAD_IMAGE_URL, uploadImageUri.toString())
             val fragment = MemberEditsDialog()
             fragment.arguments = args
             return fragment
@@ -82,8 +84,8 @@ class MemberEditsDialog : DialogFragment() {
 
         dialog!!.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
-        val profileImageUrl = arguments?.getString("IMAGE_URL")
-        val uploadImageUrl = arguments?.getString("UPLOAD_IMAGE_URL")
+        val profileImageUrl = arguments?.getString(IMAGE_URL)
+        val uploadImageUrl = arguments?.getString(UPDLOAD_IMAGE_URL)
 
         if (uploadImageUrl != "null") {
             initiateUpload(Uri.parse(uploadImageUrl))
@@ -163,7 +165,6 @@ class MemberEditsDialog : DialogFragment() {
                 requireView().findViewById<Button>(R.id.member_edits_btn_post).alpha = 1f
                 requireView().findViewById<Button>(R.id.member_edits_btn_post).isEnabled = true
             }catch (e : Exception){
-                Log.e("e", e.message!!)
             }
         }
     }
@@ -191,8 +192,8 @@ class MemberEditsDialog : DialogFragment() {
 
     private fun postToFirestore() {
         val progressDialog = ProgressDialog(requireContext())
-        progressDialog.setTitle("Uploading...")
-        progressDialog.setMessage("Working on it, Please Wait")
+        progressDialog.setTitle(getString(R.string.uploading))
+        progressDialog.setMessage(getString(R.string.working_on_wait))
         progressDialog.show()
 
 
@@ -203,7 +204,7 @@ class MemberEditsDialog : DialogFragment() {
             timestamp = Timestamp.now(),
             gif = isGif
         )
-        firestore.collection("memberEdits")
+        firestore.collection(MEMBEREDITS)
             .add(eachMeme)
             .addOnCompleteListener {
                 progressDialog.hide()

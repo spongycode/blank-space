@@ -52,6 +52,11 @@ import java.io.ByteArrayOutputStream
 import java.util.*
 import kotlin.concurrent.schedule
 
+private const val GAMING = "Gaming"
+private const val CODING = "Coding"
+private const val SCIENCE = "Science"
+private const val RANDOM = "Random"
+private const val MEMBER_EDITS = "Member Edits"
 
 @Suppress("DEPRECATION")
 class MainFragment : Fragment() {
@@ -73,45 +78,47 @@ class MainFragment : Fragment() {
     ): View? {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
 
-        memeViewModel.allMemeDb["Random"] = memeViewModel.randomMemeList
-        memeViewModel.allMemeDb["Gaming"] = memeViewModel.gamingMemeList
-        memeViewModel.allMemeDb["Coding"] = memeViewModel.codingMemeList
-        memeViewModel.allMemeDb["Science"] = memeViewModel.scienceMemeList
-        memeViewModel.allMemeDb["Member Edits"] = memeViewModel.memberEditsMemeList
+        memeViewModel.allMemeDb[RANDOM] = memeViewModel.randomMemeList
+        memeViewModel.allMemeDb[GAMING] = memeViewModel.gamingMemeList
+        memeViewModel.allMemeDb[CODING] = memeViewModel.codingMemeList
+        memeViewModel.allMemeDb[SCIENCE] = memeViewModel.scienceMemeList
+        memeViewModel.allMemeDb[MEMBER_EDITS] = memeViewModel.memberEditsMemeList
         binding.currentCatTv.text = memeViewModel.currentMemeCategory
         val mainAdapter = MemeRecyclerAdapter(requireContext())
 
-        try{
+        try {
             if (NetworkCheck.hasInternetConnection((activity as MainActivity).application)) {
                 if (memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.isEmpty()) {
                     memeViewModel.memeFun(memeViewModel.currentMemeCategory).observe(
-                        viewLifecycleOwner, {
-                            // set up and populate view
-                            memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]?.apply {
-                                addAll(it)
-                                toSet()
-                                toList()
-                            }
-                            binding.rvMeme.adapter = mainAdapter
-                            mainAdapter.mainDiffer
-                                .submitList(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory])
-                            binding.rvMeme.adapter?.notifyDataSetChanged()
+                        viewLifecycleOwner
+                    ) {
+                        // set up and populate view
+                        memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]?.apply {
+                            addAll(it)
+                            toSet()
+                            toList()
                         }
-                    )
+                        binding.rvMeme.adapter = mainAdapter
+                        mainAdapter.mainDiffer
+                            .submitList(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory])
+                        binding.rvMeme.adapter?.notifyDataSetChanged()
+                    }
                 }
             } else {
-                Toast.makeText(context, "No internet connection", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, getString(R.string.no_internet), Toast.LENGTH_LONG).show()
             }
-        } catch (e: NetworkErrorException) { Log.e("networkException", e.message!!) }
+        } catch (e: NetworkErrorException) {
+        }
 
-        if (!memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.isEmpty()) {
+        if (memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.isNotEmpty()) {
             binding.rvMeme.adapter = mainAdapter
             mainAdapter.mainDiffer
                 .submitList(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory])
         }
         binding.rvMeme.edgeEffectFactory = object : RecyclerView.EdgeEffectFactory() {
             override fun createEdgeEffect(view: RecyclerView, direction: Int): EdgeEffect {
-                return EdgeEffect(view.context).apply { color = resources.getColor(R.color.decent_green)
+                return EdgeEffect(view.context).apply {
+                    color = resources.getColor(R.color.decent_green)
                 }
             }
         }
@@ -128,7 +135,7 @@ class MainFragment : Fragment() {
                             memeFunObserve(item.title.toString())
                             Snackbar.make(
                                 (activity as AppCompatActivity).findViewById(android.R.id.content),
-                                "Loading Random Memes",
+                                getString(R.string.loading_random_memems),
                                 Snackbar.LENGTH_SHORT
                             ).show()
                         }
@@ -140,7 +147,7 @@ class MainFragment : Fragment() {
                             memeFunObserve(item.title.toString())
                             Snackbar.make(
                                 (activity as AppCompatActivity).findViewById(android.R.id.content),
-                                "Loading Gaming Memes",
+                                getString(R.string.loading_gaming_memes),
                                 Snackbar.LENGTH_SHORT
                             ).show()
                         }
@@ -152,7 +159,7 @@ class MainFragment : Fragment() {
                             memeFunObserve(item.title.toString())
                             Snackbar.make(
                                 (activity as AppCompatActivity).findViewById(android.R.id.content),
-                                "Loading Coding Memes",
+                                getString(R.string.loading_coding_memes),
                                 Snackbar.LENGTH_SHORT
                             ).show()
                         }
@@ -164,7 +171,7 @@ class MainFragment : Fragment() {
                             memeFunObserve(item.title.toString())
                             Snackbar.make(
                                 (activity as AppCompatActivity).findViewById(android.R.id.content),
-                                "Loading Science Memes",
+                                getString(R.string.loading_science_memes),
                                 Snackbar.LENGTH_SHORT
                             ).show()
                         }
@@ -176,7 +183,7 @@ class MainFragment : Fragment() {
                             memeFunObserve(item.title.toString())
                             Snackbar.make(
                                 (activity as AppCompatActivity).findViewById(android.R.id.content),
-                                "Loading Member Edits",
+                                getString(R.string.loading_member_edits),
                                 Snackbar.LENGTH_SHORT
                             ).show()
                         }
@@ -202,45 +209,49 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.rvMeme.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+        binding.rvMeme.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 val ll = binding.rvMeme.layoutManager as LinearLayoutManager
-                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE){
+                if (newState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE) {
                     val ll = binding.rvMeme.layoutManager as LinearLayoutManager
                     memeViewModel.position = ll.findLastVisibleItemPosition()
 
                     if (ll.findLastCompletelyVisibleItemPosition() == memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.size - 1
                         && memeViewModel.position == memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.size - 1
-                    ){
+                    ) {
                         // My commit today will be i don't know how, but it works
                         binding.progressBar.visibility = View.VISIBLE
                         val oldList = mutableListOf<MemeModel>()
                         val newList = mutableListOf<MemeModel>()
                         memeViewModel.memeFun(memeViewModel.currentMemeCategory).observe(
-                            viewLifecycleOwner, {
-                                // set up and populate view
-                                newList.addAll(it)
-                                newList.removeAll(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!)
-                                for (meme in  memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!) {
-                                    for (me in newList){
-                                        if (me.title == meme.title) {
-                                            oldList.add(me)
-                                        }
+                            viewLifecycleOwner
+                        ) {
+                            // set up and populate view
+                            newList.addAll(it)
+                            newList.removeAll(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!)
+                            for (meme in memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!) {
+                                for (me in newList) {
+                                    if (me.title == meme.title) {
+                                        oldList.add(me)
                                     }
                                 }
-
-                                newList.removeAll(oldList)
-                                memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.addAll(newList)
-                                MemeRecyclerAdapter(requireContext()).mainDiffer
-                                    .submitList(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory])
-                                binding.rvMeme.scrollToPosition(memeViewModel.position)
-
-                                Timer().schedule(300){
-                                    binding.progressBar.visibility = View.INVISIBLE
-                                }
                             }
-                        )
-                    } else {binding.progressBar.visibility = View.INVISIBLE}
+
+                            newList.removeAll(oldList)
+                            memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.addAll(
+                                newList
+                            )
+                            MemeRecyclerAdapter(requireContext()).mainDiffer
+                                .submitList(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory])
+                            binding.rvMeme.scrollToPosition(memeViewModel.position)
+
+                            Timer().schedule(300) {
+                                binding.progressBar.visibility = View.INVISIBLE
+                            }
+                        }
+                    } else {
+                        binding.progressBar.visibility = View.INVISIBLE
+                    }
                 }
             }
         })
@@ -249,23 +260,22 @@ class MainFragment : Fragment() {
 
     private fun memeFunObserve(category: String) {
         val mainAdapter = MemeRecyclerAdapter(requireContext())
-        if (memeViewModel.allMemeDb[category]!!.isEmpty()){
+        if (memeViewModel.allMemeDb[category]!!.isEmpty()) {
             memeViewModel.memeFun(category).observe(
-                viewLifecycleOwner, {
-                    // set up and populate view
-                    memeViewModel.allMemeDb[category]?.apply {
-                        addAll(0, it)
-                        toSet()
-                        toList()
-                        Log.d("meme", "meme: ${memeViewModel.allMemeDb[category]!!}")
-                        binding.rvMeme.adapter = mainAdapter
-                        mainAdapter.mainDiffer
-                            .submitList(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory])
-                        binding.rvMeme.adapter?.notifyDataSetChanged()
-                    }
+                viewLifecycleOwner
+            ) {
+                // set up and populate view
+                memeViewModel.allMemeDb[category]?.apply {
+                    addAll(0, it)
+                    toSet()
+                    toList()
+                    binding.rvMeme.adapter = mainAdapter
+                    mainAdapter.mainDiffer
+                        .submitList(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory])
+                    binding.rvMeme.adapter?.notifyDataSetChanged()
                 }
-            )
-        }else{
+            }
+        } else {
             binding.rvMeme.adapter = mainAdapter
             mainAdapter.mainDiffer
                 .submitList(memeViewModel.allMemeDb[memeViewModel.currentMemeCategory]!!.toList())
@@ -277,7 +287,7 @@ class MainFragment : Fragment() {
     ) :
         RecyclerView.Adapter<MemeRecyclerAdapter.ViewHolder>() {
 
-        private val mainDiffUtil = object : DiffUtil.ItemCallback<MemeModel>(){
+        private val mainDiffUtil = object : DiffUtil.ItemCallback<MemeModel>() {
             override fun areItemsTheSame(oldItem: MemeModel, newItem: MemeModel): Boolean {
                 return oldItem.url == newItem.url
             }
@@ -330,8 +340,10 @@ class MainFragment : Fragment() {
             }
 
             checkMemeIsFav(meme)
-            holder.like.setImageResource(if (meme.like) R.drawable.ic_baseline_favorite_24 else
-                R.drawable.ic_baseline_favorite_border_24)
+            holder.like.setImageResource(
+                if (meme.like) R.drawable.ic_baseline_favorite_24 else
+                    R.drawable.ic_baseline_favorite_border_24
+            )
 
             holder.title.text = meme.title
 
@@ -363,19 +375,19 @@ class MainFragment : Fragment() {
                         val showCaseFilter: ImageButton =
                             (activity as MainActivity).findViewById(R.id.pop)
                         val firstShowCaseBuilder = BubbleShowCaseBuilder(activity as MainActivity)
-                            .title("Hold to Edit")
-                            .description("Tap and Hold the image to edit them with you texts and more.")
+                            .title(getString(R.string.hold_to_edit))
+                            .description(getString(R.string.tap_and_hold_to_edit))
                             .arrowPosition(BubbleShowCase.ArrowPosition.TOP)
                             .backgroundColor(Color.WHITE)
                             .textColor(Color.BLACK)
                             .titleTextSize(17)
                             .descriptionTextSize(15)
                             .image(resources.getDrawable(R.drawable.ic_create))
-                            .showOnce("BUBBLE_SHOW_EDIT_ID")
+                            .showOnce(getString(R.string.double_show_edit))
                             .targetView(showcaseMainIv)
                         val secondShowCaseBuilder = BubbleShowCaseBuilder(activity as MainActivity)
-                            .title("Double Tap to Favorite")
-                            .description("Double tap on your favorite Memes and Templates to bookmark them and access easily.")
+                            .title(getString(R.string.tap_twice_to_fav))
+                            .description(getString(R.string.double_tap_meme_to_bookmark))
                             .arrowPosition(BubbleShowCase.ArrowPosition.TOP)
                             .backgroundColor(Color.WHITE)
                             .textColor(Color.BLACK)
@@ -396,8 +408,8 @@ class MainFragment : Fragment() {
                             .showOnce("BUBBLE_SHOW_SHARE_ID")
                             .targetView(showCaseShareIv)
                         val fourthShowCaseBuilder = BubbleShowCaseBuilder(activity as MainActivity)
-                            .title("Filter Categories")
-                            .description("Access new memes in different categories.")
+                            .title(getString(R.string.filter_categories))
+                            .description(getString(R.string.access_dif_memes))
                             .arrowPosition(BubbleShowCase.ArrowPosition.TOP)
                             .backgroundColor(Color.WHITE)
                             .textColor(Color.BLACK)
@@ -450,14 +462,20 @@ class MainFragment : Fragment() {
                     })
             }
             holder.download.setOnClickListener {
-                if(meme.url.substring(meme.url.lastIndexOf(".")).toLowerCase(Locale.ROOT).trim() != ".gif") {
+                if (meme.url.substring(meme.url.lastIndexOf(".")).toLowerCase(Locale.ROOT)
+                        .trim() != ".gif"
+                ) {
                     MainActivity().saveImage(
                         (activity as MainActivity),
                         holder.image.drawable,
                         meme.title
                     )
-                }else{
-                    Toast.makeText(requireContext(), "Gif download not supported.", Toast.LENGTH_LONG).show()
+                } else {
+                    Toast.makeText(
+                        requireContext(),
+                        getString(R.string.no_gif_download),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
             holder.like.setOnClickListener { meme.like = !meme.like }
@@ -475,7 +493,8 @@ class MainFragment : Fragment() {
             internal val memeSenderUsername: TextView = view.findViewById(R.id.meme_sender_username)
             internal val memePostTimeTv: TextView = view.findViewById(R.id.meme_post_time_tv)
             internal val memeHeartAnim: ImageView = view.findViewById(R.id.meme_heart_anim_iv)
-            internal val memeHeartAnimOut: ImageView = view.findViewById(R.id.meme_heart_anim_out_iv)
+            internal val memeHeartAnimOut: ImageView =
+                view.findViewById(R.id.meme_heart_anim_out_iv)
             internal val memeLikeEntry: ShapeableImageView = view.findViewById(R.id.like_entry)
             internal val memeLikeGone: ShapeableImageView = view.findViewById(R.id.like_gone)
         }
@@ -486,7 +505,7 @@ class MainFragment : Fragment() {
                 if (meme.gif) {
                     Toast.makeText(
                         requireContext(),
-                        "Editing GIFS not supported",
+                        getString(R.string.no_gif_edit),
                         Toast.LENGTH_LONG
                     ).show()
                 } else {
@@ -507,7 +526,7 @@ class MainFragment : Fragment() {
         }
 
         private fun onDoubleWorker(holder: ViewHolder, meme: MemeModel) {
-            if (meme.like){
+            if (meme.like) {
                 meme.like = false
                 removeMeme(meme)
                 holder.like.setImageResource(0)
@@ -523,7 +542,7 @@ class MainFragment : Fragment() {
                     drawable as AnimatedVectorDrawable
                 animatedVectorDrawable.start()
 
-            }else{
+            } else {
                 meme.like = true
                 saveMemeToFavs(meme)
                 holder.memeLikeEntry.alpha = 1f

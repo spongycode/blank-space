@@ -33,24 +33,29 @@ class SplashActivity : AppCompatActivity() {
             val uid = auth.currentUser?.uid.toString()
             userdata.afterLoginUserData = UserModel()
             firestore.collection("users")
-                    .whereEqualTo("userId", uid)
-                    .get()
-                    .addOnCompleteListener { task ->
-                        if (task.isSuccessful) {
-                            for (data in task.result!!) {
-                                userdata.afterLoginUserData.imageUrl = data.toObject(UserModel::class.java).imageUrl
-                                userdata.afterLoginUserData.email = data.toObject(UserModel::class.java).email
-                                userdata.afterLoginUserData.status = data.toObject(UserModel::class.java).status
-                                userdata.afterLoginUserData.userId = data.toObject(UserModel::class.java).userId
-                                userdata.afterLoginUserData.username = data.toObject(UserModel::class.java).username
-                                val intent = Intent(this, MainActivity::class.java)
-                                intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
-                                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
-                                startActivity(intent)
-                                finish()
-                            }
+                .whereEqualTo("userId", uid)
+                .get()
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        for (data in task.result!!) {
+                            userdata.afterLoginUserData.imageUrl =
+                                data.toObject(UserModel::class.java).imageUrl
+                            userdata.afterLoginUserData.email =
+                                data.toObject(UserModel::class.java).email
+                            userdata.afterLoginUserData.status =
+                                data.toObject(UserModel::class.java).status
+                            userdata.afterLoginUserData.userId =
+                                data.toObject(UserModel::class.java).userId
+                            userdata.afterLoginUserData.username =
+                                data.toObject(UserModel::class.java).username
+                            val intent = Intent(this, MainActivity::class.java)
+                            intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                            startActivity(intent)
+                            finish()
                         }
                     }
+                }
         } else {
             startActivity(Intent(this, AuthActivity::class.java))
             finish()
