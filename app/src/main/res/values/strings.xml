@@ -25,4 +25,11 @@
     <string name="close_drawer">close</string>
     <string name="channel__name">Blank-Space</string>
     <string name="channel_description">chatNotification</string>
+    <string name="failed_to_login">Failed to login, try again</string>
+    <string name="no_internet">No internet connection</string>
+    <string name="network_exception">networkException</string>
+    <string name="login_failed">authloginFailed</string>
+    <string name="check_your_email">Check your mail</string>
+    <string name="failed_to_register">Failed to register, try again</string>
+    <string name="change_user_name">Pick unique username</string>
 </resources>

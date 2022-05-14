@@ -165,8 +165,6 @@ class MemberEditsDialog : DialogFragment() {
             }catch (e : Exception){
                 Log.e("e", e.message!!)
             }
-
-
         }
     }
 

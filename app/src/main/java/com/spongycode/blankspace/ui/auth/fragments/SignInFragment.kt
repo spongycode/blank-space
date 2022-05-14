@@ -62,8 +62,7 @@ class SignInFragment: Fragment() {
             }
 
             resetPasswordInit.setOnClickListener {
-                ResetPasswordDialog.newInstance().show(parentFragmentManager, "reset")
-
+                ResetPasswordDialog.newInstance().show(parentFragmentManager, RESET)
             }
         }
     }
@@ -74,7 +73,6 @@ class SignInFragment: Fragment() {
     ) {
         try {
             if(hasInternetConnection((activity as AuthActivity).application)) {
-                Log.d("network", "boolean:  ${hasInternetConnection(requireActivity().application)}")
                 if (email.isNotBlank() && password.isNotBlank()) {
                     CoroutineScope(Dispatchers.IO).launch {
                         try {
@@ -84,23 +82,23 @@ class SignInFragment: Fragment() {
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(
                                     requireContext(),
-                                    "Failed to login, try again",
+                                    getString(R.string.failed_to_login),
                                     Toast.LENGTH_SHORT
                                 ).show()
-                                Log.w("authloginFailed", e.stackTrace.toString())
+                                Log.w(getString(R.string.login_failed), e.stackTrace.toString())
                             }
                         }
                     }
                 }
-            } else { Toast.makeText(context, "No internet connection", Toast.LENGTH_LONG).show() }
-        } catch (e: FirebaseNetworkException){ Log.e("networkException", e.message!!) }
+            } else { Toast.makeText(context, getString(R.string.no_internet), Toast.LENGTH_LONG).show() }
+        } catch (e: FirebaseNetworkException){ Log.e(getString(R.string.network_exception), e.message!!) }
     }
 
     private fun checkSignInState() {
         if (firebaseAuth.currentUser != null){
             val uid = firebaseAuth.currentUser?.uid.toString()
-            firestore.collection("users")
-                .whereEqualTo("userId", uid)
+            firestore.collection(USERS)
+                .whereEqualTo(USER_ID, uid)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -118,6 +116,12 @@ class SignInFragment: Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    companion object {
+        private const val USERS = "users"
+        private const val USER_ID = "userId"
+        private const val RESET = "reset"
     }
 
 }

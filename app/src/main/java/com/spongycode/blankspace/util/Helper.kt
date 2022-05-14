@@ -22,11 +22,11 @@ object Helper{
 
                     val scaleDownX = ObjectAnimator.ofFloat(
                         button,
-                        "scaleX", 0.95f
+                        SCALE_X, 0.95f
                     )
                     val scaleDownY = ObjectAnimator.ofFloat(
                         button,
-                        "scaleY", 0.95f
+                        SCALE_Y, 0.95f
                     )
                     scaleDownX.duration = 100
                     scaleDownY.duration = 100
@@ -44,10 +44,10 @@ object Helper{
 
 
                     val scaleDownX2 = ObjectAnimator.ofFloat(
-                        button, "scaleX", 1f
+                        button, SCALE_X, 1f
                     )
                     val scaleDownY2 = ObjectAnimator.ofFloat(
-                        button, "scaleY", 1f
+                        button, SCALE_Y, 1f
                     )
                     scaleDownX2.duration = 100
                     scaleDownY2.duration = 100
@@ -77,4 +77,7 @@ object Helper{
             .await()
         return res
     }
+
+    private const val SCALE_X = "scaleX"
+    private const val SCALE_Y = "scaleY"
 }

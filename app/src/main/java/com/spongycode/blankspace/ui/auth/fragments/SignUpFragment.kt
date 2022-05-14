@@ -90,32 +90,31 @@ class SignUpFragment : Fragment() {
                                 withContext(Dispatchers.Main) {
                                     Toast.makeText(
                                         requireContext(),
-                                        "Failed to register, try again",
+                                        getString(R.string.failed_to_register),
                                         Toast.LENGTH_LONG
                                     ).show()
-                                    Log.w("authregisterFailed", e.stackTrace.toString())
                                 }
                             }
                         } else {
                             withContext(Dispatchers.Main) {
                                 Toast.makeText(
                                     requireContext(),
-                                    "Pick unique username",
+                                    getString(R.string.change_user_name),
                                     Toast.LENGTH_LONG
                                 ).show()
                             }
                         }
                     }
                 }
-            } else { Toast.makeText(context, "No internet connection", Toast.LENGTH_LONG).show() }
-        } catch (e: FirebaseNetworkException){ Log.e("networkException", e.message!!) }
+            } else { Toast.makeText(context, getString(R.string.no_internet), Toast.LENGTH_LONG).show() }
+        } catch (e: FirebaseNetworkException){ Log.e(NETWORK_TAG, e.message!!) }
     }
 
     private fun checkSignUpState() {
         if (firebaseAuth.currentUser != null) {
             val uid = firebaseAuth.currentUser?.uid.toString()
-            firestore.collection("users")
-                .whereEqualTo("userId", uid)
+            firestore.collection(USERS)
+                .whereEqualTo(USER_ID, uid)
                 .get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -140,5 +139,11 @@ class SignUpFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    companion object {
+        private const val USERS = "users"
+        private const val USER_ID = "userId"
+        private const val NETWORK_TAG = "networkException"
     }
 }

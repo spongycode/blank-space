@@ -61,7 +61,7 @@ class ResetPasswordDialog : DialogFragment() {
                             dismiss()
                             Snackbar.make(
                                 requireActivity().findViewById(android.R.id.content),
-                                "Check your mail",
+                                getString(R.string.check_your_email),
                                 Snackbar.LENGTH_SHORT
                             ).show()
                         } else {
