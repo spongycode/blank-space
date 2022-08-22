@@ -1,10 +1,13 @@
 package com.spongycode.blankspace.storage
 
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -24,8 +27,10 @@ import com.spongycode.blankspace.util.Constants.REQUEST_CODE
 
 private const val CHANNEL_ID = "1"
 
-class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(context, workerParams) {
+class PollWorker(val context: Context, workerParams: WorkerParameters) :
+    Worker(context, workerParams) {
 
+    @SuppressLint("UnspecifiedImmutableFlag")
     override fun doWork(): Result {
         // group chat
         val chatMessages = mutableListOf<ChatMessage>()
@@ -40,10 +45,18 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
         var nameText = ""
 
         val intent = Intent(context, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
         }
         val pendingIntent: PendingIntent =
-            PendingIntent.getActivity(context, 0, intent, 0)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                PendingIntent.getActivity(
+                    context,
+                    0, intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
+            } else {
+                PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+            }
 
         // group caht listener
         val a = Firebase.firestore
@@ -85,7 +98,7 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
 
         val sender = firebaseAuth.currentUser!!.uid
         Firebase.firestore.collection("latest/messages/$sender")
-            .orderBy("messageTime").addSnapshotListener{ querySnapshot, error ->
+            .orderBy("messageTime").addSnapshotListener { querySnapshot, error ->
 
                 error?.let {
                     Log.w("Lmessages", error.message!!)
@@ -128,7 +141,7 @@ class PollWorker(val context: Context, workerParams: WorkerParameters): Worker(c
         return Result.success()
     }
 
-    private fun showBackgroundNotification(requestCode: Int, notification: Notification){
+    private fun showBackgroundNotification(requestCode: Int, notification: Notification) {
         val intent = Intent(ACTION_SHOW_NOTIFICATION).apply {
             putExtra(REQUEST_CODE, requestCode)
             putExtra(NOTIFICATION, notification)
