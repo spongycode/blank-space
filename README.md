@@ -1,4 +1,4 @@
-# Blank-Space
+# Blank Space
 
 [![GitHub stars](https://img.shields.io/badge/Made%20in-Kotlin-blue)](https://kotlinlang.org/)  [![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
 
@@ -18,3 +18,19 @@ They can edit any image inside the app and then share, post, download or add to 
 With a fragment dedicated to user's favorite memes and templates, we made it easier to share your favorite Memes with your friends.
 
 Blank Space allows you to share your thought and ideas in a general group chat, as well as trade private thought in private chat
+## 📷 Previews
+
+<p align="center">
+<img src="screens/scr12.jpg" alt="drawing" width="200" />
+<img src="screens/scr5.jpg" alt="drawing" width="200" />
+<img src="screens/scr4.jpg" alt="drawing" width="200" />
+<img src="screens/scr7.jpg" alt="drawing" width="200" /></br></br>
+<img src="screens/scr8.jpg" alt="drawing" width="200" />
+<img src="screens/scr6.jpg" alt="drawing" width="200" />
+<img src="screens/scr11.jpg" alt="drawing" width="200" />
+<img src="screens/scr9.jpg" alt="drawing" width="200" /></br></br>
+<img src="screens/scr10.jpg" alt="drawing" width="200" />
+<img src="screens/scr1.jpg" alt="drawing" width="200" />
+<img src="screens/scr2.jpg" alt="drawing" width="200" />
+<img src="screens/scr3.jpg" alt="drawing" width="200" />
+</p>
