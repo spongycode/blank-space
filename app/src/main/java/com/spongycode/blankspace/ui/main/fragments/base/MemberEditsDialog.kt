@@ -41,7 +41,7 @@ import com.spongycode.blankspace.util.userdata
 import java.io.ByteArrayOutputStream
 import java.util.*
 
-private const val MEMBEREDITS = "memberedits"
+private const val MEMBEREDITS = "memberEdits"
 private const val IMAGE_URL = "IMAGE_URL"
 private const val UPDLOAD_IMAGE_URL = "UPLOAD_IMAGE_URL"
 class MemberEditsDialog : DialogFragment() {

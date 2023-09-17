@@ -24,7 +24,7 @@ interface ApiInterface {
 
     companion object {
 
-        var BASE_URL = "https://meme-api.herokuapp.com"
+        var BASE_URL = "https://meme-api.com/"
 
         fun create() : ApiInterface {
 
